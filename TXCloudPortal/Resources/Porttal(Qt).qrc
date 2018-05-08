@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/Portal(Qt)">
+    <file>customservice.png</file>
     <file>logo-cs-live.png</file>
     <file>court.png</file>
     <file>pushplay.png</file>

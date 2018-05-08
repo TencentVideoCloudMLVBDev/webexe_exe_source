@@ -18,7 +18,7 @@
     <ProjectGuid>{F091C915-4F3E-4B05-8DD4-44310BE78FB1}</ProjectGuid>
     <Keyword>Qt4VSv1.0</Keyword>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>TXCloudRoom(Qt)</ProjectName>
+    <ProjectName>TXCloudRoom</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

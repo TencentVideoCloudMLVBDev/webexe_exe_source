@@ -413,7 +413,7 @@ border-width: 0px;</string>
      </property>
      <property name="styleSheet">
       <string notr="true">border-radius: 4px;
-background-image: url(:/Portal(Qt)/pushplay.png)
+background-image: url(:/Portal(Qt)/customservice.png)
 </string>
      </property>
      <property name="text">
@@ -425,7 +425,7 @@ background-image: url(:/Portal(Qt)/pushplay.png)
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="Resources/Porttal(Qt).qrc"/>
+  <include location="../Resources/Porttal(Qt).qrc"/>
  </resources>
  <connections/>
 </ui>
