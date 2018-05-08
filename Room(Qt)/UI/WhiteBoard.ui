@@ -1,0 +1,1682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WhiteBoard</class>
+ <widget class="QMainWindow" name="WhiteBoard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1036</width>
+    <height>933</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WhiteBoard</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget{
+	background-color: #00000000;
+}</string>
+  </property>
+  <widget class="QMdiArea" name="centralWidget">
+   <property name="background">
+    <brush brushstyle="SolidPattern">
+     <color alpha="255">
+      <red>255</red>
+      <green>255</green>
+      <blue>255</blue>
+     </color>
+    </brush>
+   </property>
+   <widget class="QWidget" name="toolsWindow">
+    <property name="minimumSize">
+     <size>
+      <width>36</width>
+      <height>288</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>36</width>
+      <height>288</height>
+     </size>
+    </property>
+    <property name="windowTitle">
+     <string>ToolsWindow</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#toolsWindow{
+	background-color: #66000000;
+}</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QCheckBox" name="chkColorPick">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>色板</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QCheckBox{
+	margin: 6px 4px 6px 4px;
+}
+
+QCheckBox:unchecked{
+	border-image: url(:/tools/tools/pick-normal.png);
+}
+
+QCheckBox:checked{
+	border-radius: 2px;
+	background-color:#33000000;
+	border-image: url(:/tools/tools/pick-press.png);
+}
+
+QCheckBox::indicator {
+	background-color: #0075ff;
+	margin:5px;
+    width: 18px;
+    height: 14px;
+	image: none;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoPen">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>画笔</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton{
+	margin: 6px 4px 6px 4px;
+}
+
+QRadioButton:unchecked{
+	border-image: url(:/tools/tools/pick-normal.png);
+}
+
+QRadioButton:checked{
+	border-radius: 2px;
+	background-color:#33000000;
+	border-image: url(:/tools/tools/pick-press.png);
+}
+
+QRadioButton::indicator {
+    width: 28px;
+    height: 24px;
+	image:none;
+	border-image: url(:/tools/tools/pen-normal.png);
+}
+
+QRadioButton::indicator:hover {
+	border-image: url(:/tools/tools/pen-hover.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoLine">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>直线</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton{
+	margin: 6px 4px 6px 4px;
+}
+
+QRadioButton:unchecked{
+	border-image: url(:/tools/tools/pick-normal.png);
+}
+
+QRadioButton:checked{
+	border-radius: 2px;
+	background-color:#33000000;
+	border-image: url(:/tools/tools/pick-press.png);
+}
+
+QRadioButton::indicator {
+    width: 28px;
+    height: 24px;
+	image: none;
+	border-image: url(:/tools/tools/line-normal.png);
+}
+
+QRadioButton::indicator:hover {
+	border-image: url(:/tools/tools/line-hover.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoShape">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>图形</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton{
+	margin: 6px 4px 6px 4px;
+}
+
+QRadioButton:unchecked{
+	border-image: url(:/tools/tools/pick-normal.png);
+}
+
+QRadioButton:checked{
+	border-radius: 2px;
+	background-color:#33000000;
+	border-image: url(:/tools/tools/pick-press.png);
+}
+
+QRadioButton::indicator {
+    width: 28px;
+    height: 24px;
+	image: none;
+	border-image: url(:/tools/tools/shape-normal.png);
+}
+
+QRadioButton::indicator:hover {
+	border-image: url(:/tools/tools/shape-hover.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoEraser">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>橡皮擦</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton{
+	margin: 6px 4px 6px 4px;
+}
+
+QRadioButton:unchecked{
+	border-image: url(:/tools/tools/pick-normal.png);
+}
+
+QRadioButton:checked{
+	border-radius: 2px;
+	background-color:#33000000;
+	border-image: url(:/tools/tools/pick-press.png);
+}
+
+QRadioButton::indicator {
+    width: 28px;
+    height: 24px;
+	image: none;
+	border-image: url(:/tools/tools/eraser-normal.png);
+}
+
+QRadioButton::indicator:hover {
+	border-image: url(:/tools/tools/eraser-hover.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="widgetSplite1" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>28</width>
+         <height>1</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>28</width>
+         <height>1</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QWidget{
+	background-color: #ff7c7c7b;
+	margin: 0px 4px 0px 4px;
+}</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoSelect">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>选择</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton{
+	margin: 6px 4px 6px 4px;
+}
+
+QRadioButton:unchecked{
+}
+
+QRadioButton:checked{
+	border-radius: 2px;
+	background-color:#33000000;
+}
+
+QRadioButton::indicator {
+    width: 28px;
+    height: 24px;
+	image: none;
+	border-image: url(:/tools/tools/select-normal.png);
+}
+
+QRadioButton::indicator:hover {
+	border-image: url(:/tools/tools/select-hover.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnClear">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>清除</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	margin: 6px 4px 6px 4px;
+	border-image: url(:/tools/tools/clear-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/tools/tools/clear-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="widgetSplite2" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>28</width>
+         <height>1</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>28</width>
+         <height>1</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QWidget{
+	background-color: #ff7c7c7b;
+	margin: 0px 4px 0px 4px;
+}</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnUpload">
+       <property name="minimumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>36</width>
+         <height>36</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>上传</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	margin: 6px 4px 6px 4px;
+	border-image: url(:/tools/tools/upload-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/tools/tools/upload-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="pagesWindow">
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>42</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>42</height>
+     </size>
+    </property>
+    <property name="windowTitle">
+     <string>PagesWindow</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#pagesWindow{
+	background-color: #fff2f2f2;
+}</string>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>18</number>
+     </property>
+     <property name="leftMargin">
+      <number>14</number>
+     </property>
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>19</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="btnUndo">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border-image: url(:/pages/pages/undo-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/pages/pages/undo-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRedo">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border-image: url(:/pages/pages/redo-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/pages/pages/redo-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnLastPage">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border-image: url(:/pages/pages/left-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/pages/pages/left-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnPageNumber">
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border: none;
+	font: bold 14pt &quot;Microsoft YaHei&quot;;
+	color: #ff888888;
+}
+
+QPushButton:pressed {
+	color: #ff006eef;
+}</string>
+       </property>
+       <property name="text">
+        <string>1 / 1</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnNextPage">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border-image: url(:/pages/pages/right-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/pages/pages/right-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnAddPage">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border-image: url(:/pages/pages/add-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/pages/pages/add-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnDeletePage">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border-image: url(:/pages/pages/delete-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/pages/pages/delete-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="colorWindow">
+    <property name="minimumSize">
+     <size>
+      <width>190</width>
+      <height>36</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>190</width>
+      <height>36</height>
+     </size>
+    </property>
+    <property name="windowTitle">
+     <string>ColorWindow</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#colorWindow{
+	background-color: #b3000000;
+}</string>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QRadioButton" name="rdoColorBlue">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton::indicator {
+	background-color: #0075ff;
+    width: 20px;
+    height: 16px;
+	image: none;
+}
+
+QRadioButton::indicator:checked {
+	width: 16px;
+    height: 12px;
+	border: 2px solid #ffffff;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoColorGreen">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton::indicator {
+	background-color: #00cc00;
+    width: 20px;
+    height: 16px;
+	image: none;
+}
+
+QRadioButton::indicator:checked {
+	width: 16px;
+    height: 12px;
+	border: 2px solid #ffffff;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoColorOrange">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton::indicator {
+	background-color: #ff9903;
+    width: 20px;
+    height: 16px;
+	image: none;
+}
+
+QRadioButton::indicator:checked {
+	width: 16px;
+    height: 12px;
+	border: 2px solid #ffffff;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoColorRed">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton::indicator {
+	background-color: #ff0100;
+    width: 20px;
+    height: 16px;
+	image: none;
+}
+
+QRadioButton::indicator:checked {
+	width: 16px;
+    height: 12px;
+	border: 2px solid #ffffff;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoColorBlack">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton::indicator {
+	background-color: #000000;
+    width: 20px;
+    height: 16px;
+	image: none;
+}
+
+QRadioButton::indicator:checked {
+	width: 16px;
+    height: 12px;
+	border: 2px solid #ffffff;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoColorGrey">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton::indicator {
+	background-color: #cccccc;
+    width: 20px;
+    height: 16px;
+	image: none;
+}
+
+QRadioButton::indicator:checked {
+	width: 16px;
+    height: 12px;
+	border: 2px solid #ffffff;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="sizeWindow">
+    <property name="minimumSize">
+     <size>
+      <width>100</width>
+      <height>36</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>100</width>
+      <height>36</height>
+     </size>
+    </property>
+    <property name="windowTitle">
+     <string>SizeWindow</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#sizeWindow{
+	background-color: #b3000000;
+}</string>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>10</number>
+     </property>
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QRadioButton" name="rdoSizeLevel1">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton::indicator {
+	background-color: #bbbbbb;
+	margin: 6px 8px 6px 8px;
+    width: 4px;
+    height: 4px;
+	border-radius: 2px;
+	image: none;
+}
+
+QRadioButton::indicator:checked {
+	background-color: #ffffff;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoSizeLevel2">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton::indicator {
+	background-color: #bbbbbb;
+	margin: 4px 6px 4px 6px;
+    width: 8px;
+    height: 8px;
+	border-radius: 4px;
+	image: none;
+}
+
+QRadioButton::indicator:checked {
+	background-color: #ffffff;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rdoSizeLevel3">
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QRadioButton::indicator {
+	background-color: #bbbbbb;
+	margin: 2px 4px 2px 4px;
+    width: 12px;
+    height: 12px;
+	border-radius: 6px;
+	image: none;
+}
+
+QRadioButton::indicator:checked {
+	background-color: #ffffff;
+}</string>
+       </property>
+       <property name="text">
+        <string>RadioButton</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="shapeWindow">
+    <property name="minimumSize">
+     <size>
+      <width>156</width>
+      <height>80</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>156</width>
+      <height>80</height>
+     </size>
+    </property>
+    <property name="windowTitle">
+     <string>ShapeWindow</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#shapeWindow{
+	background-color: #b3000000;
+}</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QWidget" name="widgetShape" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <property name="spacing">
+         <number>18</number>
+        </property>
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <property name="topMargin">
+         <number>10</number>
+        </property>
+        <property name="rightMargin">
+         <number>10</number>
+        </property>
+        <property name="bottomMargin">
+         <number>7</number>
+        </property>
+        <item>
+         <widget class="QRadioButton" name="rdoShapeEmptyRect">
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>20</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QRadioButton::indicator {
+    width: 20px;
+    height: 16px;
+	image: url(:/tools/tools/rect-normal.png);
+}
+
+QRadioButton::indicator:checked {
+	image: url(:/tools/tools/rect-press.png);
+}</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rdoShapeFullRect">
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>20</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QRadioButton::indicator {
+    width: 20px;
+    height: 16px;
+	image: url(:/tools/tools/rect-fill-normal.png);
+}
+
+QRadioButton::indicator:checked {
+	image: url(:/tools/tools/rect-fill-press.png);
+}</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rdoShapeEmptyEllipse">
+          <property name="minimumSize">
+           <size>
+            <width>22</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>22</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QRadioButton::indicator {
+    width: 22px;
+    height: 16px;
+	image: url(:/tools/tools/ellipse-normal.png);
+}
+
+QRadioButton::indicator:checked {
+	image: url(:/tools/tools/ellipse-press.png);
+}</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="rdoShapeFullEllipse">
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>20</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QRadioButton::indicator {
+    width: 20px;
+    height: 16px;
+	image: url(:/tools/tools/ellipse-fill-normal.png);
+}
+
+QRadioButton::indicator:checked {
+	image: url(:/tools/tools/ellipse-fill-press.png);
+}</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelBorderSize">
+       <property name="styleSheet">
+        <string notr="true">font: 10pt &quot;Microsoft YaHei&quot;;
+color: #ffffff;
+margin: 2px 0px 2px 10px;</string>
+       </property>
+       <property name="text">
+        <string>描边厚度</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="widgetBorderSize" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>8</number>
+        </property>
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QSlider" name="sliderShapeThin">
+          <property name="styleSheet">
+           <string notr="true">QSlider::groove:horizontal {
+    height: 2px;
+    border-radius:1px;
+	background: transparent;
+}
+
+QSlider::sub-page:horizontal {
+	background-color: #ff006eff;
+}
+
+QSlider::add-page:horizontal {
+    background-color: #66ffffff;
+}
+
+QSlider::handle:horizontal {
+	width: 17px;
+    height: 16px;
+	margin: -8px 0px -8px 0px;
+	border-radius:8px;
+	background: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5,   
+    stop:0.45 #ff006eff, stop:0.55 #ffffff);
+}</string>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>10</number>
+          </property>
+          <property name="value">
+           <number>1</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelThinValue">
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>20</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(255, 255, 255);
+font: 10pt &quot;Microsoft YaHei&quot;;</string>
+          </property>
+          <property name="text">
+           <string>1</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="dialogWindow">
+    <property name="windowTitle">
+     <string>DialogWindow</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#dialogWindow{
+	background-color: #7f000000;
+}</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QWidget" name="widgetDialog" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>420</width>
+           <height>148</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>420</width>
+           <height>148</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">#widgetDialog{
+	background-color: #ffffff;
+}</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>24</number>
+          </property>
+          <property name="topMargin">
+           <number>24</number>
+          </property>
+          <property name="rightMargin">
+           <number>24</number>
+          </property>
+          <property name="bottomMargin">
+           <number>24</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">margin: 20px 0px 3px 0px;
+font: bold 16pt &quot;Microsoft YaHei&quot;;
+color: #333333;</string>
+              </property>
+              <property name="text">
+               <string>确定删除当前白板页吗？</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="btnDialogClose">
+                <property name="minimumSize">
+                 <size>
+                  <width>11</width>
+                  <height>11</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>11</width>
+                  <height>11</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
+	border-image: url(:/dialog/dialog/close-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/dialog/dialog/close-press.png);
+}</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>11</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>24</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnDialogOK">
+              <property name="minimumSize">
+               <size>
+                <width>88</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>88</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+	border: none;
+	background:  #006eff;
+	color: #ffffff;
+	font: 10pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	background:  #0068f2;
+}
+
+QPushButton:pressed {
+	background:  #0062e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+              </property>
+              <property name="text">
+               <string>确定删除</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnDialogCancel">
+              <property name="minimumSize">
+               <size>
+                <width>88</width>
+                <height>33</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>88</width>
+                <height>33</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+	border: 1px solid #dddddd;
+	background:  #ffffff;
+	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	border: 1px solid #d2d2d2;
+	background:  #f2f2f2;
+}
+
+QPushButton:pressed {
+	border: 1px solid #d2d2d2;
+	background:  #e5e5e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+              </property>
+              <property name="text">
+               <string>取消</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1036</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../Resources/WhiteBoardResource/WhiteBoard.qrc"/>
+ </resources>
+ <connections/>
+</ui>

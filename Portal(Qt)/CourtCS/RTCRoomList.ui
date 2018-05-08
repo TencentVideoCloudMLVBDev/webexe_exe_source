@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RTCRoomList</class>
+ <widget class="QDialog" name="RTCRoomList">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>430</width>
+    <height>448</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>RTCRoomList</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>5</number>
+   </property>
+   <property name="topMargin">
+    <number>5</number>
+   </property>
+   <property name="rightMargin">
+    <number>5</number>
+   </property>
+   <property name="bottomMargin">
+    <number>5</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="widgetMain" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>420</width>
+       <height>438</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>420</width>
+       <height>438</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">#widgetMain{
+	background-color: rgb(255, 255, 255);
+}</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>26</number>
+      </property>
+      <property name="topMargin">
+       <number>10</number>
+      </property>
+      <property name="rightMargin">
+       <number>26</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>22</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_close">
+            <property name="minimumSize">
+             <size>
+              <width>11</width>
+              <height>10</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>11</width>
+              <height>11</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+	border-image: url(:/Portal(Qt)/close-normal.png)
+}
+QPushButton:pressed {
+	border-image: url(:/Portal(Qt)/close-press.png);
+}</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="title">
+            <property name="minimumSize">
+             <size>
+              <width>227</width>
+              <height>36</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>227</width>
+              <height>36</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>微软雅黑</family>
+              <pointsize>20</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">#title{
+	image: url(:/Portal(Qt)/logo-edu.png)
+}</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>10</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QWidget" name="widget_room_list" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>368</width>
+            <height>248</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>368</width>
+            <height>248</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">#widget_room_list{
+	border: 1px solid #dddddd;
+}</string>
+          </property>
+          <widget class="QListWidget" name="lw_room_list">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>368</width>
+             <height>248</height>
+            </rect>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>368</width>
+             <height>248</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>368</width>
+             <height>248</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">#lw_room_list{
+	border: none;
+	margin: 14px 2px 14px 2px;
+}</string>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+          </widget>
+          <widget class="QWidget" name="widge_no_room" native="true">
+           <property name="geometry">
+            <rect>
+             <x>100</x>
+             <y>80</y>
+             <width>161</width>
+             <height>81</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QLabel" name="label_conf">
+                <property name="minimumSize">
+                 <size>
+                  <width>40</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>40</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">image:url(:/Portal(Qt)/conf.png)</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_no_room">
+              <property name="styleSheet">
+               <string notr="true">color: rgb(156, 156, 156);</string>
+              </property>
+              <property name="text">
+               <string>暂时没有房间,请创建房间</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <property name="topMargin">
+         <number>24</number>
+        </property>
+        <property name="bottomMargin">
+         <number>24</number>
+        </property>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_create">
+          <property name="minimumSize">
+           <size>
+            <width>76</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>76</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <italic>false</italic>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+	border: none;
+	background:  #006eff;
+	color: #ffffff;
+	font: 10pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	background:  #0068f2;
+}
+
+QPushButton:pressed {
+	background:  #0062e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+          </property>
+          <property name="text">
+           <string>创建房间</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_join">
+          <property name="minimumSize">
+           <size>
+            <width>76</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>76</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <italic>false</italic>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+	border: 1px solid #dddddd;
+	background:  #ffffff;
+	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	border: 1px solid #d2d2d2;
+	background:  #f2f2f2;
+}
+
+QPushButton:pressed {
+	border: 1px solid #d2d2d2;
+	background:  #e5e5e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+          </property>
+          <property name="text">
+           <string>加入房间</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>lw_room_list</tabstop>
+  <tabstop>btn_create</tabstop>
+  <tabstop>btn_join</tabstop>
+  <tabstop>btn_close</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../Resources/Porttal(Qt).qrc"/>
+ </resources>
+ <connections/>
+</ui>

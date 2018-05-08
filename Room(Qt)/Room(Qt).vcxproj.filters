@@ -1,0 +1,922 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="thirdparty">
+      <UniqueIdentifier>{5f578a29-0702-4f2e-be93-6db954e798ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty\gzip">
+      <UniqueIdentifier>{ac0d53d8-95eb-4258-9b35-7fc3da1fff78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty\zlib">
+      <UniqueIdentifier>{738b28c2-aee0-46d8-a0b7-b90161963f42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty\jsoncpp">
+      <UniqueIdentifier>{a69ef583-0176-456a-ad86-0648cb25b731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Education">
+      <UniqueIdentifier>{4eb7b56e-0696-4700-b26d-a7f2b5f980a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK">
+      <UniqueIdentifier>{3f8de336-aadc-416e-a0bb-a2b3aec50a19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PushPlayTest">
+      <UniqueIdentifier>{0579f4e6-6b7d-4dde-b0d9-0e4e3625552b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{863132e8-8100-4293-8f6a-5a66cfc61428}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{73276880-5162-4986-aef7-53591d541f6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files\Professional_Release">
+      <UniqueIdentifier>{0e588f5e-270a-4250-9521-308fa239a178}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="SDK\RoomService">
+      <UniqueIdentifier>{30b9c1f0-f6d2-4881-9b14-d6ea90ce4e11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\RoomService\LiveRoom">
+      <UniqueIdentifier>{d6d474ca-5058-468f-8dcf-a9b3f9eabca5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDK\RoomService\RTCRoom">
+      <UniqueIdentifier>{36abe60a-7c6a-4997-ac0e-e62140069b5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CSLive">
+      <UniqueIdentifier>{6d208865-b039-4ebd-a2b0-7ddc7a515096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CourtCS">
+      <UniqueIdentifier>{2eae5488-7b23-4ea7-ba0b-82ced46c7dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{dfe6030c-8b52-4893-b057-5284610978d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{9a7f2dfe-e2fa-4972-9665-6e175c4c999f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\RoomService">
+      <UniqueIdentifier>{7601de04-be3e-4993-a897-9199910649e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{5230537a-5ad1-468f-b1cc-f8ac17e9dec4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="thirdparty\gzip\gzip.cpp">
+      <Filter>thirdparty\gzip</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\jsoncpp\jsoncpp.cpp">
+      <Filter>thirdparty\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Education\LiveDemo.cpp">
+      <Filter>Education</Filter>
+    </ClCompile>
+    <ClCompile Include="PushPlayTest\GetPushUrlInfo.cpp">
+      <Filter>PushPlayTest</Filter>
+    </ClCompile>
+    <ClCompile Include="PushPlayTest\PushPlayDemo.cpp">
+      <Filter>PushPlayTest</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_WhiteBoard.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_RoomService.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_PushPlayTest.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\RoomService\LiveRoom\LiveRoom.cpp">
+      <Filter>SDK\RoomService\LiveRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\RoomService\LiveRoom\LRBussiness.cpp">
+      <Filter>SDK\RoomService\LiveRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\RoomService\LiveRoom\LRHttpRequest.cpp">
+      <Filter>SDK\RoomService\LiveRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\RoomService\LiveRoom\LRStreamMixer.cpp">
+      <Filter>SDK\RoomService\LiveRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\RoomService\RTCRoom\RTCRBussiness.cpp">
+      <Filter>SDK\RoomService\RTCRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\RoomService\RTCRoom\RTCRHttpRequest.cpp">
+      <Filter>SDK\RoomService\RTCRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\RoomService\RTCRoom\RTCRoom.cpp">
+      <Filter>SDK\RoomService\RTCRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="Education\LiveVideoPanel.cpp">
+      <Filter>Education</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_LiveVideoPanel.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LiveVideoPanel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LiveVideoPanel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_LiveVideoWidget.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LiveVideoWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LiveVideoWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Education\LiveVideoWidget.cpp">
+      <Filter>Education</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_GetPushUrlInfo.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_GetPushUrlInfo.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_GetPushUrlInfo.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_LiveDemo.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LiveDemo.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LiveDemo.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_PushPlayDemo.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PushPlayDemo.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PushPlayDemo.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="CSLive\DialogPushPlay.cpp">
+      <Filter>CSLive</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_DialogPushPlay.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_DialogPushPlay.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_DialogPushPlay.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Court&amp;CS\DoubleVideoPanel.cpp">
+      <Filter>CourtCS</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_DoubleVideoPanel.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_DoubleVideoPanel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_DoubleVideoPanel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Court&amp;CS\MultiVideoPanel.cpp">
+      <Filter>CourtCS</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_MultiVideoPanel.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_MultiVideoPanel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_MultiVideoPanel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Court&amp;CS\RTCDemo.cpp">
+      <Filter>CourtCS</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_RTCDemo.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_RTCDemo.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_RTCDemo.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Court&amp;CS\RTCVideoWidget.cpp">
+      <Filter>CourtCS</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_RTCVideoWidget.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_RTCVideoWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_RTCVideoWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_Application.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Application.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Application.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\CustomTextEdit.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_CustomTextEdit.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_CustomTextEdit.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_CustomTextEdit.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\DeviceManage.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_DeviceManage.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_DeviceManage.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_DeviceManage.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\DialogMessage.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_DialogMessage.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_DialogMessage.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_DialogMessage.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\GDIWidget.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_GDIWidget.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_GDIWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_GDIWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\IMItemView.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_IMItemView.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_IMItemView.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_IMItemView.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\IMPanel.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_IMPanel.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_IMPanel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_IMPanel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\InvitePanel.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_InvitePanel.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_InvitePanel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_InvitePanel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MemberItemView.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_MemberItemView.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_MemberItemView.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_MemberItemView.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MemberPanel.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_MemberPanel.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_MemberPanel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_MemberPanel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\QDialogProgress.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_QDialogProgress.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_QDialogProgress.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_QDialogProgress.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\QProgressIndicator.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_QProgressIndicator.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_QProgressIndicator.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_QProgressIndicator.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\QWidgetToast.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_QWidgetToast.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_QWidgetToast.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_QWidgetToast.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\WhiteBoard.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_WhiteBoard.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_WhiteBoard.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_WhiteBoard.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="common\RoomService\BoardService.cpp">
+      <Filter>Common\RoomService</Filter>
+    </ClCompile>
+    <ClCompile Include="common\RoomService\CaptureScreen.cpp">
+      <Filter>Common\RoomService</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_CaptureScreen.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_CaptureScreen.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_CaptureScreen.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="common\RoomService\COSInfo.cpp">
+      <Filter>Common\RoomService</Filter>
+    </ClCompile>
+    <ClCompile Include="common\RoomService\TaskQueue.cpp">
+      <Filter>Common\RoomService</Filter>
+    </ClCompile>
+    <ClCompile Include="common\RoomService\TIMManager.cpp">
+      <Filter>Common\RoomService</Filter>
+    </ClCompile>
+    <ClCompile Include="common\ActiveXUtil.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\crashdump.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\HttpClient.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\HttpServer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\log.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\TaskQueue.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\RoomService\ImageDownloader.cpp">
+      <Filter>Common\RoomService</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_ImageDownloader.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ImageDownloader.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ImageDownloader.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\BeautyManage.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_BeautyManage.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_BeautyManage.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_BeautyManage.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\RoomService\RTCRoom\RTCStreamMixer.cpp">
+      <Filter>SDK\RoomService\RTCRoom</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Education\LiveDemo.h">
+      <Filter>Education</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PushPlayTest\GetPushUrlInfo.h">
+      <Filter>PushPlayTest</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PushPlayTest\PushPlayDemo.h">
+      <Filter>PushPlayTest</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\WhiteBoardResource\WhiteBoard.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\RoomService\RoomService.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\PushPlayTest\PushPlayTest.qrc">
+      <Filter>PushPlayTest</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Education\LiveVideoPanel.h">
+      <Filter>Education</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Education\LiveVideoWidget.h">
+      <Filter>Education</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CSLive\DialogPushPlay.h">
+      <Filter>CSLive</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Court&amp;CS\DoubleVideoPanel.h">
+      <Filter>CourtCS</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Court&amp;CS\MultiVideoPanel.h">
+      <Filter>CourtCS</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Court&amp;CS\RTCDemo.h">
+      <Filter>CourtCS</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Court&amp;CS\RTCVideoWidget.h">
+      <Filter>CourtCS</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Application.h" />
+    <CustomBuild Include="UI\CustomTextEdit.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\DeviceManage.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\DialogMessage.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\GDIWidget.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\IMItemView.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\IMPanel.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\InvitePanel.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\MemberItemView.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\MemberPanel.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\QDialogProgress.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\QProgressIndicator.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\QWidgetToast.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\WhiteBoard.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="common\RoomService\CaptureScreen.h">
+      <Filter>Common\RoomService</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\DeviceManage.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\DialogMessage.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\IMItemView.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\IMPanel.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\InvitePanel.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\MainPanel.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\MemberItemView.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\MemberPanel.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\QDialogProgress.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\RoomDemo.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\VideoWidget.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\WhiteBoard.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="PushPlayTest\PushPlayDemo.ui">
+      <Filter>PushPlayTest</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CSLive\DialogPushPlay.ui">
+      <Filter>CSLive</Filter>
+    </CustomBuild>
+    <CustomBuild Include="common\RoomService\ImageDownloader.h">
+      <Filter>Common\RoomService</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\BeautyManage.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\BeautyManage.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="thirdparty\gzip\gzip.h">
+      <Filter>thirdparty\gzip</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\zlib\ioapi.h">
+      <Filter>thirdparty\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\zlib\unzip.h">
+      <Filter>thirdparty\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\zlib\zconf.h">
+      <Filter>thirdparty\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\zlib\zlib.h">
+      <Filter>thirdparty\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\jsoncpp\json.h">
+      <Filter>thirdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\jsoncpp\json-forwards.h">
+      <Filter>thirdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RoomService\LiveRoom\LiveRoom.h">
+      <Filter>SDK\RoomService\LiveRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RoomService\LiveRoom\LiveRoomUtil.h">
+      <Filter>SDK\RoomService\LiveRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RoomService\LiveRoom\LRBussiness.h">
+      <Filter>SDK\RoomService\LiveRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RoomService\LiveRoom\LRHttpRequest.h">
+      <Filter>SDK\RoomService\LiveRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RoomService\LiveRoom\LRStreamMixer.h">
+      <Filter>SDK\RoomService\LiveRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RoomService\RTCRoom\RTCRBussiness.h">
+      <Filter>SDK\RoomService\RTCRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RoomService\RTCRoom\RTCRHttpRequest.h">
+      <Filter>SDK\RoomService\RTCRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RoomService\RTCRoom\RTCRoom.h">
+      <Filter>SDK\RoomService\RTCRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RoomService\RTCRoom\RTCRoomUtil.h">
+      <Filter>SDK\RoomService\RTCRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="common\RoomService\BoardService.h">
+      <Filter>Common\RoomService</Filter>
+    </ClInclude>
+    <ClInclude Include="common\RoomService\commonType.h">
+      <Filter>Common\RoomService</Filter>
+    </ClInclude>
+    <ClInclude Include="common\RoomService\COSInfo.h">
+      <Filter>Common\RoomService</Filter>
+    </ClInclude>
+    <ClInclude Include="common\RoomService\TaskQueue.h">
+      <Filter>Common\RoomService</Filter>
+    </ClInclude>
+    <ClInclude Include="common\RoomService\TIMManager.h">
+      <Filter>Common\RoomService</Filter>
+    </ClInclude>
+    <ClInclude Include="common\ActiveXUtil.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\Base.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\crashdump.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\HttpClient.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\HttpServer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\log.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\TaskQueue.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_DeviceManage.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_DialogMessage.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_IMItemView.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_IMPanel.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_InvitePanel.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_MainPanel.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_MemberItemView.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_MemberPanel.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_QDialogProgress.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_RoomDemo.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_VideoWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_WhiteBoard.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_PushPlayDemo.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_DialogPushPlay.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_BeautyManage.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RoomService\RTCRoom\RTCStreamMixer.h">
+      <Filter>SDK\RoomService\RTCRoom</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\multi.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\clear-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\clear-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\ellipse-fill-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\ellipse-fill-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\ellipse-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\ellipse-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\eraser-hover.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\eraser-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\line-hover.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\line-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\pen-hover.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\pen-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\pick-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\pick-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\rect-fill-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\rect-fill-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\rect-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\rect-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\select-hover.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\select-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\shape-hover.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\shape-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\upload-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\tools\upload-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\add-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\add-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\delete-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\delete-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\left-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\left-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\redo-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\redo-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\right-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\right-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\undo-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\pages\undo-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\dialog\close-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\WhiteBoardResource\dialog\close-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\RoomService\cameraOff.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\RoomService\cameraOffBG.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\RoomService\close-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\RoomService\close-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\RoomService\mute.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PushPlayTest\beautiful.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PushPlayTest\beautiful-dis.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PushPlayTest\log.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PushPlayTest\log2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PushPlayTest\mirror_off.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PushPlayTest\mirror_on.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PushPlayTest\new.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PushPlayTest\snapshot.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PushPlayTest\start.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\PushPlayTest\suspend.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\CSLive\close-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\CSLive\close-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\RoomService\close_btn_active.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\RoomService\close_btn_normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

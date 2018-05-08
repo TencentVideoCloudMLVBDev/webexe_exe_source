@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSONP</title>
+    <script src="https://cdn.bootcss.com/jquery/1.10.0/jquery.min.js"></script>
+</head>
+<body>
+    <div id="mydiv">
+		<p>port</p>
+		<input type="text" id="myPort" value="">
+		<br/>
+		<p>api</p>
+		<input type="text" id="myApi" value="">
+		<br/>
+        <button id="btn" onClick="CallWebServiceByJsonp1();">jsonp</button>
+    </div>
+</body>
+<script>
+    function CallWebServiceByJsonp1() {
+		var port =document.getElementById('myPort');
+		var api =document.getElementById('myApi');
+		var aUrl = "http://localhost:" + port.value + "/" + api.value;
+        $("#SubEquipmentDetails").html('');
+        $.ajax({
+            type: "GET",
+            cache: false,
+            url: aUrl,
+            data: { strCparent: $("#Equipment_ID").val() },
+            dataType: "jsonp"
+        })
+		.done(function(res) {
+		  console.log("success");
+		  console.log(res);
+		})
+		.fail(function(res) {
+		  console.log("failed");
+		  console.log(res);
+		})
+    }
+</script>
+</html>

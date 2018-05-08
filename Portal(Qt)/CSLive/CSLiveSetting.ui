@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CSLiveSetting</class>
+ <widget class="QDialog" name="CSLiveSetting">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>433</width>
+    <height>333</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CSLiveSetting</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(255, 255, 255);</string>
+  </property>
+  <widget class="QPushButton" name="btn_close">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>10</y>
+     <width>11</width>
+     <height>11</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>11</width>
+     <height>11</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>11</width>
+     <height>11</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	border-image: url(:/Portal(Qt)/close-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/Portal(Qt)/close-press.png);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="autoDefault">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="title">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>30</y>
+     <width>227</width>
+     <height>36</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>227</width>
+     <height>36</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>227</width>
+     <height>36</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>20</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">#title{
+	image: url(:/Portal(Qt)/logo-cs-live.png)
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>250</y>
+     <width>264</width>
+     <height>78</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <property name="spacing">
+     <number>10</number>
+    </property>
+    <property name="topMargin">
+     <number>24</number>
+    </property>
+    <property name="bottomMargin">
+     <number>24</number>
+    </property>
+    <item>
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_ok">
+      <property name="minimumSize">
+       <size>
+        <width>76</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>76</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	border: none;
+	background:  #006eff;
+	color: #ffffff;
+	font: 10pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	background:  #0068f2;
+}
+
+QPushButton:pressed {
+	background:  #0062e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+      </property>
+      <property name="text">
+       <string>确定</string>
+      </property>
+      <property name="default">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_cancel">
+      <property name="minimumSize">
+       <size>
+        <width>76</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>76</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	border: 1px solid #dddddd;
+	background:  #ffffff;
+	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	border: 1px solid #d2d2d2;
+	background:  #f2f2f2;
+}
+
+QPushButton:pressed {
+	border: 1px solid #d2d2d2;
+	background:  #e5e5e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+      </property>
+      <property name="text">
+       <string>取消</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="widget_input" native="true">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>391</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>80</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">#widget_input{
+	border: 1px solid #dddddd;
+}</string>
+   </property>
+   <widget class="QLineEdit" name="edit_play_url">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>120</y>
+      <width>306</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit{
+	font: 9pt &quot;Microsoft YaHei&quot;;
+    color: #888888;
+	border: 1px solid #ffffff;
+	border-bottom-color: #f2f2f2;
+	padding-left: 10px;
+}</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>52</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;</string>
+    </property>
+    <property name="text">
+     <string>标题</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="edit_push_url">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>70</y>
+      <width>306</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit{
+	font: 9pt &quot;Microsoft YaHei&quot;;
+    color: #888888;
+	border: 1px solid #ffffff;
+	border-bottom-color: #f2f2f2;
+	padding-left: 10px;
+}</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>120</y>
+      <width>52</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;</string>
+    </property>
+    <property name="text">
+     <string>播放地址</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="edit_title">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>20</y>
+      <width>306</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit{
+	font: 9pt &quot;Microsoft YaHei&quot;;
+    color: #888888;
+	border: 1px solid #ffffff;
+	border-bottom-color: #f2f2f2;
+	padding-left: 10px;
+}</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>70</y>
+      <width>52</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;</string>
+    </property>
+    <property name="text">
+     <string>推流地址</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../Resources/Porttal(Qt).qrc"/>
+ </resources>
+ <connections/>
+</ui>

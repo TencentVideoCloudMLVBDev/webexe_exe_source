@@ -1,0 +1,16 @@
+<RCC>
+  <qresource prefix="/Portal(Qt)">
+    <file>logo-cs-live.png</file>
+    <file>court.png</file>
+    <file>pushplay.png</file>
+    <file>cs.png</file>
+    <file>edu.png</file>
+    <file>close-normal.png</file>
+    <file>close-press.png</file>
+    <file>conf.png</file>
+    <file>logo-court.png</file>
+    <file>logo-cs.png</file>
+    <file>logo-edu.png</file>
+    <file>Porttal(Qt).qrc</file>
+  </qresource>
+</RCC>

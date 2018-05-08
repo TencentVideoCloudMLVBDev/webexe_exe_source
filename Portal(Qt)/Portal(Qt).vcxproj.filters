@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{863132e8-8100-4293-8f6a-5a66cfc61428}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{73276880-5162-4986-aef7-53591d541f6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files\Professional_Release">
+      <UniqueIdentifier>{0e588f5e-270a-4250-9521-308fa239a178}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{9a7f2dfe-e2fa-4972-9665-6e175c4c999f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{bbad0abd-3bc0-430a-990a-bdfeb3a361e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Education">
+      <UniqueIdentifier>{7fdbd3ae-8e06-4303-831e-b87d25d316b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CourtCS">
+      <UniqueIdentifier>{cb93071c-5e48-42f3-b17f-c4746ae5843f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CSLive">
+      <UniqueIdentifier>{ed4ca0dd-74d3-4fae-ad39-5bed5fcafb24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty">
+      <UniqueIdentifier>{b334cdd1-c032-4306-9ba3-a9170f1ed382}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thirdparty\jsoncpp">
+      <UniqueIdentifier>{db8d617e-eab1-4725-9f26-d3f7e590fc5d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="GeneratedFiles\qrc_Porttal(Qt).cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\log.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\DialogMessage.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_DialogMessage.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_DialogMessage.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_DialogMessage.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Education\LiveRoomList.cpp">
+      <Filter>Education</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_LiveRoomList.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LiveRoomList.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LiveRoomList.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\RoomItemView.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_RoomItemView.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_RoomItemView.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_RoomItemView.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\CreateRoom.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_CreateRoom.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_CreateRoom.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_CreateRoom.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="CourtCS\RTCRoomList.cpp">
+      <Filter>CourtCS</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_RTCRoomList.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_RTCRoomList.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_RTCRoomList.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="CSLive\CSLiveSetting.cpp">
+      <Filter>CSLive</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_CSLiveSetting.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_CSLiveSetting.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_CSLiveSetting.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\HttpRequest.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\crashdump.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\jsoncpp\jsoncpp.cpp">
+      <Filter>thirdparty\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\HttpClient.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TaskQueue.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\MainDialog.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_MainDialog.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_MainDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_MainDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Resources\Porttal(Qt).qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\DialogMessage.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\DialogMessage.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Education\LiveRoomList.h">
+      <Filter>Education</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Education\LiveRoomList.ui">
+      <Filter>Education</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\RoomItemView.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\RoomItemView.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\CreateRoom.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\CreateRoom.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CourtCS\RTCRoomList.h">
+      <Filter>CourtCS</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CourtCS\RTCRoomList.ui">
+      <Filter>CourtCS</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CSLive\CSLiveSetting.h">
+      <Filter>CSLive</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CSLive\CSLiveSetting.ui">
+      <Filter>CSLive</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\MainDialog.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\MainDialog.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\log.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Base.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_DialogMessage.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_LiveRoomList.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_RoomItemView.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_CreateRoom.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="GeneratedFiles\ui_RTCRoomList.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_CSLiveSetting.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\HttpRequest.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\crashdump.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\jsoncpp\json.h">
+      <Filter>thirdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\jsoncpp\json-forwards.h">
+      <Filter>thirdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\HttpClient.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TaskQueue.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_MainDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\court.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\pushplay.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\cs.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\edu.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\close-normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\close-press.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\conf.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\logo-court.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\logo-cs.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\logo-edu.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

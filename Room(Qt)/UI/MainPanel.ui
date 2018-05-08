@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainPanel</class>
+ <widget class="QWidget" name="MainPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>780</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainPanel</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#MainPanel{ background-color: rgb(255,255,255);}</string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>780</width>
+     <height>700</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>780</width>
+     <height>700</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>780</width>
+     <height>700</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">#tabWidget{
+	background-color: #ffffff;
+} 
+
+QTabWidget::pane { /* The tab widget frame */
+	top: 0px;
+	border-top: 1px solid #dddddd;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom:0px;
+}
+/* Style the tab using the tab sub-control. Note that
+    it reads QTabBar _not_ QTabWidget */
+QTabBar::tab {
+	margin-top: 16px;
+	margin-left: 2px;
+    padding-left:0px;
+	padding-right:0px;
+	height:18px;
+	width: 84px;
+}
+
+QTabBar::tab:selected {
+	font: bold 11pt &quot;Microsoft YaHei&quot;;
+	color: #006eff;
+    background: #ffffff;
+	border-bottom: 2px solid #006eff;
+}
+
+QTabBar::tab:!selected {
+    margin-top: 16px; /* make non-selected tabs look smaller */
+	font: 11pt &quot;Microsoft YaHei&quot;;
+	color: #444444;
+    background: #ffffff;
+}
+</string>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab_camera">
+    <attribute name="title">
+     <string>摄像头</string>
+    </attribute>
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>15</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>15</number>
+     </property>
+     <item>
+      <widget class="QWidget" name="widget_camera" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>780</width>
+         <height>642</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>20</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="GDIWidget" name="dis_main" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>780</width>
+            <height>442</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <widget class="QLabel" name="label_mute_main">
+           <property name="geometry">
+            <rect>
+             <x>750</x>
+             <y>0</y>
+             <width>30</width>
+             <height>30</height>
+            </rect>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-image: url(:/RoomService/mute.png);
+background-repeat: no-repeat;
+background-position: center;</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QWidget" name="widget_camera_tip" native="true">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>780</width>
+             <height>442</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">#widget_camera_tip
+{
+	background-color: rgb(242,242,242);
+}</string>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <item>
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <item>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_10">
+                  <property name="spacing">
+                   <number>10</number>
+                  </property>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_11">
+                    <item>
+                     <widget class="QLabel" name="label">
+                      <property name="minimumSize">
+                       <size>
+                        <width>40</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>40</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-image: url(:/RoomService/cameraOff.png);
+background-repeat: no-repeat;
+background-position: center;
+border-width: 0px;</string>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_tip">
+                    <property name="styleSheet">
+                     <string notr="true">color: rgb(136,136,136);
+border-width: 0px;
+font: 9pt &quot;微软雅黑&quot;;</string>
+                    </property>
+                    <property name="text">
+                     <string>未开启摄像头暂时没有画面</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="widget_local" native="true">
+           <property name="geometry">
+            <rect>
+             <x>590</x>
+             <y>300</y>
+             <width>187</width>
+             <height>0</height>
+            </rect>
+           </property>
+           <widget class="QLabel" name="label_bg">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>190</width>
+              <height>140</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>190</width>
+              <height>140</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>190</width>
+              <height>140</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-image: url(:/RoomService/cameraOffBG.png);
+background-repeat: no-repeat;</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_mute">
+            <property name="geometry">
+             <rect>
+              <x>157</x>
+              <y>0</y>
+              <width>30</width>
+              <height>30</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-image: url(:/RoomService/mute.png);
+background-repeat: no-repeat;
+background-position: center;</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </widget>
+          <zorder>widget_camera_tip</zorder>
+          <zorder>label_mute_main</zorder>
+          <zorder>widget_local</zorder>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="widget_camera1" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>780</width>
+            <height>185</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>780</width>
+            <height>185</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border: 1px solid #C4C4C4;</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="hLayout_camera"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="tab_board">
+    <attribute name="title">
+     <string>白板</string>
+    </attribute>
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>15</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>15</number>
+     </property>
+     <item>
+      <widget class="QWidget" name="widget_content" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>780</width>
+         <height>642</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <property name="spacing">
+         <number>20</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QWidget" name="widget_camera2" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>780</width>
+            <height>185</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>780</width>
+            <height>185</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border: 1px solid #C4C4C4;</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="hLayout_board"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="widget_board" native="true"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="tab_screen">
+    <attribute name="title">
+     <string>屏幕分享</string>
+    </attribute>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>15</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>15</number>
+     </property>
+     <item>
+      <widget class="QStackedWidget" name="stacked_screen">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="page_screen_options">
+        <property name="styleSheet">
+         <string notr="true">#page_screen_options{
+	background: #f2f2f2;
+}</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>486</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="spacing">
+            <number>10</number>
+           </property>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btn_area_share">
+             <property name="minimumSize">
+              <size>
+               <width>160</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>160</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+	border: 1px solid #dddddd;
+	background:  #ffffff;
+	color: #000000;
+	font: 9pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	border: 1px solid #d2d2d2;
+	background:  #f2f2f2;
+}
+
+QPushButton:pressed {
+	border: 1px solid #d2d2d2;
+	background:  #e5e5e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+             </property>
+             <property name="text">
+              <string>局部屏幕分享</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btn_full_share">
+             <property name="minimumSize">
+              <size>
+               <width>160</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>160</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+	border: none;
+	background:  #006eff;
+	color: #ffffff;
+	font: 9pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	background:  #0068f2;
+}
+
+QPushButton:pressed {
+	background:  #0062e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+             </property>
+             <property name="text">
+              <string>全屏分享</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>486</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_screen_content">
+        <property name="styleSheet">
+         <string notr="true">#page_screen_content{
+	background: #f2f2f2;
+}</string>
+        </property>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>GDIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">GDIWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../Resources/RoomService/RoomService.qrc"/>
+ </resources>
+ <connections/>
+</ui>

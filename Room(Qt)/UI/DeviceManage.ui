@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DeviceManage</class>
+ <widget class="QDialog" name="DeviceManage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>369</width>
+    <height>613</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DeviceManage</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background: #ffffff;
+</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;</string>
+   </property>
+   <property name="text">
+    <string>启用摄像头</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>130</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;</string>
+   </property>
+   <property name="text">
+    <string>选择摄像头</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>180</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;</string>
+   </property>
+   <property name="text">
+    <string>预览</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>370</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;</string>
+   </property>
+   <property name="text">
+    <string>启用麦克风</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>420</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;</string>
+   </property>
+   <property name="text">
+    <string>选择麦克风</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="cmb_camera">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>130</y>
+     <width>221</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"> border-style: solid;
+ border-width: 1px;
+ border-color: rgb(221,221,221);</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="widget_render" native="true">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>180</y>
+     <width>221</width>
+     <height>150</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:  rgb(242,242,242);
+</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="chb_camera">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>80</y>
+     <width>51</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QCheckBox{  
+    spacing: 5px;  
+}  
+  
+QCheckBox::indicator{  
+    width: 45px;  
+    height: 30px;  
+}  
+  
+QCheckBox::indicator:unchecked{  
+    image:url(:/RoomService/switch_off.png);
+}  
+  
+QCheckBox::indicator:checked{  
+    image:url(:/RoomService/switch_on.png);
+}  
+  
+QCheckBox::indicator:checked:disabled{  
+    image:url(:/RoomService/switch_off.png);
+}    </string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="chb_mic">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>370</y>
+     <width>51</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QCheckBox{  
+    spacing: 5px;  
+}  
+  
+QCheckBox::indicator{  
+    width: 45px;  
+    height: 30px;  
+}  
+  
+QCheckBox::indicator:unchecked{  
+    image:url(:/RoomService/switch_off.png);
+}  
+  
+QCheckBox::indicator:checked{  
+    image:url(:/RoomService/switch_on.png);
+}  
+  
+QCheckBox::indicator:checked:disabled{  
+    image:url(:/RoomService/switch_off.png);
+}  </string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="cmb_mic">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>420</y>
+     <width>221</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"> border-style: solid;
+ border-width: 1px;
+ border-color: rgb(221,221,221);</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>470</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;</string>
+   </property>
+   <property name="text">
+    <string>音量</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="slider_volume">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>470</y>
+     <width>231</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QSlider::groove:horizontal {
+border: 1px solid #999999;
+height: 5px;
+border-radius: 9px;
+margin: 0px;  
+left : 9px;
+right: 9px;         
+}
+
+QSlider::handle:horizontal {
+width: 18px;
+background-image: url(:/RoomService/slider.png);
+margin: -7px -7px -7px -7px;  
+}
+
+QSlider::add-page:qlineargradient {
+background: lightgrey;
+border-top-right-radius: 9px;
+border-bottom-right-radius: 9px;
+border-top-left-radius: 0px;
+border-bottom-left-radius: 0px;
+}
+
+QSlider::sub-page:qlineargradient {
+background: #006eff;
+border-top-right-radius: 0px;
+border-bottom-right-radius: 0px;
+border-top-left-radius: 9px;
+border-bottom-left-radius: 9px;
+}</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>550</y>
+     <width>331</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <property name="spacing">
+     <number>10</number>
+    </property>
+    <item>
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_ok">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>88</width>
+        <height>33</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>64</width>
+        <height>33</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	border: none;
+	background:  #006eff;
+	color: #ffffff;
+	font: 10pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	background:  #0068f2;
+}
+
+QPushButton:pressed {
+	background:  #0062e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+      </property>
+      <property name="text">
+       <string>确定</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_cancel">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>88</width>
+        <height>33</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>88</width>
+        <height>33</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	border: 1px solid #dddddd;
+	background:  #ffffff;
+	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	border: 1px solid #d2d2d2;
+	background:  #f2f2f2;
+}
+
+QPushButton:pressed {
+	border: 1px solid #d2d2d2;
+	background:  #e5e5e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+      </property>
+      <property name="text">
+       <string>取消</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLabel" name="label_title">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>0</y>
+     <width>251</width>
+     <height>59</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="font">
+    <font>
+     <family>Microsoft YaHei</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <italic>false</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">margin: 20px 0px 3px 0px;
+font: bold 12pt &quot;Microsoft YaHei&quot;;
+color: #333333;</string>
+   </property>
+   <property name="text">
+    <string>设备管理</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_close">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>10</y>
+     <width>11</width>
+     <height>11</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>11</width>
+     <height>11</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>11</width>
+     <height>11</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	border-image: url(:/RoomService/close-normal.png);
+
+}
+
+QPushButton:pressed {
+	border-image: url(:/RoomService/close-press.png);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="Line" name="line">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>340</y>
+     <width>331</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>500</y>
+     <width>21</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>500</y>
+     <width>31</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>100</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_9">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>500</y>
+     <width>21</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>50</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../Resources/RoomService/RoomService.qrc"/>
+ </resources>
+ <connections/>
+</ui>

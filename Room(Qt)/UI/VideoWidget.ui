@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VideoWidget</class>
+ <widget class="QWidget" name="VideoWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>187</width>
+    <height>175</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>187</width>
+    <height>175</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>190</width>
+    <height>175</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>VideoWidget</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="GDIWidget" name="widget_display" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>187</width>
+       <height>140</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>187</width>
+       <height>140</height>
+      </size>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
+     <widget class="QLabel" name="label_mute">
+      <property name="geometry">
+       <rect>
+        <x>157</x>
+        <y>0</y>
+        <width>30</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>30</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-image: url(:/RoomService/mute.png);
+background-repeat: no-repeat;
+background-position: center;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_bg">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>187</width>
+        <height>140</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>187</width>
+        <height>140</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>187</width>
+        <height>140</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-image: url(:/RoomService/cameraOffBG.png);
+background-repeat: no-repeat;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <zorder>label_bg</zorder>
+     <zorder>label_mute</zorder>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_id" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>35</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>35</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">#widget_id{
+	border-left: 1px solid #dddddd;
+	border-bottom: 1px solid #dddddd;
+	background-color: rgb(255,255,255);
+}</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_19">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_user">
+        <property name="minimumSize">
+         <size>
+          <width>90</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>33</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: rgb(136,136,136);
+border-width: 0px;
+background-color: rgb(255,255,255);
+border-color: rgb(221,221,221);
+font: 9pt &quot;微软雅黑&quot;;</string>
+        </property>
+        <property name="text">
+         <string>用户名</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_split" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>1</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>1</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background: #dddddd;
+margin-top: 8px;
+margin-bottom: 8px;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>GDIWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">GDIWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../Resources/RoomService/RoomService.qrc"/>
+ </resources>
+ <connections/>
+</ui>

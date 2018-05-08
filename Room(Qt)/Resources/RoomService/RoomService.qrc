@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/RoomService">
+        <file>switch_off.png</file>
+        <file>slider.png</file>
+        <file>switch_on.png</file>
+        <file>cameraOff.png</file>
+        <file>logo-court-demo.png</file>
+        <file>logo-cs-demo.png</file>
+        <file>logo-edu-demo.png</file>
+        <file>cameraOffBG.png</file>
+        <file>close-normal.png</file>
+        <file>close-press.png</file>
+        <file>mute.png</file>
+        <file>close-button.png</file>
+        <file>min-button.png</file>
+    </qresource>
+</RCC>

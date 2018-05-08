@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DialogPushPlay</class>
+ <widget class="QDialog" name="DialogPushPlay">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>360</width>
+    <height>681</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>432</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>DialogPushPlay</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_5">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="widget_main" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>360</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>360</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">.QWidget#widget_main{
+  border-style: solid;
+  border-width: 0px;
+  border-color: rgb(91, 155, 213);
+  background-color: rgb(25,27,25);
+}
+</string>
+     </property>
+     <widget class="QWidget" name="widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>5</y>
+        <width>361</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QWidget#widget{
+	background-color: rgb(25,25,25);
+	border-width: 1px;
+    border-color: rgb(0,0,0);
+}</string>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <property name="leftMargin">
+        <number>5</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_title">
+         <property name="styleSheet">
+          <string notr="true">color: rgb(153,153,153);
+border-width: 0px;</string>
+         </property>
+         <property name="text">
+          <string>腾讯云视频（C++）</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_min">
+         <property name="minimumSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton{
+	font: 20pt &quot;Courier New&quot;;
+    color: rgb(153,153,153);
+	background-color: rgba(255,255, 255, 0);
+}
+QPushButton:hover{
+	color: rgb(153,153,153);
+}
+QPushButton:pressed{
+	color: rgb(153,153,153);
+}</string>
+         </property>
+         <property name="text">
+          <string>-</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_close">
+         <property name="minimumSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton{
+	font: 20pt &quot;Courier New&quot;;
+    color: rgb(153,153,153);
+	background-color: rgba(255,255, 255, 0);
+}
+QPushButton:hover{
+	color: rgb(153,153,153);
+}
+QPushButton:pressed{
+	color: rgb(153,153,153);
+}</string>
+         </property>
+         <property name="text">
+          <string>×</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+      <zorder>horizontalSpacer_6</zorder>
+      <zorder>btn_close</zorder>
+      <zorder>label_title</zorder>
+      <zorder>btn_min</zorder>
+     </widget>
+     <widget class="QWidget" name="widget_video_play" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>40</y>
+        <width>360</width>
+        <height>640</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>360</width>
+        <height>640</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>360</width>
+        <height>640</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">  background-color: rgb(0,0,0);</string>
+      </property>
+      <widget class="QWidget" name="widget_video_push" native="true">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>520</y>
+         <width>120</width>
+         <height>120</height>
+        </rect>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>120</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>120</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">  background-color: rgb(0,0,0);</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="Resources/PushPlay.qrc"/>
+ </resources>
+ <connections/>
+</ui>

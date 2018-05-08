@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="PushPlayTest">
+    <file>beautiful.png</file>
+    <file>beautiful-dis.png</file>
+    <file>log.png</file>
+    <file>log2.png</file>
+    <file>mirror_off.png</file>
+    <file>mirror_on.png</file>
+    <file>new.png</file>
+    <file>snapshot.png</file>
+    <file>start.png</file>
+    <file>suspend.png</file>
+  </qresource>
+</RCC>

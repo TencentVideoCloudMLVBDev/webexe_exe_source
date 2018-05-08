@@ -1,0 +1,46 @@
+<RCC>
+  <qresource prefix="tools">
+    <file>tools/clear-normal.png</file>
+    <file>tools/clear-press.png</file>
+    <file>tools/ellipse-fill-normal.png</file>
+    <file>tools/ellipse-fill-press.png</file>
+    <file>tools/ellipse-normal.png</file>
+    <file>tools/ellipse-press.png</file>
+    <file>tools/eraser-hover.png</file>
+    <file>tools/eraser-normal.png</file>
+    <file>tools/line-hover.png</file>
+    <file>tools/line-normal.png</file>
+    <file>tools/pen-hover.png</file>
+    <file>tools/pen-normal.png</file>
+    <file>tools/pick-normal.png</file>
+    <file>tools/pick-press.png</file>
+    <file>tools/rect-fill-normal.png</file>
+    <file>tools/rect-fill-press.png</file>
+    <file>tools/rect-normal.png</file>
+    <file>tools/rect-press.png</file>
+    <file>tools/select-hover.png</file>
+    <file>tools/select-normal.png</file>
+    <file>tools/shape-hover.png</file>
+    <file>tools/shape-normal.png</file>
+    <file>tools/upload-normal.png</file>
+    <file>tools/upload-press.png</file>
+  </qresource>
+  <qresource prefix="pages">
+    <file>pages/add-normal.png</file>
+    <file>pages/add-press.png</file>
+    <file>pages/delete-normal.png</file>
+    <file>pages/delete-press.png</file>
+    <file>pages/left-normal.png</file>
+    <file>pages/left-press.png</file>
+    <file>pages/redo-normal.png</file>
+    <file>pages/redo-press.png</file>
+    <file>pages/right-normal.png</file>
+    <file>pages/right-press.png</file>
+    <file>pages/undo-normal.png</file>
+    <file>pages/undo-press.png</file>
+  </qresource>
+  <qresource prefix="dialog">
+    <file>dialog/close-normal.png</file>
+    <file>dialog/close-press.png</file>
+  </qresource>
+</RCC>
