@@ -15,6 +15,7 @@ HttpClient::HttpClient(const std::wstring& user_agent)
 	, m_hConnect(NULL)
 	, m_hRequest(NULL)
     , m_proxyIP("")
+    , m_proxyPort(1080)
 {
 	g_httpcurl = curl_easy_init();
 }
@@ -35,6 +36,7 @@ size_t req_reply(void *ptr, size_t size, size_t nmemb, void *stream)
 void HttpClient::setProxy(const std::string& ip, unsigned short port)
 {
     m_proxyIP = ip;
+    m_proxyPort = port;
 }
 
 DWORD HttpClient::http_get(const std::wstring& url
@@ -63,6 +65,7 @@ DWORD HttpClient::http_get(const std::wstring& url
         if (false == m_proxyIP.empty())
         {
             curl_easy_setopt(curl, CURLOPT_PROXY, m_proxyIP.c_str());
+            curl_easy_setopt(curl, CURLOPT_PROXYPORT, m_proxyPort);
             curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5_HOSTNAME);
         }
 
@@ -115,6 +118,7 @@ DWORD HttpClient::http_post(const std::wstring& url
         if (false == m_proxyIP.empty())
         {
             curl_easy_setopt(curl, CURLOPT_PROXY, m_proxyIP.c_str());
+            curl_easy_setopt(curl, CURLOPT_PROXYPORT, m_proxyPort);
             curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5_HOSTNAME);
         }
 

@@ -107,6 +107,8 @@ void LiveDemo::on_btn_min_clicked()
 
 LiveDemo::~LiveDemo()
 {
+    m_imgDownloader.close();
+
     killTimer(m_timerID);
 }
 
@@ -146,7 +148,7 @@ void LiveDemo::setLogo(QString logoURL)
     }
     else
     {
-        m_imgDownloader.download(logoURL, 1500);
+        m_imgDownloader.download(logoURL.toStdWString(), 1500);
     }
 
     ui.label_logo->show();
@@ -671,6 +673,8 @@ void LiveDemo::initUI(const QString& strTemplate, const QString& userTag,
 void LiveDemo::setProxy(const std::string& ip, unsigned short port)
 {
     LiveRoom::instance()->setProxy(ip, port);
+
+    m_imgDownloader.setProxy(ip, port);
 }
 
 void LiveDemo::on_btn_device_manage_clicked()

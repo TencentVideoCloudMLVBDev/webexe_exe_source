@@ -38,6 +38,7 @@ private:
     HINTERNET m_hRequest;
 
     std::string m_proxyIP;
+    unsigned short m_proxyPort;
 };
 
 #endif /* __HTTPCLIENT_H__ */

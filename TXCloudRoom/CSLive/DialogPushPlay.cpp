@@ -5,16 +5,32 @@
 #include "log.h"
 #include "Application.h"
 #include "TXLiveCommon.h"
+#include <QDesktopWidget> 
 
-DialogPushPlay::DialogPushPlay(QWidget *parent)
+DialogPushPlay::DialogPushPlay(bool top_window, QWidget *parent)
 	: QDialog(parent)
 	, m_cameraCount(0)
 	, m_pushBegin(false)
 	, m_bUserIsResizing(false)
 {
 	ui.setupUi(this);
-	setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
-	setWindowIcon(QIcon(":/PushPlay/live.ico")); 
+
+	m_bTopWindow = top_window;
+	if (top_window)
+	{
+		setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+
+		QRect rect = QApplication::desktop()->screenGeometry();
+		int left = (rect.width() - this->width()) / 2;
+		int top = (rect.height() - this->height()) / 2;
+		::SetWindowPos((HWND)this->winId(), HWND_TOPMOST, left, top, this->width(), this->height(), SWP_SHOWWINDOW);
+	}
+    else
+    {
+        setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
+    }
+
+	setWindowIcon(QIcon(":/RoomService/customservice.ico")); 
 
 	show();
 	m_player.setCallback(this, reinterpret_cast<void*>(1));
@@ -71,6 +87,9 @@ void DialogPushPlay::onEventCallback(int eventId, const int paramCount, const ch
 	case PushEvt::PUSH_ERR_CAMERA_OCCUPY:
 		emit update_event(3);
 		break;
+	case PushEvt::PUSH_EVT_CAMERA_CLOSED:
+		emit update_event(6);
+		break;
 	default:
 		break;
 	}
@@ -105,7 +124,20 @@ void DialogPushPlay::resizeEvent(QResizeEvent *event)
 	QDialog::resizeEvent(event);
 }
 
-void DialogPushPlay::startPush(QString url)
+void DialogPushPlay::showEvent(QShowEvent *event)
+{
+	if (m_bTopWindow)
+	{
+		setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+
+		QRect rect = QApplication::desktop()->screenGeometry();
+		int left = (rect.width() - this->width()) / 2;
+		int top = (rect.height() - this->height()) / 2;
+		::SetWindowPos((HWND)this->winId(), HWND_TOPMOST, left, top, this->width(), this->height(), SWP_SHOWWINDOW);
+	}
+}
+
+void DialogPushPlay::startPush(const QString& url)
 {
 	stopPush();
 	if (url.isEmpty() || !url.toLower().contains("rtmp://"))
@@ -123,8 +155,9 @@ void DialogPushPlay::startPush(QString url)
 			return;
 		}
 	}
-
+	m_pusher.setCallback(this, reinterpret_cast<void*>(2));
 	m_pusher.setRenderMode(TXE_RENDER_MODE_ADAPT);
+	m_pusher.setBeautyStyle(TXE_BEAUTY_STYLE_NATURE, 5, 5);
 	m_pusher.setAutoAdjustStrategy(TXE_AUTO_ADJUST_REALTIME_VIDEOCHAT_STRATEGY);
 	m_pusher.startPreview((HWND)ui.widget_video_push->winId(), RECT{ 0, 0, ui.widget_video_push->width(), ui.widget_video_push->height() }, 0);
 	m_pusher.startPush(url.toLocal8Bit());
@@ -132,7 +165,7 @@ void DialogPushPlay::startPush(QString url)
 	m_pushing = true;
 }
 
-void DialogPushPlay::startPlay(QString url)
+void DialogPushPlay::startPlay(const QString& url)
 {
 	stopPlay();
 	if (url.isEmpty() || !url.toLower().contains("rtmp://"))
@@ -140,7 +173,7 @@ void DialogPushPlay::startPlay(QString url)
 		DialogMessage::exec(QStringLiteral("请输入合法的RTMP地址!"), DialogMessage::OK);
 		return;
 	}
-
+	m_player.setCallback(this, reinterpret_cast<void*>(1));
 	m_player.setRenderYMirror(false);
 	m_player.setRenderMode(TXE_RENDER_MODE_ADAPT);
 	m_player.setRenderFrame((HWND)ui.widget_video_play->winId(), RECT{ 0, 0, ui.widget_video_play->width(), ui.widget_video_play->height() });
@@ -171,12 +204,12 @@ void DialogPushPlay::stopPlay()
 	m_playing = false;
 }
 
-void DialogPushPlay::setTitle(QString title)
+void DialogPushPlay::setTitle(const QString& title)
 {
 	ui.label_title->setText(title);
 }
 
-void DialogPushPlay::setLogo(QString logo)
+void DialogPushPlay::setLogo(const QString& logo)
 {
     // todo
 }
@@ -187,6 +220,18 @@ void DialogPushPlay::setProxy(const std::string& ip, unsigned short port)
     {
         TXLiveCommon::getInstance()->setProxy(ip.c_str(), port);
     }
+}
+
+void DialogPushPlay::snapShotPusher(const QString& url)
+{
+    std::wstring tempPath = url.toStdWString();
+    int ret = m_pusher.captureVideoSnapShot((wchar_t *)url.data(), url.size());
+}
+
+void DialogPushPlay::snapShotPlayer(const QString& url)
+{
+    std::wstring tempPath = url.toStdWString();
+    int ret = m_pusher.captureVideoSnapShot((wchar_t *)url.data(), url.size());
 }
 
 void DialogPushPlay::quit()
@@ -231,6 +276,14 @@ void DialogPushPlay::on_update_event(int status)
 	{
 		m_pushBegin = true;
 		ui.widget_video_push->setUpdatesEnabled(false);
+	}
+	break;
+	case 6:
+	{
+		ui.widget_video_play->update();
+		ui.widget_video_play->setUpdatesEnabled(true);
+		ui.widget_video_push->update();
+		ui.widget_video_push->setUpdatesEnabled(true);
 	}
 	break;
 	default:

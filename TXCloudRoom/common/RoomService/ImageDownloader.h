@@ -1,9 +1,11 @@
 #pragma once
 
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QObject>
+#include <memory>
+#include <thread>
+#include <string>
+
+#include "HttpClient.h"
 
 class ImageDownloader : public QObject
 {
@@ -13,17 +15,20 @@ public:
     ImageDownloader();
     virtual ~ImageDownloader();
 
-    void download(const QString& url, long ms);
+    void setProxy(const std::string& ip, unsigned short port);
+
+    void download(const std::wstring& url, long ms);
     void close();
 signals:
     void downloadFinished(bool success, QByteArray image);
-protected slots:
-    void onReplyFinished(QNetworkReply *reply);
+protected:
+    void onRequestImage();
 protected:
     virtual void timerEvent(QTimerEvent *event);
 private:
-    QNetworkAccessManager m_networkManager;
-    QNetworkRequest m_request;
+    HttpClient m_httpClient;
+    std::wstring m_url;
+    std::unique_ptr<std::thread> m_thread;
     int m_timerID;
 };
 

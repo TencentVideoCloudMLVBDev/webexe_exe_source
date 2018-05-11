@@ -83,8 +83,8 @@
 copy /Y "$(ProjectDir)SDK\liteav\lib\*.dll" "$(OutDir)"
 copy /Y "$(ProjectDir)SDK\BoardSDK\dll\*.dll" "$(OutDir)"
 copy /Y "$(ProjectDir)thirdparty\curl\dll\*.dll" "$(OutDir)"
-copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.dll" "$(ProjectDir)..\Portal(Qt)\Build\Bin\$(Configuration)\"
-copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(Qt)\Build\Bin\$(Configuration)\"</Command>
+copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.dll" "$(ProjectDir)..\TXCloudPortal\Build\Bin\$(Configuration)\"
+copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\TXCloudPortal\Build\Bin\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -107,8 +107,8 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
 copy /Y "$(ProjectDir)SDK\liteav\lib\*.dll" "$(OutDir)"
 copy /Y "$(ProjectDir)SDK\BoardSDK\dll\*.dll" "$(OutDir)"
 copy /Y "$(ProjectDir)thirdparty\curl\dll\*.dll" "$(OutDir)"
-copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.dll" "$(ProjectDir)..\Portal(Qt)\Build\Bin\$(Configuration)\"
-copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(Qt)\Build\Bin\$(Configuration)\"</Command>
+copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.dll" "$(ProjectDir)..\TXCloudPortal\Build\Bin\$(Configuration)\"
+copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\TXCloudPortal\Build\Bin\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">

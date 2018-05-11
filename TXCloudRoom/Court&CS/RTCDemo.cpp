@@ -98,6 +98,7 @@ void RTCDemo::on_btn_min_clicked()
 
 RTCDemo::~RTCDemo()
 {
+    m_imgDownloader.close();
 }
 
 void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record)
@@ -143,7 +144,7 @@ void RTCDemo::setLogo(QString logoURL, bool multi)
     }
     else
     {
-        m_imgDownloader.download(logoURL, 1500);
+        m_imgDownloader.download(logoURL.toStdWString(), 1500);
     }
 
     ui.label_logo->show();
@@ -615,6 +616,8 @@ void RTCDemo::initUI(const QString& strTemplate, const QString& userTag, bool bU
 void RTCDemo::setProxy(const std::string& ip, unsigned short port)
 {
     RTCRoom::instance()->setProxy(ip, port);
+
+    m_imgDownloader.setProxy(ip, port);
 }
 
 void RTCDemo::handle(txfunction func)

@@ -1,30 +1,41 @@
 #include "ImageDownloader.h"
 
 #include <QPixmap>
+#include <assert.h>
 
 ImageDownloader::ImageDownloader()
-    : m_networkManager(this)
-    , m_request()
+    : m_httpClient(L"User-Agent")
+    , m_url(L"")
+    , m_thread(nullptr)
     , m_timerID(-1)
 {
-    connect(&m_networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onReplyFinished(QNetworkReply*)));
+
 }
 
 ImageDownloader::~ImageDownloader()
 {
     close();
+
+    assert(true == m_thread->joinable());
+    m_thread->join();
 }
 
-void ImageDownloader::download(const QString& url, long ms)
+void ImageDownloader::setProxy(const std::string& ip, unsigned short port)
 {
-    m_request.setUrl(url);
-    m_networkManager.get(m_request);
+    m_httpClient.setProxy(ip, port);
+}
 
+void ImageDownloader::download(const std::wstring& url, long ms)
+{
+    m_url = url;
     m_timerID = startTimer(ms);
+    m_thread.reset(new std::thread(&ImageDownloader::onRequestImage, this));
 }
 
 void ImageDownloader::close()
 {
+    m_httpClient.http_close();
+
     if (-1 != m_timerID)
     {
         killTimer(m_timerID);
@@ -32,15 +43,15 @@ void ImageDownloader::close()
     }
 }
 
-void ImageDownloader::onReplyFinished(QNetworkReply *reply)
+void ImageDownloader::onRequestImage()
 {
+    std::string respData;
+    DWORD ret = m_httpClient.http_get(m_url, std::vector<std::wstring>(), respData);
     close();
 
-    if (reply->error() == QNetworkReply::NoError)
+    if (ERROR_SUCCESS == ret)
     {
-        QByteArray bytes = reply->readAll();
-
-        emit downloadFinished(true, bytes);
+        emit downloadFinished(true, QByteArray(respData.c_str(), respData.size()));
     }
     else
     {
@@ -50,7 +61,10 @@ void ImageDownloader::onReplyFinished(QNetworkReply *reply)
 
 void ImageDownloader::timerEvent(QTimerEvent *event)
 {
-    close();
+    if (-1 != m_timerID)
+    {
+        close();
 
-    emit downloadFinished(false, QByteArray());
+        emit downloadFinished(false, QByteArray());
+    }
 }

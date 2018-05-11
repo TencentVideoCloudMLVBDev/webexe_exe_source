@@ -17,6 +17,7 @@
 #include <combaseapi.h>
 #include <shellapi.h>
 #include <QApplication>
+#include <QDesktopWidget> 
 
 static unsigned char ToHex(unsigned char x)
 {
@@ -76,6 +77,30 @@ static std::string URLDecode(const std::string& str)
     return strTemp;
 }
 
+void Application::getSnapShotPath(std::wstring& fullpath)
+{
+	if (m_tempPath.empty())
+	{
+		wchar_t TempFilePath[MAX_PATH] = { 0 };
+		DWORD dwRet = GetTempPath(MAX_PATH, TempFilePath);
+		if (!dwRet) {
+			return;
+		}
+		m_tempPath.assign(TempFilePath, dwRet);
+		m_tempPath.append(L"LiteAvWebexe");
+		if (_waccess(m_tempPath.c_str(), 0) == -1)
+			int a = _wmkdir(m_tempPath.c_str());
+		m_tempPath.append(L"\\");
+	}
+	time_t timep;
+	time(&timep);
+	wchar_t tmp[128] = { 0 };
+	wcsftime(tmp, sizeof(tmp), L"snap_file_%H_%M_%S.jpg", localtime(&timep));
+	fullpath.append(m_tempPath);
+	fullpath.append(tmp);
+}
+
+
 Application::Application(QObject *parent)
     : QObject(parent)
     , m_gdiplusToken(NULL)
@@ -120,9 +145,6 @@ int Application::run(int &argc, char **argv)
 
     //::MessageBoxW(NULL, NULL, NULL, MB_OK);   // 方便附加调试
 
-	bool regRet = regProtol();
-	LINFO(L"Register protol ret: %s", (true == regRet ? L"true" : L"false"));
-
     curl_global_init(CURL_GLOBAL_ALL);
 
     QApplication app(argc, argv);
@@ -133,7 +155,7 @@ int Application::run(int &argc, char **argv)
         return -1;
     }
 
-    std::string cmd = QString::fromWCharArray(::GetCommandLineW()).toStdString();  // 注意，因argv会忽略命令行中的引号，导致json字符串不合法，故使用GetCommandLine函数
+    std::string cmd = QString::fromWCharArray(::GetCommandLineW()).toStdString();  // 注意，因argv会忽略命令行中的引号，导致json字符串不合法，估使用GetCommandLine函数
 
     std::string prefix = "txcloudroom://liteav/params?json=";
     size_t index = cmd.find(prefix);  // 忽略大小写
@@ -272,7 +294,7 @@ void Application::pushMemberChange(const std::list<MemberItem>& members)
     }
 
     Json::Value root;
-    root["event"] = "menberChange";
+    root["event"] = "memberChange";
     root["list"] = list;
 
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -298,11 +320,27 @@ void Application::onGetRequest(const std::wstring& absPath, DWORD& statusCode, s
 {
     if (0 == absPath.find(L"/query"))
     {
-        handleReqQuery(absPath, statusCode, respDataUTF8);
+        handleQuery(absPath, statusCode, respDataUTF8);
     }
     else if (0 == absPath.find(L"/quit"))
     {
-        handleReqQuit(absPath, statusCode, respDataUTF8);
+        handleQuit(absPath, statusCode, respDataUTF8);
+    }
+    else if (0 == absPath.find(L"/csliveCreateSession?"))
+    {
+        handleCreateSession(absPath, statusCode, respDataUTF8);
+    }
+    else if (0 == absPath.find(L"/csliveDestroySession"))
+    {
+        handleDestroySession(absPath, statusCode, respDataUTF8);
+    }
+    else if (0 == absPath.find(L"/csliveSnapshotPusher"))
+    {
+        handleSnapshotPusher(absPath, statusCode, respDataUTF8);
+    }
+    else if (0 == absPath.find(L"/csliveSnapshotPlayer"))
+    {
+        handleSnapshotPlayer(absPath, statusCode, respDataUTF8);
     }
 }
 
@@ -316,7 +354,7 @@ void Application::onClose(ULONGLONG requestId)
     LINFO(L"requestId: %lu", requestId);
 }
 
-void Application::handleReqQuery(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8)
+void Application::handleQuery(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8)
 {
     std::wstring callbackValue(L"");
 
@@ -367,7 +405,7 @@ void Application::handleReqQuery(const std::wstring& absPath, DWORD& statusCode,
     }
 }
 
-void Application::handleReqQuit(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8)
+void Application::handleQuit(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8)
 {
     executeInMainThread([=] {
         if (nullptr != m_normalLive)
@@ -400,6 +438,177 @@ void Application::handleReqQuit(const std::wstring& absPath, DWORD& statusCode, 
     });
 }
 
+void Application::handleCreateSession(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8)
+{
+    std::wstring callbackValue(L"");
+
+    std::wstring prefix(L"callback=");
+    size_t beginIndex = absPath.find(prefix, 0);
+    if (std::wstring::npos != beginIndex)
+    {
+        beginIndex += prefix.size();
+        size_t endIndex = absPath.find(L"&", beginIndex);
+        if (endIndex > beginIndex)
+        {
+            callbackValue = absPath.substr(beginIndex, endIndex - beginIndex);
+        }
+    }
+
+    QString queryString = QString::fromStdWString(absPath);
+
+    QUrlQuery query(queryString.replace("/csliveCreateSession?", ""));
+    
+    QString pushURL = query.queryItemValue("pushURL");
+    std::string pushURLDecode = URLDecode(pushURL.toStdString());
+
+    QString pullURL = query.queryItemValue("pullURL");
+    std::string pullURLDecode = URLDecode(pullURL.toStdString());
+
+    if (NULL != m_csLive)
+    {
+        m_csLive->startPush(pushURLDecode.c_str());
+        m_csLive->startPlay(pullURLDecode.c_str());
+    }
+
+    statusCode = 200;
+    if (true == callbackValue.empty())
+    {
+        respDataUTF8 = "{\"code\": 0, \"message\" : \"\"}";
+    }
+    else
+    {
+        respDataUTF8 = Wide2UTF8(callbackValue);
+        respDataUTF8.append("({\"code\": 0, \"message\" : \"\"})");
+    }
+}
+
+void Application::handleDestroySession(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8)
+{
+    std::wstring callbackValue(L"");
+
+    std::wstring prefix(L"callback=");
+    size_t beginIndex = absPath.find(prefix, 0);
+    if (std::wstring::npos != beginIndex)
+    {
+        beginIndex += prefix.size();
+        size_t endIndex = absPath.find(L"&", beginIndex);
+        if (endIndex > beginIndex)
+        {
+            callbackValue = absPath.substr(beginIndex, endIndex - beginIndex);
+        }
+    }
+
+    if (NULL != m_csLive)
+    {
+        m_csLive->quit();
+    }
+
+    statusCode = 200;
+    if (true == callbackValue.empty())
+    {
+        respDataUTF8 = "{\"code\": 0, \"message\" : \"\"}";
+    }
+    else
+    {
+        respDataUTF8 = Wide2UTF8(callbackValue);
+        respDataUTF8.append("({\"code\": 0, \"message\" : \"\"})");
+    }
+}
+
+void Application::handleSnapshotPusher(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8)
+{
+    std::wstring callbackValue(L"");
+
+    std::wstring prefix(L"callback=");
+    size_t beginIndex = absPath.find(prefix, 0);
+    if (std::wstring::npos != beginIndex)
+    {
+        beginIndex += prefix.size();
+        size_t endIndex = absPath.find(L"&", beginIndex);
+        if (endIndex > beginIndex)
+        {
+            callbackValue = absPath.substr(beginIndex, endIndex - beginIndex);
+        }
+    }
+	time_t timep;
+	time(&timep);
+	wchar_t tmp[128];
+	wcsftime(tmp, sizeof(tmp), L"snap_file_%H_%M_%S.jpg", localtime(&timep));
+	std::wstring fullpath; 
+	getSnapShotPath(fullpath);
+	fullpath.append(tmp);
+    QString queryString = QString::fromStdWString(fullpath);
+
+	/*
+    QUrlQuery query(queryString.replace("/csliveSnapshotPusher?", ""));
+    QString path = query.queryItemValue("path");
+    std::string pathDecode = URLDecode(path.toStdString());
+	*/
+
+    if (NULL != m_csLive)
+    {
+        m_csLive->snapShotPusher(queryString);
+    }
+
+    statusCode = 200;
+    if (true == callbackValue.empty())
+    {
+        respDataUTF8 = "{\"code\": 0, \"message\" : \"\"}";
+    }
+    else
+    {
+        respDataUTF8 = Wide2UTF8(callbackValue);
+        respDataUTF8.append("({\"code\": 0, \"message\" : \"\"})");
+    }
+}
+
+void Application::handleSnapshotPlayer(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8)
+{
+    std::wstring callbackValue(L"");
+
+    std::wstring prefix(L"callback=");
+    size_t beginIndex = absPath.find(prefix, 0);
+    if (std::wstring::npos != beginIndex)
+    {
+        beginIndex += prefix.size();
+        size_t endIndex = absPath.find(L"&", beginIndex);
+        if (endIndex > beginIndex)
+        {
+            callbackValue = absPath.substr(beginIndex, endIndex - beginIndex);
+        }
+    }
+
+	time_t timep;
+	time(&timep);
+	wchar_t tmp[128];
+	wcsftime(tmp, sizeof(tmp), L"snap_file_%H_%M_%S.jpg", localtime(&timep));
+	std::wstring fullpath;
+	getSnapShotPath(fullpath);
+	fullpath.append(tmp);
+	QString queryString = QString::fromStdWString(fullpath);
+	/*
+    QUrlQuery query(queryString.replace("/csliveSnapshotPlayer?", ""));
+    QString path = query.queryItemValue("path");
+    std::string pathDecode = URLDecode(path.toStdString());
+	*/
+
+    if (NULL != m_csLive)
+    {
+        m_csLive->snapShotPlayer(queryString);
+    }
+
+    statusCode = 200;
+    if (true == callbackValue.empty())
+    {
+        respDataUTF8 = "{\"code\": 0, \"message\" : \"\"}";
+    }
+    else
+    {
+        respDataUTF8 = Wide2UTF8(callbackValue);
+        respDataUTF8.append("({\"code\": 0, \"message\" : \"\"})");
+    }
+}
+
 bool Application::resolveProtol(const std::string& json)
 {
     LINFO(L"json: %s", Ansi2Wide(json).c_str());
@@ -411,6 +620,24 @@ bool Application::resolveProtol(const std::string& json)
     if (false == reader.parse(jsonDecode, root))
     {
         return false;
+    }
+
+    if (root.isMember("port"))
+    {
+        m_httpPort = root["port"].asInt();
+        if (-1 != m_httpPort)
+        {
+            std::wstring queryURL = format(L"http://localhost:%d/query", m_httpPort);
+            std::wstring quitURL = format(L"http://localhost:%d/quit", m_httpPort);
+            std::wstring createSessionURL = format(L"http://localhost:%d/csliveCreateSession", m_httpPort);
+            std::wstring destroySessionURL = format(L"http://localhost:%d/csliveDestroySession", m_httpPort);
+            std::wstring snapshotPusherURL = format(L"http://localhost:%d/csliveSnapshotPusher", m_httpPort);
+            std::wstring snapshotPlayerURL = format(L"http://localhost:%d/csliveSnapshotPlayer", m_httpPort);
+            std::vector<std::wstring> urls = { queryURL, quitURL, createSessionURL, destroySessionURL, snapshotPusherURL, snapshotPlayerURL };
+            DWORD hsRet = m_httpServer.listen(urls);
+
+            LINFO(L"Http server listen ret: %lu, port: %d", hsRet, m_httpPort);
+        }
     }
 
     std::string type;
@@ -449,20 +676,6 @@ bool Application::resolveNormalLiveProtol(const Json::Value& root)
     if (root.isMember("action"))
     {
         action = root["action"].asString();
-    }
-
-    if (root.isMember("port"))
-    {
-        m_httpPort = root["port"].asInt();
-        if (-1 != m_httpPort)
-        {
-            std::wstring queryURL = format(L"http://localhost:%d/query", m_httpPort);
-            std::wstring leaveRoomURL = format(L"http://localhost:%d/quit", m_httpPort);
-            std::vector<std::wstring> urls = { queryURL, leaveRoomURL };
-            DWORD hsRet = m_httpServer.listen(urls);
-
-            LINFO(L"Http server listen ret: %lu, port: %d", hsRet, m_httpPort);
-        }
     }
 
     // todo 处理重入的情况
@@ -546,20 +759,6 @@ bool Application::resolveCSLiveProtol(const Json::Value& root)
         action = root["action"].asString();
     }
 
-    if (root.isMember("port"))
-    {
-        m_httpPort = root["port"].asInt();
-        if (-1 != m_httpPort)
-        {
-            std::wstring queryURL = format(L"http://localhost:%d/query", m_httpPort);
-            std::wstring leaveRoomURL = format(L"http://localhost:%d/quit", m_httpPort);
-            std::vector<std::wstring> urls = { queryURL, leaveRoomURL };
-            DWORD hsRet = m_httpServer.listen(urls);
-
-            LINFO(L"Http server listen ret: %lu, port: %d", hsRet, m_httpPort);
-        }
-    }
-
     if (action == "stop")
     {
         if (NULL != m_csLive)
@@ -596,7 +795,13 @@ bool Application::resolveCSLiveProtol(const Json::Value& root)
             logo = root["logo"].asString();
         }
 
-        m_csLive = new DialogPushPlay();
+		bool top_window = true;
+		if (root.isMember("top_window"))
+		{
+			top_window = root["top_window"].asBool();
+		}
+
+        m_csLive = new DialogPushPlay(top_window);
 
         std::string ip;
         int proxyPort = 0;
@@ -621,7 +826,6 @@ bool Application::resolveCSLiveProtol(const Json::Value& root)
         m_csLive->setLogo(logo.c_str());
         m_csLive->startPush(pushURL.c_str());
         m_csLive->startPlay(playURL.c_str());
-        m_csLive->show();
     }
     else
     {
@@ -639,20 +843,6 @@ bool Application::resolveLiveRoomProtol(const Json::Value& root)
     if (root.isMember("action"))
     {
         action = root["action"].asString();
-    }
-
-    if (root.isMember("port"))
-    {
-        m_httpPort = root["port"].asInt();
-        if (-1 != m_httpPort)
-        {
-            std::wstring queryURL = format(L"http://localhost:%d/query", m_httpPort);
-            std::wstring leaveRoomURL = format(L"http://localhost:%d/quit", m_httpPort);
-            std::vector<std::wstring> urls = { queryURL, leaveRoomURL };
-            DWORD hsRet = m_httpServer.listen(urls);
-
-            LINFO(L"Http server listen ret: %lu, port: %d", hsRet, m_httpPort);
-        }
     }
 
     if (action == "createRoom" || action == "enterRoom")
@@ -747,20 +937,6 @@ bool Application::resolveRTCRoomProtol(const Json::Value& root)
     if (root.isMember("action"))
     {
         action = root["action"].asString();
-    }
-
-    if (root.isMember("port"))
-    {
-        m_httpPort = root["port"].asInt();
-        if (-1 != m_httpPort)
-        {
-            std::wstring queryURL = format(L"http://localhost:%d/query", m_httpPort);
-            std::wstring leaveRoomURL = format(L"http://localhost:%d/quit", m_httpPort);
-            std::vector<std::wstring> urls = { queryURL, leaveRoomURL };
-            DWORD hsRet = m_httpServer.listen(urls);
-
-            LINFO(L"Http server listen ret: %lu, port: %d", hsRet, m_httpPort);
-        }
     }
 
     if (action == "createRoom" || action == "enterRoom")
@@ -941,127 +1117,4 @@ void Application::getConfigInfo(const Json::Value& root, std::string & serverDom
 	{
 		logo = root["logo"].asString();
 	}
-}
-
-bool Application::regProtol()
-{
-    wchar_t pathBuff[MAX_PATH] = { 0 };
-    DWORD count = ::GetModuleFileNameW(NULL, pathBuff, _countof(pathBuff));
-    if (0 == count)
-    {
-        LERROR(L"GetModuleFileNameW failed: %lu", ::GetLastError());
-        return false;
-    }
-
-    LPCWSTR lpszLastSlash = ::wcsrchr(pathBuff, _W('\\'));
-    if (NULL == lpszLastSlash)
-    {
-        LERROR(L"Wrong pathBuff: %s", pathBuff);
-        return false;
-    }
-
-    std::wstring path(pathBuff, lpszLastSlash - pathBuff + 1);
-    path.append(L"TXCloudRoom.exe");
-
-    // 自动释放HKEY
-    auto deleter = [](HKEY* key) {
-        if (key && *key)
-        {
-            ::RegCloseKey(*key);
-        }
-    };
-
-    HKEY root = NULL;
-    LSTATUS ret = ::RegCreateKeyEx(HKEY_CLASSES_ROOT, L"TXCloudRoom", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &root, NULL);
-    if (ERROR_SUCCESS != ret)
-    {
-        LPWSTR msg = NULL;
-        ::FormatMessageW(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, ret,
-            MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED), msg, 0, NULL);
-        LERROR(L"RegCreateKeyEx failed, ret: %lu, msg: %s", ret, msg);
-
-        ::LocalFree(msg);
-        return false;
-    }
-
-    std::unique_ptr<HKEY, decltype(deleter)> txcloudLiteAVPtr(&root, deleter);
-
-    std::wstring value = L"TXCloud LiteAV Protocol";
-    ::RegSetValueExW(*txcloudLiteAVPtr, NULL, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), (value.size() + 1) * 2);
-
-    value = path;
-    ::RegSetValueExW(*txcloudLiteAVPtr, L"URL Protocol", 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), (value.size() + 1) * 2);
-
-    HKEY defaultIcon = NULL;
-    ret = ::RegCreateKeyEx(*txcloudLiteAVPtr, L"DefaultIcon", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &defaultIcon, NULL);
-    if (ERROR_SUCCESS != ret)
-    {
-        LPWSTR msg = NULL;
-        ::FormatMessageW(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, ret,
-            MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED), msg, 0, NULL);
-        LERROR(L"RegCreateKeyEx failed, ret: %lu, msg: %s", ret, msg);
-
-        ::LocalFree(msg);
-        return false;
-    }
-
-    std::unique_ptr<HKEY, decltype(deleter)> defaultIconPtr(&defaultIcon, deleter);
-
-    value = format(L"%s,1", path.c_str());
-    ::RegSetValueExW(*defaultIconPtr, NULL, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), (value.size() + 1) * 2);
-
-    HKEY shell = NULL;
-    ret = ::RegCreateKeyEx(*txcloudLiteAVPtr, L"shell", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &shell, NULL);
-    if (ERROR_SUCCESS != ret)
-    {
-        LPWSTR msg = NULL;
-        ::FormatMessageW(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, ret,
-            MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED), msg, 0, NULL);
-        LERROR(L"RegCreateKeyEx failed, ret: %lu, msg: %s", ret, msg);
-
-        ::LocalFree(msg);
-        return false;
-    }
-
-    std::unique_ptr<HKEY, decltype(deleter)> shellPtr(&shell, deleter);
-
-    HKEY open = NULL;
-    ret = ::RegCreateKeyEx(*shellPtr, L"open", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &open, NULL);
-    if (ERROR_SUCCESS != ret)
-    {
-        LPWSTR msg = NULL;
-        ::FormatMessageW(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, ret,
-            MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED), msg, 0, NULL);
-        LERROR(L"RegCreateKeyEx failed, ret: %lu, msg: %s", ret, msg);
-
-        ::LocalFree(msg);
-        return false;
-    }
-
-    std::unique_ptr<HKEY, decltype(deleter)> openPtr(&open, deleter);
-
-    HKEY command = NULL;
-    ret = ::RegCreateKeyEx(*openPtr, L"command", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &command, NULL);
-    if (ERROR_SUCCESS != ret)
-    {
-        LPWSTR msg = NULL;
-        ::FormatMessageW(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, ret,
-            MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED), msg, 0, NULL);
-        LERROR(L"RegCreateKeyEx failed, ret: %lu, msg: %s", ret, msg);
-
-        ::LocalFree(msg);
-        return false;
-    }
-
-    std::unique_ptr<HKEY, decltype(deleter)> commandPtr(&command, deleter);
-
-    value = format(L"\"%s\",\"%%1\"", path.c_str());
-    ::RegSetValueExW(*commandPtr, NULL, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), (value.size() + 1) * 2);
-
-    return true;
 }

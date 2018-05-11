@@ -1,9 +1,0 @@
-<RCC>
-  <qresource prefix="PushPlay">
-    <file>live.ico</file>
-    <file>close-normal.png</file>
-    <file>close-press.png</file>
-    <file>start.png</file>
-    <file>suspend.png</file>
-  </qresource>
-</RCC>

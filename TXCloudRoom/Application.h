@@ -51,8 +51,12 @@ protected:
     virtual void onLog(HSLogLevel level, const std::string& content);
     virtual void onClose(ULONGLONG requestId);
 private:
-    void handleReqQuery(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
-    void handleReqQuit(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
+    void handleQuery(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
+    void handleQuit(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
+    void handleCreateSession(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
+    void handleDestroySession(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
+    void handleSnapshotPusher(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
+    void handleSnapshotPlayer(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
 
     bool resolveProtol(const std::string& json);
     bool resolveNormalLiveProtol(const Json::Value& root);
@@ -63,7 +67,7 @@ private:
 	void getConfigInfo(const Json::Value& root, std::string& serverDomain, int& sdkAppID, std::string& accountType, std::string& userID,
 		std::string& userSig, std::string& userName, std::string& userAvatar, std::string& roomID, std::string& roomInfo,
 		std::string& strTemplate, std::string& userTag, bool & userList, bool & IMList, bool & whiteboard, bool & screenShare, bool & record, std::string& title, std::string& logo);
-    bool regProtol();   // 注册表注册伪协议
+	void getSnapShotPath(std::wstring& fullpath);
 private:
     ULONG_PTR m_gdiplusToken;
     PushPlayDemo* m_normalLive;
@@ -76,4 +80,5 @@ private:
     std::list<Json::Value> m_dataList;  // 缓存推送包
     const size_t m_maxDataListCount;    // 最大缓存数量
     std::mutex m_mutex;
+	std::wstring m_tempPath;
 };

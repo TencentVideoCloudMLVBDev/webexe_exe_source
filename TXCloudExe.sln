@@ -3,35 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TXCloudCS", "TXCloudCS\TXCloudCS.vcxproj", "{211870AF-B068-497C-AB9F-5AF2A76D2377}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TXCloudPortal", "TXCloudPortal\TXCloudPortal.vcxproj", "{98440953-4C28-4283-8CC0-C34653BFC012}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F091C915-4F3E-4B05-8DD4-44310BE78FB1} = {F091C915-4F3E-4B05-8DD4-44310BE78FB1}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TXCloudRoom", "TXCloudRoom\TXCloudRoom.vcxproj", "{F091C915-4F3E-4B05-8DD4-44310BE78FB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
-		Professional_Release|x86 = Professional_Release|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{211870AF-B068-497C-AB9F-5AF2A76D2377}.Debug|x86.ActiveCfg = Debug|Win32
-		{211870AF-B068-497C-AB9F-5AF2A76D2377}.Debug|x86.Build.0 = Debug|Win32
-		{211870AF-B068-497C-AB9F-5AF2A76D2377}.Professional_Release|x86.ActiveCfg = Release|Win32
-		{211870AF-B068-497C-AB9F-5AF2A76D2377}.Professional_Release|x86.Build.0 = Release|Win32
-		{211870AF-B068-497C-AB9F-5AF2A76D2377}.Release|x86.ActiveCfg = Release|Win32
-		{211870AF-B068-497C-AB9F-5AF2A76D2377}.Release|x86.Build.0 = Release|Win32
 		{98440953-4C28-4283-8CC0-C34653BFC012}.Debug|x86.ActiveCfg = Debug|Win32
 		{98440953-4C28-4283-8CC0-C34653BFC012}.Debug|x86.Build.0 = Debug|Win32
-		{98440953-4C28-4283-8CC0-C34653BFC012}.Professional_Release|x86.ActiveCfg = Professional_Release|Win32
-		{98440953-4C28-4283-8CC0-C34653BFC012}.Professional_Release|x86.Build.0 = Professional_Release|Win32
 		{98440953-4C28-4283-8CC0-C34653BFC012}.Release|x86.ActiveCfg = Release|Win32
 		{98440953-4C28-4283-8CC0-C34653BFC012}.Release|x86.Build.0 = Release|Win32
 		{F091C915-4F3E-4B05-8DD4-44310BE78FB1}.Debug|x86.ActiveCfg = Debug|Win32
 		{F091C915-4F3E-4B05-8DD4-44310BE78FB1}.Debug|x86.Build.0 = Debug|Win32
-		{F091C915-4F3E-4B05-8DD4-44310BE78FB1}.Professional_Release|x86.ActiveCfg = Professional_Release|Win32
-		{F091C915-4F3E-4B05-8DD4-44310BE78FB1}.Professional_Release|x86.Build.0 = Professional_Release|Win32
 		{F091C915-4F3E-4B05-8DD4-44310BE78FB1}.Release|x86.ActiveCfg = Release|Win32
 		{F091C915-4F3E-4B05-8DD4-44310BE78FB1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
