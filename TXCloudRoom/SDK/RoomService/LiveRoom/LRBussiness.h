@@ -74,7 +74,7 @@ public:
     void setProxy(const std::string& ip, unsigned short port);
 
 	void login(const std::string & serverDomain, const LRAuthData & authData, ILoginLiveCallback* callback);
-	void recordVideo();
+	void recordVideo(int picture_id);
 	void logout();
 
 	void getRoomList(int index, int cnt, IGetLiveRoomListCallback* callback);

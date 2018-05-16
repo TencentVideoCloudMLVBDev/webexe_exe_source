@@ -25,6 +25,7 @@ public:
     void setSdkAppID(int sdkAppID);
     void setRoomID(const std::string& roomID);
     void setUserID(const std::string& userID);
+	void setPictureID(int picture_id);
 
     void setMainStream(const std::string& streamID, int width, int height);
     void addSubStream(const std::string& streamID, int width, int height);
@@ -42,6 +43,7 @@ private:
 
     LRStreamMixParam m_mainStream;
     std::vector<LRStreamMixParam> m_subStream;
+	int m_pictureID = -1;
 };
 
 #endif /* __STREAMMIXER_H__ */

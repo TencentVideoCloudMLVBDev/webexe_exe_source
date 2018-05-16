@@ -330,7 +330,7 @@ void HttpRequest::getRoomList(int index, int cnt, RoomType roomType, getRoomList
 
 void HttpRequest::heartbeat(const std::string& roomID, RoomType roomType, heardbeatFunc func)
 {
-    m_taskQueue.post(true, [=]() {
+    m_taskQueue.post([=]() {
         Json::Value jsonObj;
         jsonObj["roomID"] = roomID;
         jsonObj["roomType"] = static_cast<int>(roomType);

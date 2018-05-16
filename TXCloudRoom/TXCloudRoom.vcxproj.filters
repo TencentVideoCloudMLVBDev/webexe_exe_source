@@ -469,6 +469,9 @@
     <ClCompile Include="SDK\RoomService\RTCRoom\RTCStreamMixer.cpp">
       <Filter>SDK\RoomService\RTCRoom</Filter>
     </ClCompile>
+    <ClCompile Include="common\RoomService\DataReport.cpp">
+      <Filter>Common\RoomService</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Education\LiveDemo.h">
@@ -738,6 +741,9 @@
     </ClInclude>
     <ClInclude Include="SDK\RoomService\RTCRoom\RTCStreamMixer.h">
       <Filter>SDK\RoomService\RTCRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="common\RoomService\DataReport.h">
+      <Filter>Common\RoomService</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -54,6 +54,7 @@ private slots:
 private:
 	void stopPush();
 	void stopPlay();
+	void getImageBase64(std::string filePath, std::string& base64Buff);
 
 	QPoint mousePressedPosition;
 	QPoint windowPositionAsDrag;

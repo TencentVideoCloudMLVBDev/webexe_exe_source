@@ -47,8 +47,9 @@ public:
 	/**
 	* \brief：录制本地视频，请注意在startLocalPreview之前调用。录制的同时会开启混流，可将房间成员的视频合成在创建者画面中
 	* \param：multi - 是否为多人混流。若为true, 混流画面将合成在视频下方，若为false，混流画面将合成在视频右方
+	* \param：picture_id - 背景图水印ID。若不设置，默认为-1，背景图显示为黑色画布
 	*/
-	void recordVideo(bool multi);
+	void recordVideo(bool multi, int picture_id = -1);
 
     /**
     * \brief：登出业务服务器RoomService，请注意在leaveRoom调用后，再调用logout，否则leaveRoom会调用失败

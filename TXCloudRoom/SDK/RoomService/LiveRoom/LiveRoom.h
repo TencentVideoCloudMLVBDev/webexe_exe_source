@@ -49,8 +49,9 @@ public:
 
 	/**
 	* \brief：录制本地视频，请注意在startLocalPreview之前调用
+	* \param：picture_id - 背景图水印ID。若不设置，默认为 - 1，背景图显示为黑色画布
 	*/
-	void recordVideo();
+	void recordVideo(int picture_id = -1);
 
     /**
     * \brief：登出业务服务器RoomService，请注意在leaveRoom调用后，再调用logout，否则leaveRoom会调用失败

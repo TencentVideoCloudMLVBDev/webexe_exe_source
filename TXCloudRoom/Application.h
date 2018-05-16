@@ -57,6 +57,7 @@ private:
     void handleDestroySession(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
     void handleSnapshotPusher(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
     void handleSnapshotPlayer(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
+	void handleGetImageRes(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
 
     bool resolveProtol(const std::string& json);
     bool resolveNormalLiveProtol(const Json::Value& root);
@@ -66,7 +67,7 @@ private:
 
 	void getConfigInfo(const Json::Value& root, std::string& serverDomain, int& sdkAppID, std::string& accountType, std::string& userID,
 		std::string& userSig, std::string& userName, std::string& userAvatar, std::string& roomID, std::string& roomInfo,
-		std::string& strTemplate, std::string& userTag, bool & userList, bool & IMList, bool & whiteboard, bool & screenShare, bool & record, std::string& title, std::string& logo);
+		std::string& strTemplate, std::string& userTag, bool & userList, bool & IMList, bool & whiteboard, bool & screenShare, bool & record, int & pictureID, std::string& title, std::string& logo);
 	void getSnapShotPath(std::wstring& fullpath);
 private:
     ULONG_PTR m_gdiplusToken;

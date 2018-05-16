@@ -26,8 +26,8 @@ public:
 	RTCDemo(QWidget *parent = Q_NULLPTR);
 	virtual ~RTCDemo();
 
-	void createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record);
-	void enterRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record);
+	void createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id);
+	void enterRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id);
 	void setLogo(QString logoURL, bool multi = true);
 	void setTitle(QString title);
 	void leaveRoom();

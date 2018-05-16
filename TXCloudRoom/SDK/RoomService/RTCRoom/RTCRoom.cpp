@@ -46,11 +46,11 @@ void RTCRoom::login(const std::string & serverDomain, const RTCAuthData & authDa
     }
 }
 
-void RTCRoom::recordVideo(bool multi)
+void RTCRoom::recordVideo(bool multi, int picture_id)
 {
 	if (m_impl)
 	{
-		m_impl->recordVideo(multi);
+		m_impl->recordVideo(multi, picture_id);
 	}
 }
 

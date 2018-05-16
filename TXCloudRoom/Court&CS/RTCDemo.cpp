@@ -84,8 +84,6 @@ void RTCDemo::on_btn_close_clicked()
 
 	RTCRoom::instance()->leaveRoom();
 	RTCRoom::instance()->logout();
-	RTCRoom* roomService = RTCRoom::instance();
-	delete roomService;
 
 	this->close();
 	Application::instance().quit(0);
@@ -99,34 +97,45 @@ void RTCDemo::on_btn_min_clicked()
 RTCDemo::~RTCDemo()
 {
     m_imgDownloader.close();
+	if (m_doublePanel)
+	{
+		delete m_doublePanel;
+	}
+	if (m_multiPanel)
+	{
+		delete m_multiPanel;
+	}
+
+	RTCRoom* roomService = RTCRoom::instance();
+	delete roomService;
 }
 
-void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record)
+void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id)
 {
 	m_bCreate = true;
     m_roomID = roomID;
 	m_roomInfo = roomInfo;
 	BoardService::instance().setRoomID(roomID.toStdString());
-	init(authData, roomInfo);
-	RTCRoom::instance()->login(serverDomain.toStdString(), authData, this);	
 	if (record)
 	{
-		RTCRoom::instance()->recordVideo(m_multi);
+		RTCRoom::instance()->recordVideo(m_multi, picture_id);
 	}
+	RTCRoom::instance()->login(serverDomain.toStdString(), authData, this);	
+	init(authData, roomInfo);
 }
 
-void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record)
+void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id)
 {
 	m_bCreate = false;
     m_roomID = roomID;
 	m_roomInfo = roomInfo;
 	BoardService::instance().setRoomID(roomID.toStdString());
-	init(authData, roomInfo);
-	RTCRoom::instance()->login(serverDomain.toStdString(), authData, this);
 	if (record)
 	{
-		RTCRoom::instance()->recordVideo(m_multi);
+		RTCRoom::instance()->recordVideo(m_multi, picture_id);
 	}
+	RTCRoom::instance()->login(serverDomain.toStdString(), authData, this);
+	init(authData, roomInfo);
 }
 
 void RTCDemo::setLogo(QString logoURL, bool multi)
@@ -496,25 +505,20 @@ void RTCDemo::onError(const RTCResult & res, const std::string & userID)
 
 void RTCDemo::onLogin(const RTCResult & res, const RTCAuthData & authData)
 {
-	emit dispatch([=] {
-		if (RTCROOM_SUCCESS == res.ec)
-		{
-			if (m_multiPanel)
-				m_multiPanel->initStartVideo();
-			else
-				m_doublePanel->initStartVideo();
-
-			if (m_bCreate)
-				RTCRoom::instance()->createRoom(m_roomID.toStdString(), m_roomInfo.toStdString());
-			else
-				RTCRoom::instance()->enterRoom(m_roomID.toStdString());
-		}
+	if (RTCROOM_SUCCESS == res.ec)
+	{
+		if (m_bCreate)
+			RTCRoom::instance()->createRoom(m_roomID.toStdString(), m_roomInfo.toStdString());
 		else
-		{
+			RTCRoom::instance()->enterRoom(m_roomID.toStdString());
+	}
+	else
+	{
+		emit dispatch([=] {
 			RTCRoom::instance()->stopLocalPreview();
 			DialogMessage::exec(QString::fromStdString(res.msg), DialogMessage::OK);
-		}
-	});
+		});
+	}
 }
 
 void RTCDemo::onSendIMGroupMsg(const std::string & msg)

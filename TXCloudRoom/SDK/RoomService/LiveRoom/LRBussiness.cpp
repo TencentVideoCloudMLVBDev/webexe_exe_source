@@ -5,10 +5,12 @@
 #include "TXLiveCommon.h"
 #include "log.h"
 #include "Base.h"
+#include "DataReport.h"
 
 #include <ctime>
 #include <strstream>
 #include <assert.h>
+static uint64_t IMLoginTS;
 
 LRMainPublisher::LRMainPublisher()
     : m_userID(NULL)
@@ -170,6 +172,7 @@ void LRBussiness::setProxy(const std::string& ip, unsigned short port)
 void LRBussiness::login(const std::string & serverDomain, const LRAuthData & authData, ILoginLiveCallback* callback)
 {
 	LOGGER;
+	DataReport::instance()->setLogin(DataReport::instance()->txf_gettickcount());
 
 	assert(false == serverDomain.empty() && NULL != callback);
 
@@ -187,6 +190,8 @@ void LRBussiness::login(const std::string & serverDomain, const LRAuthData & aut
 	accountInfo.sdkAppID = m_authData.sdkAppID;
 	accountInfo.userID = m_authData.userID;
 	accountInfo.userSig = m_authData.userSig;
+	IMLoginTS = DataReport::instance()->txf_gettickcount();
+
 	TIMManager::instance()->login(accountInfo, &cb);
 
 	LINFO(L"%s", Ansi2Wide(serverDomain).c_str());
@@ -199,9 +204,10 @@ void LRBussiness::login(const std::string & serverDomain, const LRAuthData & aut
 	});
 }
 
-void LRBussiness::recordVideo()
+void LRBussiness::recordVideo(int picture_id)
 {
 	m_bRecord = true;
+	m_streamMixer.setPictureID(picture_id);
 }
 
 void LRBussiness::logout()
@@ -274,12 +280,15 @@ void LRBussiness::getAudienceList(const std::string& roomID)
 void LRBussiness::createRoom(const std::string& roomID, const std::string& roomInfo)
 {
 	LOGGER;
+	uint64_t ts = DataReport::instance()->txf_gettickcount();
+	DataReport::instance()->setCreate(ts);
 
 	m_roomData.roomID = roomID;
 	m_roomData.roomInfo = roomInfo;
 	m_role = LRMainRole;
 
 	m_httpRequest.getPushURL(m_authData.userID, [=](const LRResult& res, const std::string& pushURL) {
+		DataReport::instance()->setCGIPushURL(DataReport::instance()->txf_gettickspan(ts));
 		if (LIVEROOM_SUCCESS != res.ec)
 		{
 			if (m_callback)
@@ -301,7 +310,6 @@ void LRBussiness::createRoom(const std::string& roomID, const std::string& roomI
 
 			m_bPushBegin = false;
 			m_mainPublisher.pusher()->startAudioCapture();
-			m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
 			m_mainPublisher.pusher()->startPush(recordURL.c_str());
 		}
 	});
@@ -465,11 +473,11 @@ void LRBussiness::startLocalPreview(HWND rendHwnd, const RECT & rect)
     LINFO(L"rendHwnd: 0x%08X, rect: <%ld, %ld, %ld, %ld>", rendHwnd, rect.left, rect.top, rect.right, rect.bottom);
 
 	m_mainPublisher.pusher()->setRenderMode(TXE_RENDER_MODE_ADAPT);
+	m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality, TXE_VIDEO_RATIO_16_9);
 
     m_mainPublisher.setUserID(m_authData.userID.c_str());
 	m_mainPublisher.pusher()->setCallback(this, m_mainPublisher.userID());
 	m_mainPublisher.pusher()->startPreview(rendHwnd, rect, 0);
-	m_mainPublisher.pusher()->startAudioCapture();
 }
 
 void LRBussiness::updateLocalPreview(HWND rendHwnd, const RECT & rect)
@@ -500,7 +508,6 @@ bool LRBussiness::startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT
 	m_mainPublisher.pusher()->setVideoFPS(10);
 	m_mainPublisher.pusher()->setScreenCaptureParam(captureHwnd, captureRect);
 	bool ret = m_mainPublisher.pusher()->startPreview(TXE_VIDEO_SRC_SDK_SCREEN, rendHwnd, renderRect);
-	m_mainPublisher.pusher()->startAudioCapture();
 
 	//sdk内部默认是镜像模式（针对摄像头），但是录屏出来的源数据本来就是镜像模式。
 	m_mainPublisher.pusher()->setRenderYMirror(false);
@@ -558,14 +565,12 @@ void LRBussiness::addRemoteView(HWND rendHwnd, const RECT & rect, const char * u
             break;
         case LRMainRole:
         {
-            m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER);
-            m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
+            m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER, TXE_VIDEO_RATIO_16_9);
         }
         break;
         case LRSubRole:
         {
-            m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_LINKMIC_SUB_PUBLISHER);
-            m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
+            m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_LINKMIC_SUB_PUBLISHER, TXE_VIDEO_RATIO_16_9);
         }
         break;
         case LRAudience:
@@ -606,14 +611,12 @@ void LRBussiness::removeRemoteView(const char * userID)
             break;
         case LRMainRole:
         {
-            m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality);
-            m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
+            m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality, TXE_VIDEO_RATIO_16_9);
         }
         break;
         case LRSubRole:
         {
-            m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality);
-            m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
+            m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality, TXE_VIDEO_RATIO_16_9);
         }
         break;
         case LRAudience:
@@ -651,13 +654,13 @@ void LRBussiness::setVideoQuality(LRVideoQuality quality, LRAspectRatio ratio)
 		break;
 	}
 
-    m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality);
-    m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
+    m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality, TXE_VIDEO_RATIO_16_9);
 }
 
 void LRBussiness::onTIMLoginSuccess(void* data)
 {
 	LINFO(L"IM login success");
+	DataReport::instance()->setIMLogin(DataReport::instance()->txf_gettickspan(IMLoginTS));
 }
 
 void LRBussiness::onTIMLoginError(int code, const char* desc, void* data)
@@ -1050,6 +1053,11 @@ void LRBussiness::onEventCallback(int eventId, const int paramCount, const char*
 		handlePushDisconnect(userID);
 	}
 	break;
+	case  PushEvt::PUSH_EVT_CONNECT_SUCC:
+	{
+		DataReport::instance()->setConnectSucc(DataReport::instance()->txf_gettickcount());
+	}
+	break;
 	case PushEvt::PUSH_EVT_PUSH_BEGIN:
 	{
 		handlePushBegin();
@@ -1299,11 +1307,13 @@ void LRBussiness::handleSketchPad(const std::string& userID, const Json::Value& 
 void LRBussiness::handlePushBegin()
 {
     LINFO(L"m_bPushBegin", (true == m_bPushBegin ? L"true" : L"false"));;
-
     if (m_bPushBegin)
     {
         return;
     }
+
+	uint64_t ts = DataReport::instance()->txf_gettickcount();
+	DataReport::instance()->setPushBegin(ts);
 
     m_bPushBegin = true;
 
@@ -1313,6 +1323,10 @@ void LRBussiness::handlePushBegin()
 	{
 		m_streamMixer.mergeStream(10);
 		m_httpRequest.createRoom(m_roomData.roomID, m_roomData.roomInfo, [=](const LRResult& res, const std::string& roomID) {
+			DataReport::instance()->setCGICreateRoom(DataReport::instance()->txf_gettickspan(ts));
+			DataReport::instance()->generateCreateReport(0, m_roomData.roomID, m_authData.userID, m_authData.userName, "", 1);
+			CreateDataReport dataReport = DataReport::instance()->getCreateReport();
+
 			if (LIVEROOM_SUCCESS != res.ec)
 			{
 				if (m_callback)

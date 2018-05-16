@@ -15,6 +15,7 @@ DoubleVideoPanel::DoubleVideoPanel(QWidget *parent)
 
 DoubleVideoPanel::~DoubleVideoPanel()
 {
+	RTCRoom::instance()->stopLocalPreview();
 }
 
 void DoubleVideoPanel::initShowVideo()
@@ -58,7 +59,7 @@ void DoubleVideoPanel::onPusherQuit(const MemberItem& member)
 void DoubleVideoPanel::onRoomClosed()
 {
 	remoteWidget->hide();
-    selfWidget->hide();
+	selfWidget->hide();
 	RTCRoom::instance()->stopLocalPreview();
 	RTCRoom::instance()->removeRemoteView(m_remoteID.c_str());
 	ui.widget_camera_tip->show();
@@ -70,6 +71,16 @@ void DoubleVideoPanel::onRoomClosed()
 void DoubleVideoPanel::setRoomCreator(const std::string& id)
 {
 	m_roomCreator = id;
+	if (!whiteBoard)
+	{
+		whiteBoard = new WhiteBoard(ui.widget_board);
+		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
+		vBoardLayout->setMargin(0);
+		vBoardLayout->addWidget(whiteBoard);
+		ui.widget_board->setLayout(vBoardLayout);
+		whiteBoard->show();
+	}
+
 	if (m_roomCreator == m_userID && whiteBoard)
 	{
 		whiteBoard->setMainUser(true);
@@ -81,15 +92,6 @@ void DoubleVideoPanel::setUserInfo(const std::string & id, const std::string & u
 	m_userID = id;
 	m_userName = userName;
 	selfWidget->setUserName(userName);
-	if (!whiteBoard)
-	{
-		whiteBoard = new WhiteBoard(ui.widget_board);
-		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
-		vBoardLayout->setMargin(0);
-		vBoardLayout->addWidget(whiteBoard);
-		ui.widget_board->setLayout(vBoardLayout);
-		whiteBoard->show();
-	}
 }
 
 void DoubleVideoPanel::updatePreview()
@@ -120,11 +122,6 @@ void DoubleVideoPanel::setDeviceEnabled(bool camera, bool mic)
 	RTCRoom::instance()->setMute(!mic);
 }
 
-void DoubleVideoPanel::initStartVideo()
-{
-	RTCRoom::instance()->startLocalPreview((HWND)ui.widget_local->winId(), RECT{ 0, 0, ui.widget_local->width(), ui.widget_local->height() });
-}
-
 void DoubleVideoPanel::initConfigSetting(bool whiteboard, bool screenShare)
 {
 	if (!screenShare)
@@ -142,12 +139,12 @@ void DoubleVideoPanel::showEvent(QShowEvent * event)
 	static bool init = true;
 	if (init)
 	{
-		m_initMainHeight = ui.dis_main->height();
-		ui.widget_camera_tip->setFixedHeight(m_initMainHeight);
+		ui.widget_camera_tip->setFixedHeight(ui.dis_main->height());
 		QRect dismain = ui.dis_main->geometry();
-		ui.widget_local->setGeometry(QRect(dismain.right()-187, dismain.bottom()-140, 187, 140));
+		ui.widget_local->setGeometry(QRect(dismain.right() - 187, dismain.bottom() - 140, 187, 140));
 		ui.widget_local->raise();
 		ui.widget_local->setWindowFlags(Qt::WindowStaysOnTopHint);
+		RTCRoom::instance()->startLocalPreview((HWND)ui.widget_local->winId(), RECT{ 0, 0, ui.widget_local->width(), ui.widget_local->height() });
 		init = false;
 	}
 }
@@ -162,23 +159,23 @@ void DoubleVideoPanel::keyPressEvent(QKeyEvent * event)
 		{
 			m_screenFull = false;
 			m_screenArea = false;
-            m_cameraPreview = true;
+			m_cameraPreview = true;
 
 			RTCRoom::instance()->stopScreenPreview();
 			ui.stacked_screen->setCurrentIndex(0);
 
-            RTCRoom::instance()->stopScreenPreview();
-            RTCRoom::instance()->startLocalPreview((HWND)ui.widget_local->winId(), RECT{ 0, 0, ui.widget_local->width(), ui.widget_local->height() });
+			RTCRoom::instance()->stopScreenPreview();
+			RTCRoom::instance()->startLocalPreview((HWND)ui.widget_local->winId(), RECT{ 0, 0, ui.widget_local->width(), ui.widget_local->height() });
 
-            if (m_cameraPreview)
-                RTCRoom::instance()->updateLocalPreview((HWND)ui.widget_local->winId(), RECT{ 0, 0, ui.widget_local->width(), ui.widget_local->height() });
-            if (!m_remoteID.empty())
-            {
-                RTCRoom::instance()->updateRemotePreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() }, m_remoteID.c_str());
-            }
+			if (m_cameraPreview)
+				RTCRoom::instance()->updateLocalPreview((HWND)ui.widget_local->winId(), RECT{ 0, 0, ui.widget_local->width(), ui.widget_local->height() });
+			if (!m_remoteID.empty())
+			{
+				RTCRoom::instance()->updateRemotePreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() }, m_remoteID.c_str());
+			}
 		}
 	}
-		break;
+	break;
 	default:
 		QWidget::keyPressEvent(event);
 	}
@@ -191,8 +188,8 @@ void DoubleVideoPanel::initUI()
 	scrollArea_camera = new QScrollArea(ui.widget_camera2);
 	scrollArea_camera->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	scrollArea_camera->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	scrollArea_camera->setFixedSize(QSize(780,185));
-	scrollArea_camera->setContentsMargins(QMargins(0,0,0,0));
+	scrollArea_camera->setFixedSize(QSize(780, 185));
+	scrollArea_camera->setContentsMargins(QMargins(0, 0, 0, 0));
 	ui.hLayout_board->addWidget(scrollArea_camera);
 	hCameraLayout = new QHBoxLayout(scrollArea_camera);
 	hCameraLayout->setMargin(0);
@@ -274,6 +271,16 @@ void DoubleVideoPanel::on_selectCaptureArea(QRect rect)
 
 void DoubleVideoPanel::on_tabWidget_currentChanged()
 {
+	if (!whiteBoard)
+	{
+		whiteBoard = new WhiteBoard(ui.widget_board);
+		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
+		vBoardLayout->setMargin(0);
+		vBoardLayout->addWidget(whiteBoard);
+		ui.widget_board->setLayout(vBoardLayout);
+		whiteBoard->show();
+	}
+
 	m_tabIndex = ui.tabWidget->currentIndex();
 	switch (m_tabIndex)
 	{
@@ -295,7 +302,7 @@ void DoubleVideoPanel::on_tabWidget_currentChanged()
 	}
 	break;
 	case 1:
-	{	
+	{
 		widget_tab_corner->hide();
 		if (((m_screenFull || m_screenArea) && m_cameraPreview) || (!m_cameraPreview && m_cameraEnabled))
 		{
@@ -304,7 +311,7 @@ void DoubleVideoPanel::on_tabWidget_currentChanged()
 			selfWidget->startVideo(m_userID);
 		}
 
-		if (m_cameraPreview) 
+		if (m_cameraPreview)
 		{
 			selfWidget->updatePreview();
 			selfWidget->setMenuInfo(m_menuInfo);

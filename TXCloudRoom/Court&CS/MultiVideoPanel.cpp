@@ -19,6 +19,7 @@ MultiVideoPanel::MultiVideoPanel(QWidget *parent)
 
 MultiVideoPanel::~MultiVideoPanel()
 {
+	RTCRoom::instance()->stopLocalPreview();
 }
 
 void MultiVideoPanel::initShowVideo()
@@ -104,6 +105,15 @@ void MultiVideoPanel::onRoomClosed()
 void MultiVideoPanel::setRoomCreator(const std::string& id)
 {
 	m_roomCreator = id;
+	if (!whiteBoard)
+	{
+		whiteBoard = new WhiteBoard(ui.widget_board);
+		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
+		vBoardLayout->setMargin(0);
+		vBoardLayout->addWidget(whiteBoard);
+		ui.widget_board->setLayout(vBoardLayout);
+		whiteBoard->show();
+	}
 	if (m_roomCreator == m_userID && whiteBoard)
 	{
 		whiteBoard->setMainUser(true);
@@ -115,15 +125,6 @@ void MultiVideoPanel::setUserInfo(const std::string& id, const std::string& user
 	m_userID = id;
 	m_userName = userName;
 	selfWidget->setUserName(userName);
-	if (!whiteBoard)
-	{
-		whiteBoard = new WhiteBoard(ui.widget_board);
-		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
-		vBoardLayout->setMargin(0);
-		vBoardLayout->addWidget(whiteBoard);
-		ui.widget_board->setLayout(vBoardLayout);
-		whiteBoard->show();
-	}
 }
 
 int MultiVideoPanel::getVideoCount()
@@ -173,18 +174,12 @@ void MultiVideoPanel::initConfigSetting(int size, bool whiteboard, bool screenSh
 	}
 }
 
-void MultiVideoPanel::initStartVideo()
-{
-	RTCRoom::instance()->startLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
-}
-
 void MultiVideoPanel::showEvent(QShowEvent * event)
 {
 	static bool init = true;
 	if (init)
 	{
-		m_initMainHeight = ui.dis_main->height();
-		ui.widget_camera_tip->setFixedHeight(m_initMainHeight);
+		RTCRoom::instance()->startLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
 		init = false;
 	}
 }
@@ -218,6 +213,8 @@ void MultiVideoPanel::keyPressEvent(QKeyEvent * event)
 
 void MultiVideoPanel::initUI()
 {
+	ui.widget_camera_tip->setFixedHeight(ui.dis_main->height());
+
 	ui.widget_local->hide();
 
 	scrollArea_camera = new QScrollArea(ui.widget_camera1);
@@ -417,6 +414,16 @@ void MultiVideoPanel::on_selectCaptureArea(QRect rect)
 
 void MultiVideoPanel::on_tabWidget_currentChanged()
 {
+	if (!whiteBoard)
+	{
+		whiteBoard = new WhiteBoard(ui.widget_board);
+		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
+		vBoardLayout->setMargin(0);
+		vBoardLayout->addWidget(whiteBoard);
+		ui.widget_board->setLayout(vBoardLayout);
+		whiteBoard->show();
+	}
+
 	m_tabIndex = ui.tabWidget->currentIndex();
 	switch (m_tabIndex)
 	{

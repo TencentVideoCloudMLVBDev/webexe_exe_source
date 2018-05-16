@@ -93,8 +93,6 @@ void LiveDemo::on_btn_close_clicked()
 	m_roomID = "";
 	LiveRoom::instance()->leaveRoom();
 	LiveRoom::instance()->logout();
-	LiveRoom* roomService = LiveRoom::instance();
-	delete roomService;
 
 	this->close();
     Application::instance().quit(0);
@@ -108,36 +106,45 @@ void LiveDemo::on_btn_min_clicked()
 LiveDemo::~LiveDemo()
 {
     m_imgDownloader.close();
+	killTimer(m_timerID);
 
-    killTimer(m_timerID);
+	if (m_mainPanel)
+	{
+		delete m_mainPanel;
+	}
+
+	LiveRoom* roomService = LiveRoom::instance();
+	delete roomService;
 }
 
-void LiveDemo::createRoom(const LRAuthData & authData, const QString & serverDomain, const QString & roomID, const QString & roomInfo, bool record)
+void LiveDemo::createRoom(const LRAuthData & authData, const QString & serverDomain, const QString & roomID, const QString & roomInfo, bool record, int picture_id)
 {
 	m_bCreate = true;
     m_roomID = roomID.toStdString();
 	m_roomInfo = roomInfo;
 	BoardService::instance().setRoomID(roomID.toStdString());
-	init(authData, roomInfo);
-	LiveRoom::instance()->login(serverDomain.toStdString(), authData, this);
 	if (record)
 	{
-		LiveRoom::instance()->recordVideo();
+		LiveRoom::instance()->recordVideo(picture_id);
 	}
+	LiveRoom::instance()->login(serverDomain.toStdString(), authData, this);
+
+	init(authData, roomInfo);
 }
 
-void LiveDemo::enterRoom(const LRAuthData & authData, const QString & serverDomain, const QString & roomID, const QString & roomInfo, bool record)
+void LiveDemo::enterRoom(const LRAuthData & authData, const QString & serverDomain, const QString & roomID, const QString & roomInfo, bool record, int picture_id)
 {
 	m_bCreate = false;
     m_roomID = roomID.toStdString();
 	m_roomInfo = roomInfo;
 	BoardService::instance().setRoomID(roomID.toStdString());
-	init(authData, roomInfo);
-	LiveRoom::instance()->login(serverDomain.toStdString(), authData, this);
 	if (record)
 	{
-		LiveRoom::instance()->recordVideo();
+		LiveRoom::instance()->recordVideo(picture_id);
 	}
+	LiveRoom::instance()->login(serverDomain.toStdString(), authData, this);
+
+	init(authData, roomInfo);
 }
 
 void LiveDemo::setLogo(QString logoURL)
@@ -576,19 +583,18 @@ void LiveDemo::onRecvKickoutSubPusher(const std::string& roomID)
 
 void LiveDemo::onLogin(const LRResult & res, const LRAuthData & authData)
 {
-	emit dispatch([=] {
-		if (LIVEROOM_SUCCESS == res.ec)
-		{
-			m_mainPanel->initStartVideo();
-			if (m_bCreate)
-				LiveRoom::instance()->createRoom(m_roomID, m_roomInfo.toStdString());
-		}
-		else
-		{
+	if (LIVEROOM_SUCCESS == res.ec)
+	{
+		if (m_bCreate)
+			LiveRoom::instance()->createRoom(m_roomID, m_roomInfo.toStdString());
+	}
+	else
+	{
+		emit dispatch([=] {
 			LiveRoom::instance()->stopLocalPreview();
 			DialogMessage::exec(QString::fromStdString(res.msg), DialogMessage::OK);
-		}
-	});
+		});
+	}
 }
 
 void LiveDemo::onSendIMGroupMsg(const std::string & msg)

@@ -46,11 +46,11 @@ void LiveRoom::login(const std::string & serverDomain, const LRAuthData & authDa
     }
 }
 
-void LiveRoom::recordVideo()
+void LiveRoom::recordVideo(int picture_id)
 {
 	if (m_impl)
 	{
-		m_impl->recordVideo();
+		m_impl->recordVideo(picture_id);
 	}
 }
 

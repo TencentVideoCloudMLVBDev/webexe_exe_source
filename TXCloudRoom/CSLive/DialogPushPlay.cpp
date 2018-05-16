@@ -6,6 +6,9 @@
 #include "Application.h"
 #include "TXLiveCommon.h"
 #include <QDesktopWidget> 
+#include "Base.h"
+#include <iostream>  
+#include <fstream>  
 
 DialogPushPlay::DialogPushPlay(bool top_window, QWidget *parent)
 	: QDialog(parent)
@@ -99,6 +102,18 @@ void DialogPushPlay::onEventCallback(int eventId, const int paramCount, const ch
     {
         params.insert(std::pair<std::string, std::string>(paramKeys[i], paramValues[i]));
     }
+
+	if (eventId == 1012 || eventId == 2010)
+	{
+		std::string temp = paramValues[0];
+		if (temp.compare("0") == 0)
+		{
+			std::string tempPath = paramValues[1];
+			std::string imageContext;
+			getImageBase64(tempPath, imageContext);
+			params.insert(std::pair<std::string, std::string>("base64Img", imageContext.c_str()));
+		}
+	}
 
     Application::instance().pushSDKEvent(eventId, params);
 }
@@ -202,6 +217,33 @@ void DialogPushPlay::stopPlay()
 	ui.widget_video_play->update();
 	ui.widget_video_play->setUpdatesEnabled(true);
 	m_playing = false;
+}
+
+void DialogPushPlay::getImageBase64(std::string filePath, std::string& base64Buff)
+{
+	std::filebuf *pbuf;
+	std::ifstream filestr;
+	long size = 0;
+	char * buffer = nullptr;
+	base64Buff = "";
+	// 要读入整个文件，必须采用二进制打开   
+	filestr.open(filePath.c_str(), std::ios::binary);
+	if (filestr.is_open())
+	{
+		// 获取filestr对应buffer对象的指针   
+		pbuf = filestr.rdbuf();
+		// 调用buffer对象方法获取文件大小  
+		size = pbuf->pubseekoff(0, std::ios::end, std::ios::in);
+		pbuf->pubseekpos(0, std::ios::in);
+		// 分配内存空间  
+		buffer = new char[size];
+		// 获取文件内容  
+		pbuf->sgetn(buffer, size);
+		filestr.close();
+		base64Buff = EncodeBase64((unsigned char*)buffer, size);
+		delete[] buffer;
+		buffer = nullptr;
+	}
 }
 
 void DialogPushPlay::setTitle(const QString& title)

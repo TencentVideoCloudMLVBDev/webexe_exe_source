@@ -25,8 +25,8 @@ public:
 	LiveDemo(QWidget *parent = Q_NULLPTR);
 	virtual ~LiveDemo();
 
-    void createRoom(const LRAuthData& authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record);
-	void enterRoom(const LRAuthData& authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record);
+    void createRoom(const LRAuthData& authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id);
+	void enterRoom(const LRAuthData& authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id);
 	void setLogo(QString logoURL);
 	void setTitle(QString title);
 	void leaveRoom();

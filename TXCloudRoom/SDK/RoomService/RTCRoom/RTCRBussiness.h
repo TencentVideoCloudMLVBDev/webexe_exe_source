@@ -64,7 +64,7 @@ public:
     void setProxy(const std::string& ip, unsigned short port);
 
     void login(const std::string & serverDomain, const RTCAuthData & authData, ILoginRTCCallback* callback);
-	void recordVideo(bool multi);
+	void recordVideo(bool multi, int picture_id);
     void logout();
 
     void getRoomList(int index, int cnt, IGetRTCRoomListCallback* callback);

@@ -17,7 +17,13 @@
 #include <combaseapi.h>
 #include <shellapi.h>
 #include <QApplication>
-#include <QDesktopWidget> 
+#include <QDesktopWidget>  
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <TlHelp32.h> 
+#include <iostream>  
+#include <fstream>  
+#include "DataReport.h"
 
 static unsigned char ToHex(unsigned char x)
 {
@@ -145,6 +151,7 @@ int Application::run(int &argc, char **argv)
 
     //::MessageBoxW(NULL, NULL, NULL, MB_OK);   // 方便附加调试
 
+	DataReport::instance()->setRcvProtol(DataReport::instance()->txf_gettickcount());
     curl_global_init(CURL_GLOBAL_ALL);
 
     QApplication app(argc, argv);
@@ -155,7 +162,7 @@ int Application::run(int &argc, char **argv)
         return -1;
     }
 
-    std::string cmd = QString::fromWCharArray(::GetCommandLineW()).toStdString();  // 注意，因argv会忽略命令行中的引号，导致json字符串不合法，估使用GetCommandLine函数
+    std::string cmd = QString::fromWCharArray(::GetCommandLineW()).toStdString();  // 注意，因argv会忽略命令行中的引号，导致json字符串不合法，故使用GetCommandLine函数
 
     std::string prefix = "txcloudroom://liteav/params?json=";
     size_t index = cmd.find(prefix);  // 忽略大小写
@@ -219,7 +226,8 @@ void Application::quit(int retcode)
 void Application::pushSDKEvent(int eventID, const std::map<std::string, std::string>& params)
 {
     Json::Value paramsValue;
-    for (std::map<std::string, std::string>::const_iterator it = params.begin(); params.end() != it; ++it)
+
+	for (std::map<std::string, std::string>::const_iterator it = params.begin(); params.end() != it; ++it)
     {
         Json::Value item;
         item["name"] = Wide2UTF8(Ansi2Wide(it->first));
@@ -227,7 +235,6 @@ void Application::pushSDKEvent(int eventID, const std::map<std::string, std::str
 
         paramsValue.append(item);
     }
-
     Json::Value root;
     root["event"] = "sdkEventCallback";
     root["eventID"] = eventID;
@@ -342,6 +349,10 @@ void Application::onGetRequest(const std::wstring& absPath, DWORD& statusCode, s
     {
         handleSnapshotPlayer(absPath, statusCode, respDataUTF8);
     }
+	else if (0 == absPath.find(L"/csliveGetImageRes"))
+	{
+		handleGetImageRes(absPath, statusCode, respDataUTF8);
+	}
 }
 
 void Application::onLog(HSLogLevel level, const std::string& content)
@@ -609,6 +620,82 @@ void Application::handleSnapshotPlayer(const std::wstring& absPath, DWORD& statu
     }
 }
 
+void Application::handleGetImageRes(const std::wstring & absPath, DWORD & statusCode, std::string & respDataUTF8)
+{
+	std::wstring callbackValue(L"");
+
+	std::wstring prefix(L"callback=");
+	size_t beginIndex = absPath.find(prefix, 0);
+	if (std::wstring::npos != beginIndex)
+	{
+		beginIndex += prefix.size();
+		size_t endIndex = absPath.find(L"&", beginIndex);
+		if (endIndex > beginIndex)
+		{
+			callbackValue = absPath.substr(beginIndex, endIndex - beginIndex);
+		}
+	}
+
+	QString queryString = QString::fromStdWString(absPath);
+
+	QUrlQuery query(queryString.replace("/csliveGetImageRes?", ""));
+
+	QString pushURL = query.queryItemValue("path");
+	std::string pathDecode = URLDecode(pushURL.toStdString());
+
+
+	std::filebuf *pbuf;
+	std::ifstream filestr;
+	long size = 0;
+	char * buffer = nullptr;
+	// 要读入整个文件，必须采用二进制打开   
+	filestr.open(pathDecode.c_str(), std::ios::binary);
+	if (filestr.is_open())
+	{
+		// 获取filestr对应buffer对象的指针   
+		pbuf = filestr.rdbuf();
+		// 调用buffer对象方法获取文件大小  
+		size = pbuf->pubseekoff(0, std::ios::end, std::ios::in);
+		pbuf->pubseekpos(0, std::ios::in);
+		// 分配内存空间  
+		buffer = new char[size];
+		// 获取文件内容  
+		pbuf->sgetn(buffer, size);
+		filestr.close();
+	}
+
+	Json::Value root;
+	root["code"] = 0;
+	root["message"] = "";
+	root["data"] = "";
+	if (buffer)
+	{
+		root["base64Img"] = EncodeBase64((unsigned char*)buffer, size);
+		delete[]buffer;
+	}
+	else
+	{
+		root["code"] = -1;
+		root["data"] = "";
+	}
+
+	Json::FastWriter writer;
+	std::string jsonUTF8 = writer.write(root);
+
+	statusCode = 200;
+	if (true == callbackValue.empty())
+	{
+		respDataUTF8 = jsonUTF8;
+	}
+	else
+	{
+		respDataUTF8 = Wide2UTF8(callbackValue);
+		respDataUTF8.append("(");
+		respDataUTF8.append(jsonUTF8);
+		respDataUTF8.append(")");
+	}
+}
+
 bool Application::resolveProtol(const std::string& json)
 {
     LINFO(L"json: %s", Ansi2Wide(json).c_str());
@@ -633,7 +720,8 @@ bool Application::resolveProtol(const std::string& json)
             std::wstring destroySessionURL = format(L"http://localhost:%d/csliveDestroySession", m_httpPort);
             std::wstring snapshotPusherURL = format(L"http://localhost:%d/csliveSnapshotPusher", m_httpPort);
             std::wstring snapshotPlayerURL = format(L"http://localhost:%d/csliveSnapshotPlayer", m_httpPort);
-            std::vector<std::wstring> urls = { queryURL, quitURL, createSessionURL, destroySessionURL, snapshotPusherURL, snapshotPlayerURL };
+			std::wstring getImageResURL = format(L"http://localhost:%d/csliveGetImageRes", m_httpPort);
+            std::vector<std::wstring> urls = { queryURL, quitURL, createSessionURL, destroySessionURL, snapshotPusherURL, snapshotPlayerURL, getImageResURL};
             DWORD hsRet = m_httpServer.listen(urls);
 
             LINFO(L"Http server listen ret: %lu, port: %d", hsRet, m_httpPort);
@@ -645,6 +733,40 @@ bool Application::resolveProtol(const std::string& json)
     {
         type = root["type"].asString();
     }
+
+	bool singleton = true;
+	if (root.isMember("singleton"))
+	{
+		singleton = root["singleton"].asBool();
+	}
+
+	if (singleton)
+	{
+		PROCESSENTRY32 pe32;
+		pe32.dwSize = sizeof(pe32);
+
+		HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+		if (hProcessSnap == INVALID_HANDLE_VALUE) {
+			return false;
+		}
+
+		BOOL bResult = Process32First(hProcessSnap, &pe32);
+		int count = 0;
+		while (bResult)
+		{
+			if (!wcscmp(pe32.szExeFile, L"TXCloudRoom.exe"))
+			{
+				count++;
+			}
+			bResult = Process32Next(hProcessSnap, &pe32);
+		}
+		CloseHandle(hProcessSnap);
+
+		if (count >= 2)
+		{
+			return false;
+		}
+	}
 
     if (type == "NormalLive")
     {
@@ -889,8 +1011,9 @@ bool Application::resolveLiveRoomProtol(const Json::Value& root)
 		bool whiteboard = false;
 		bool screenShare = false;
 		bool record = false;
+		int picture_id = -1;
 
-		getConfigInfo(root, serverDomain, sdkAppID, accountType, userID, userSig, userName, userAvatar, roomID, roomInfo, strTemplate,userTag, userList, IMList, whiteboard, screenShare, record, title, logo);
+		getConfigInfo(root, serverDomain, sdkAppID, accountType, userID, userSig, userName, userAvatar, roomID, roomInfo, strTemplate,userTag, userList, IMList, whiteboard, screenShare, record, picture_id, title, logo);
 		
 		std::transform(strTemplate.begin(), strTemplate.end(), strTemplate.begin(), ::tolower);
 		LRAuthData authData;
@@ -907,9 +1030,9 @@ bool Application::resolveLiveRoomProtol(const Json::Value& root)
 		m_liveDemo->initUI(strTemplate.c_str(), QString::fromUtf8(userTag.c_str()), userList, IMList, whiteboard, screenShare);
 
 		if (action == "createRoom")
-			m_liveDemo->createRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), record);
+			m_liveDemo->createRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), record, picture_id);
 		else
-			m_liveDemo->enterRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), record);
+			m_liveDemo->enterRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), record, picture_id);
 
 		m_liveDemo->show();
     }
@@ -983,8 +1106,9 @@ bool Application::resolveRTCRoomProtol(const Json::Value& root)
 		bool whiteboard = false;
 		bool screenShare = false;
 		bool record = false;
+		int picture_id = -1;
 
-		getConfigInfo(root, serverDomain, sdkAppID, accountType, userID, userSig, userName, userAvatar, roomID, roomInfo, strTemplate, userTag, userList, IMList, whiteboard, screenShare, record, title, logo);
+		getConfigInfo(root, serverDomain, sdkAppID, accountType, userID, userSig, userName, userAvatar, roomID, roomInfo, strTemplate, userTag, userList, IMList, whiteboard, screenShare, record, picture_id, title, logo);
 
 		std::transform(strTemplate.begin(), strTemplate.end(), strTemplate.begin(), ::tolower);
 		RTCAuthData authData;
@@ -997,9 +1121,9 @@ bool Application::resolveRTCRoomProtol(const Json::Value& root)
 		m_RTCDemo->initUI(strTemplate.c_str(), QString::fromUtf8(userTag.c_str()), userList, IMList, whiteboard, screenShare);
 
 		if (action == "createRoom")
-			m_RTCDemo->createRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), record);
+			m_RTCDemo->createRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), record, picture_id);
 		else
-			m_RTCDemo->enterRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), record);
+			m_RTCDemo->enterRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), record, picture_id);
 
 		m_RTCDemo->setTitle(title.c_str());
 		m_RTCDemo->setLogo(logo.c_str(), strTemplate != "1v1");
@@ -1022,7 +1146,7 @@ bool Application::resolveRTCRoomProtol(const Json::Value& root)
     return true;
 }
 
-void Application::getConfigInfo(const Json::Value& root, std::string & serverDomain, int & sdkAppID, std::string & accountType, std::string & userID, std::string & userSig, std::string & userName, std::string & userAvatar, std::string & roomID, std::string & roomInfo, std::string& strTemplate, std::string& userTag, bool& userList, bool& IMList, bool& whiteboard, bool& screenShare, bool & record, std::string & title, std::string & logo)
+void Application::getConfigInfo(const Json::Value& root, std::string & serverDomain, int & sdkAppID, std::string & accountType, std::string & userID, std::string & userSig, std::string & userName, std::string & userAvatar, std::string & roomID, std::string & roomInfo, std::string& strTemplate, std::string& userTag, bool& userList, bool& IMList, bool& whiteboard, bool& screenShare, bool & record, int & pictureID, std::string & title, std::string & logo)
 {
 	if (root.isMember("serverDomain"))
 	{
@@ -1106,6 +1230,11 @@ void Application::getConfigInfo(const Json::Value& root, std::string & serverDom
 	if (root.isMember("record"))
 	{
 		record = root["record"].asBool();
+	}
+
+	if (root.isMember("pictureID"))
+	{
+		pictureID = root["pictureID"].asInt();
 	}
 
 	if (root.isMember("title"))

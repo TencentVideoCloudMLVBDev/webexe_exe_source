@@ -27,7 +27,6 @@ public:
 	void updatePreview();
 	void setDeviceEnabled(bool camera, bool mic);
 
-	void initStartVideo();
 	void initConfigSetting(bool whiteboard, bool screenShare);
 
 protected:
@@ -48,7 +47,6 @@ private:
 	bool m_cameraPreview = true;
 	RECT m_areaRect;
 	MenuInfo m_menuInfo;
-	int m_initMainHeight;
 	std::string m_remoteID;
 	void initUI();
 	bool m_cameraEnabled = true;

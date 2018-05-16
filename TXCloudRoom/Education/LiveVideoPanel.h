@@ -33,10 +33,10 @@ public:
 	void setDeviceEnabled(bool camera, bool mic);
 
 	void initConfigSetting(int size, bool whiteboard, bool screenShare);
-	void initStartVideo();
 	void initShowVideo();
 protected:
 	virtual void keyPressEvent(QKeyEvent *event) override;
+	virtual void showEvent(QShowEvent *event) override;
 
 private:
 	void initUI();

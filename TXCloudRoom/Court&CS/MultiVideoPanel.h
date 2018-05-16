@@ -35,7 +35,6 @@ public:
 	void setDeviceEnabled(bool camera, bool mic);
 
 	void initConfigSetting(int size, bool whiteboard, bool screenShare);
-	void initStartVideo();
 	void initShowVideo();
 protected:
 	virtual void showEvent(QShowEvent *event) override;
@@ -59,7 +58,6 @@ private:
 	bool m_cameraPreview = true;
 	RECT m_areaRect;
 	MenuInfo m_menuInfo;
-	int m_initMainHeight;
 	bool m_cameraEnabled = true;
 
 	std::string m_roomCreator;

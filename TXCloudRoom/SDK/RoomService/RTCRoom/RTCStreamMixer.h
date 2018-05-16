@@ -26,6 +26,7 @@ public:
     void setRoomID(const std::string& roomID);
     void setUserID(const std::string& userID);
 	void setMixType(bool multi);
+	void setPictureID(int picture_id);
 
     void setMainStream(const std::string& streamID, int width, int height);
     void addSubStream(const std::string& streamID, int width, int height);
@@ -45,6 +46,7 @@ private:
     RTCStreamMixParam m_mainStream;
     std::vector<RTCStreamMixParam> m_subStream;
 	bool m_multi = true;
+	int m_pictureID = -1;
 };
 
 #endif /* __STREAMMIXER_H__ */

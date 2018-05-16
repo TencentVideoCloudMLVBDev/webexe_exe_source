@@ -146,6 +146,7 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
     <ClCompile Include="common\RoomService\BoardService.cpp" />
     <ClCompile Include="common\RoomService\CaptureScreen.cpp" />
     <ClCompile Include="common\RoomService\COSInfo.cpp" />
+    <ClCompile Include="common\RoomService\DataReport.cpp" />
     <ClCompile Include="common\RoomService\ImageDownloader.cpp" />
     <ClCompile Include="common\RoomService\TaskQueue.cpp" />
     <ClCompile Include="common\RoomService\TIMManager.cpp" />
@@ -922,6 +923,7 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\."</Command>
     </CustomBuild>
+    <ClInclude Include="common\RoomService\DataReport.h" />
     <ClInclude Include="common\RoomService\TaskQueue.h" />
     <ClInclude Include="common\RoomService\TIMManager.h" />
     <ClInclude Include="common\TaskQueue.h" />

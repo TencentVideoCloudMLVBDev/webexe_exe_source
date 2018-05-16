@@ -5,10 +5,12 @@
 #include "log.h"
 #include "Base.h"
 #include "TXLiveCommon.h"
+#include "DataReport.h"
 
 #include <ctime>
 #include <strstream>
 #include <assert.h>
+static uint64_t IMLoginTS;
 
 RTCMainPublisher::RTCMainPublisher()
     : m_userID(NULL)
@@ -155,6 +157,7 @@ void RTCRBussiness::setProxy(const std::string& ip, unsigned short port)
 void RTCRBussiness::login(const std::string & serverDomain, const RTCAuthData & authData, ILoginRTCCallback* callback)
 {
     LOGGER;
+	DataReport::instance()->setLogin(DataReport::instance()->txf_gettickcount());
 
     assert(false == serverDomain.empty() && NULL != callback);
 
@@ -172,6 +175,8 @@ void RTCRBussiness::login(const std::string & serverDomain, const RTCAuthData & 
     accountInfo.sdkAppID = m_authData.sdkAppID;
     accountInfo.userID = m_authData.userID;
     accountInfo.userSig = m_authData.userSig;
+	IMLoginTS = DataReport::instance()->txf_gettickcount();
+
     TIMManager::instance()->login(accountInfo, &cb);
 
     LINFO(L"%s", Ansi2Wide(serverDomain).c_str());
@@ -184,11 +189,12 @@ void RTCRBussiness::login(const std::string & serverDomain, const RTCAuthData & 
     });
 }
 
-void RTCRBussiness::recordVideo(bool multi)
+void RTCRBussiness::recordVideo(bool multi, int picture_id)
 {
 	m_bRecord = true;
 
 	m_streamMixer.setMixType(multi);
+	m_streamMixer.setPictureID(picture_id);
 }
 
 void RTCRBussiness::logout()
@@ -244,12 +250,16 @@ void RTCRBussiness::getRoomList(int index, int cnt, IGetRTCRoomListCallback* cal
 void RTCRBussiness::createRoom(const std::string& roomID, const std::string& roomInfo)
 {
     LOGGER;
-
+	
     m_roomData.roomID = roomID; //用户指定roomid，若为空，则后台自动生成
     m_roomData.roomInfo = roomInfo;
     m_bCreateRoom = true;
+	uint64_t ts = DataReport::instance()->txf_gettickcount();
+	DataReport::instance()->setCreate(ts);
 
     m_httpRequest.getPushURL(m_authData.userID, [=](const RTCResult& res, const std::string& pushURL) {
+		DataReport::instance()->setCGIPushURL(DataReport::instance()->txf_gettickspan(ts));
+
 		if (RTCROOM_SUCCESS != res.ec)
 		{
 			if (m_callback)
@@ -267,7 +277,6 @@ void RTCRBussiness::createRoom(const std::string& roomID, const std::string& roo
 			if (m_bRecord)
 			{
 				recordURL.append("&record=mp4&record_interval=7200");
-				m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
 			}
 
 			m_bPushBegin = false;
@@ -297,11 +306,6 @@ void RTCRBussiness::enterRoom(const std::string& roomID)
 			m_pushUrl = pushURL;
 
 			m_bPushBegin = false;
-			m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_LINKMIC_SUB_PUBLISHER);
-			if (m_bRecord)
-			{
-				m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
-			}
 			m_mainPublisher.pusher()->startAudioCapture();
 			m_mainPublisher.pusher()->startPush(m_pushUrl.c_str());
 		}
@@ -416,13 +420,15 @@ void RTCRBussiness::startLocalPreview(HWND rendHwnd, const RECT & rect)
 {
     LINFO(L"rendHwnd: 0x%08X, rect: <%ld, %ld, %ld, %ld>", rendHwnd, rect.left, rect.top, rect.right, rect.bottom);
 
-    m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_REALTIME_VIDEOCHAT);
     m_mainPublisher.pusher()->setRenderMode(TXE_RENDER_MODE_ADAPT);
+	if (m_bRecord)
+		m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality, TXE_VIDEO_RATIO_16_9);
+	else
+		m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality, TXE_VIDEO_RATIO_4_3);
 
     m_mainPublisher.setUserID(m_authData.userID.c_str());
     m_mainPublisher.pusher()->setCallback(this, m_mainPublisher.userID());
     m_mainPublisher.pusher()->startPreview(rendHwnd, rect, 0);
-    m_mainPublisher.pusher()->startAudioCapture();
 }
 
 void RTCRBussiness::updateLocalPreview(HWND rendHwnd, const RECT & rect)
@@ -450,7 +456,6 @@ bool RTCRBussiness::startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RE
     m_mainPublisher.pusher()->setVideoFPS(10);
     m_mainPublisher.pusher()->setScreenCaptureParam(captureHwnd, captureRect);
     bool ret = m_mainPublisher.pusher()->startPreview(TXE_VIDEO_SRC_SDK_SCREEN, rendHwnd, renderRect);
-    m_mainPublisher.pusher()->startAudioCapture();
 
     //sdk内部默认是镜像模式（针对摄像头），但是录屏出来的源数据本来就是镜像模式。
     m_mainPublisher.pusher()->setRenderYMirror(false);
@@ -501,11 +506,9 @@ void RTCRBussiness::addRemoteView(HWND rendHwnd, const RECT & rect, const char *
 	if (noLinkMic && m_subPublisher.size() > 0 && m_bRecord) // 开始混流
 	{
 		if (m_bCreateRoom)
-			m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER);
+			m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_LINKMIC_MAIN_PUBLISHER, TXE_VIDEO_RATIO_16_9);
 		else
-			m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_LINKMIC_SUB_PUBLISHER);
-
-		m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
+			m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_LINKMIC_SUB_PUBLISHER, TXE_VIDEO_RATIO_16_9);
 	}
 }
 
@@ -532,8 +535,7 @@ void RTCRBussiness::removeRemoteView(const char * userID)
 
 	if (hasLinkMic && 0 == m_subPublisher.size() && m_bRecord)  // 结束混流, 恢复原有的画质设置
 	{
-		m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality);
-		m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
+		m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality, TXE_VIDEO_RATIO_16_9);
 	}
 }
 
@@ -577,16 +579,18 @@ void RTCRBussiness::setVideoQuality(RTCVideoQuality quality, RTCAspectRatio rati
 		break;
 	}
 
-	m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality);
 	if (m_bRecord)
 	{
-		m_mainPublisher.pusher()->setVideoResolution(TXE_VIDEO_RESOLUTION_640x360);
+		m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality, TXE_VIDEO_RATIO_16_9);
 	}
+	else
+		m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality, TXE_VIDEO_RATIO_4_3);
 }
 
 void RTCRBussiness::onTIMLoginSuccess(void* data)
 {
     LINFO(L"IM login success");
+	DataReport::instance()->setIMLogin(DataReport::instance()->txf_gettickspan(IMLoginTS));
 }
 
 void RTCRBussiness::onTIMLoginError(int code, const char* desc, void* data)
@@ -885,6 +889,11 @@ void RTCRBussiness::onEventCallback(int eventId, const int paramCount, const cha
 		handlePushDisconnect(userID);
 	}
 	break;
+	case  PushEvt::PUSH_EVT_CONNECT_SUCC:
+	{
+		DataReport::instance()->setConnectSucc(DataReport::instance()->txf_gettickcount());
+	}
+	break;
 	case PushEvt::PUSH_EVT_PUSH_BEGIN:
 	{
 		LINFO(L"m_bPushBegin: %s", (true == m_bPushBegin ? L"true" : L"false"));
@@ -1088,6 +1097,8 @@ void RTCRBussiness::handleSketchPad(const std::string& userID, const Json::Value
 void RTCRBussiness::handlePushBeginForCreate()
 {
 	LOGGER;
+	uint64_t ts = DataReport::instance()->txf_gettickcount();
+	DataReport::instance()->setPushBegin(ts);
 
 	m_bPushBegin = true;
 
@@ -1097,6 +1108,10 @@ void RTCRBussiness::handlePushBeginForCreate()
 	}
 
 	m_httpRequest.createRoom(m_roomData.roomID, m_roomData.roomInfo, [=](const RTCResult& res, const std::string& roomID) {
+		DataReport::instance()->setCGICreateRoom(DataReport::instance()->txf_gettickspan(ts));
+		DataReport::instance()->generateCreateReport(0, m_roomData.roomID, m_authData.userID, m_authData.userName, "", 1);
+		CreateDataReport dataReport = DataReport::instance()->getCreateReport();
+
 		if (RTCROOM_SUCCESS != res.ec)
 		{
 			if (m_callback)

@@ -27,6 +27,16 @@ RTCStreamMixer::~RTCStreamMixer()
 void RTCStreamMixer::setSdkAppID(int sdkAppID)
 {
     m_sdkAppID = sdkAppID;
+	if (m_sdkAppID == 1400047134 && m_pictureID == -1)
+	{
+		//demo默认的appid对应的水印ID。
+		if (m_multi)
+		{
+			m_pictureID = 33261;
+		}
+		else
+			m_pictureID = 33270;
+	}
 }
 
 void RTCStreamMixer::setRoomID(const std::string& roomID)
@@ -42,6 +52,14 @@ void RTCStreamMixer::setUserID(const std::string& userID)
 void RTCStreamMixer::setMixType(bool multi)
 {
 	m_multi = multi;
+}
+
+void RTCStreamMixer::setPictureID(int picture_id)
+{
+	if (picture_id != -1)
+	{
+		m_pictureID = picture_id;
+	}
 }
 
 void RTCStreamMixer::setMainStream(const std::string& streamID, int width, int height)
@@ -233,33 +251,37 @@ Json::Value RTCStreamMixer::createMultiJsonParams()
 	}
 
 	//背景图
-	for (int i = 0; i < MAX_SUBSTREAM_COUNT - m_subStream.size(); ++i)
+	if (m_pictureID != -1)
 	{
-		int actualSubWidth = subWidth;
-		int actualSubHeight = subHeight;
-
-		if (MAX_SUBSTREAM_COUNT - m_subStream.size() - 1 == i)       // 最后一个背景画面占满剩余空间
+		for (int i = 0; i < MAX_SUBSTREAM_COUNT - m_subStream.size(); ++i)
 		{
-			actualSubWidth = m_mainStream.width - subLocationX;
+			int actualSubWidth = subWidth;
+			int actualSubHeight = subHeight;
+
+			if (MAX_SUBSTREAM_COUNT - m_subStream.size() - 1 == i)       // 最后一个背景画面占满剩余空间
+			{
+				actualSubWidth = m_mainStream.width - subLocationX;
+			}
+
+			Json::Value layoutParam;
+			layoutParam["image_layer"] = index++;
+			layoutParam["image_width"] = actualSubWidth;
+			layoutParam["image_height"] = actualSubHeight;
+			layoutParam["location_x"] = subLocationX;
+			layoutParam["location_y"] = subLocationY;
+			layoutParam["input_type"] = 2;
+			layoutParam["picture_id"] = m_pictureID;
+
+			Json::Value bgStream;
+			bgStream["layout_params"] = layoutParam;
+			bgStream["input_stream_id"] = m_mainStream.streamID;
+
+			inputStreamList.append(bgStream);
+
+			subLocationX += actualSubWidth;
 		}
-
-		Json::Value layoutParam;
-		layoutParam["image_layer"] = index++;
-		layoutParam["image_width"] = actualSubWidth;
-		layoutParam["image_height"] = actualSubHeight;
-		layoutParam["location_x"] = subLocationX;
-		layoutParam["location_y"] = subLocationY;
-		layoutParam["input_type"] = 2;
-		layoutParam["picture_id"] = 33261;
-
-		Json::Value bgStream;
-		bgStream["layout_params"] = layoutParam;
-		bgStream["input_stream_id"] = m_mainStream.streamID;
-
-		inputStreamList.append(bgStream);
-
-		subLocationX += actualSubWidth;
 	}
+
 	// para
 	Json::Value para;
 	para["app_id"] = m_sdkAppID;
@@ -322,8 +344,8 @@ Json::Value RTCStreamMixer::createDoubleJsonParams()
 		layoutParam["location_x"] = 0;
 		layoutParam["location_y"] = 0;
 
-		int srcWidth = m_mainStream.width;
-		int srcHeight = m_mainStream.height;
+		int srcWidth = m_mainStream.width / 4 * 2;
+		int srcHeight = m_mainStream.height / 4 * 2;
 
 		int cropWidth = srcWidth;
 		int cropHeight = srcHeight;
@@ -411,28 +433,29 @@ Json::Value RTCStreamMixer::createDoubleJsonParams()
 	}
 
 	//背景图
-	for (int i = 0; i < 1 - m_subStream.size(); ++i)
+	if (m_pictureID != -1)
 	{
-		int actualSubWidth = subWidth;
-		int actualSubHeight = subHeight;
+		for (int i = 0; i < 1 - m_subStream.size(); ++i)
+		{
+			Json::Value layoutParam;
+			layoutParam["image_layer"] = index++;
+			layoutParam["image_width"] = subWidth;
+			layoutParam["image_height"] = subHeight;
+			layoutParam["location_x"] = subLocationX;
+			layoutParam["location_y"] = subLocationY;
+			layoutParam["input_type"] = 2;
+			layoutParam["picture_id"] = m_pictureID;
 
-		Json::Value layoutParam;
-		layoutParam["image_layer"] = index++;
-		layoutParam["image_width"] = actualSubWidth;
-		layoutParam["image_height"] = actualSubHeight;
-		layoutParam["location_x"] = subLocationX;
-		layoutParam["location_y"] = subLocationY;
-		layoutParam["input_type"] = 2;
-		layoutParam["picture_id"] = 33270;
+			Json::Value bgStream;
+			bgStream["layout_params"] = layoutParam;
+			bgStream["input_stream_id"] = m_mainStream.streamID;
 
-		Json::Value bgStream;
-		bgStream["layout_params"] = layoutParam;
-		bgStream["input_stream_id"] = m_mainStream.streamID;
+			inputStreamList.append(bgStream);
 
-		inputStreamList.append(bgStream);
-
-		subLocationX += actualSubWidth;
+			subLocationX += subWidth;
+		}
 	}
+
 
 	// para
 	Json::Value para;

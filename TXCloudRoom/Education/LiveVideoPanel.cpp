@@ -21,6 +21,7 @@ LiveVideoPanel::LiveVideoPanel(QWidget *parent)
 
 LiveVideoPanel::~LiveVideoPanel()
 {
+	LiveRoom::instance()->stopLocalPreview();
 }
 
 void LiveVideoPanel::initShowVideo()
@@ -106,6 +107,15 @@ void LiveVideoPanel::onRoomClosed()
 void LiveVideoPanel::setRoomCreator(const std::string & id)
 {
 	m_roomCreator = id;
+	if (!whiteBoard)
+	{
+		whiteBoard = new WhiteBoard(ui.widget_board);
+		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
+		vBoardLayout->setMargin(0);
+		vBoardLayout->addWidget(whiteBoard);
+		ui.widget_board->setLayout(vBoardLayout);
+		whiteBoard->show();
+	}
 	if (m_roomCreator == m_userID && whiteBoard)
 	{
 		whiteBoard->setMainUser(true);
@@ -117,15 +127,6 @@ void LiveVideoPanel::setUserInfo(const std::string & id, const std::string & use
 	m_userID = id;
 	m_userName = userName;
 	selfWidget->setUserName(userName);
-	if (!whiteBoard)
-	{
-		whiteBoard = new WhiteBoard(ui.widget_board);
-		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
-		vBoardLayout->setMargin(0);
-		vBoardLayout->addWidget(whiteBoard);
-		ui.widget_board->setLayout(vBoardLayout);
-		whiteBoard->show();
-	}
 }
 
 int LiveVideoPanel::getVideoCount()
@@ -175,12 +176,6 @@ void LiveVideoPanel::initConfigSetting(int size, bool whiteboard, bool screenSha
 	}
 }
 
-void LiveVideoPanel::initStartVideo()
-{
-	LiveRoom::instance()->setVideoQuality(LIVEROOM_VIDEO_QUALITY_HIGH_DEFINITION, LIVEROOM_ASPECT_RATIO_4_3);
-	LiveRoom::instance()->startLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
-}
-
 void LiveVideoPanel::keyPressEvent(QKeyEvent * event)
 {
 	switch (event->key())
@@ -206,6 +201,16 @@ void LiveVideoPanel::keyPressEvent(QKeyEvent * event)
 		break;
 	default:
 		QWidget::keyPressEvent(event);
+	}
+}
+
+void LiveVideoPanel::showEvent(QShowEvent * event)
+{
+	static bool init = true;
+	if (init)
+	{
+		LiveRoom::instance()->startLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
+		init = false;
 	}
 }
 
@@ -406,6 +411,15 @@ void LiveVideoPanel::on_selectCaptureArea(QRect rect)
 
 void LiveVideoPanel::on_tabWidget_currentChanged()
 {
+	if (!whiteBoard)
+	{
+		whiteBoard = new WhiteBoard(ui.widget_board);
+		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
+		vBoardLayout->setMargin(0);
+		vBoardLayout->addWidget(whiteBoard);
+		ui.widget_board->setLayout(vBoardLayout);
+		whiteBoard->show();
+	}
 	m_tabIndex = ui.tabWidget->currentIndex();
 	switch (m_tabIndex)
 	{
