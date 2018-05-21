@@ -27,11 +27,6 @@ LRStreamMixer::~LRStreamMixer()
 void LRStreamMixer::setSdkAppID(int sdkAppID)
 {
     m_sdkAppID = sdkAppID;
-	if (m_sdkAppID == 1400047134 && m_pictureID == -1)
-	{
-		//demo默认的appid对应的水印ID。
-		m_pictureID = 33261;
-	}
 }
 
 void LRStreamMixer::setRoomID(const std::string& roomID)

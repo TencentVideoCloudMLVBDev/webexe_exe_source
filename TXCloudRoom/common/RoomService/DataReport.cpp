@@ -63,7 +63,6 @@ void DataReport::setCreateRoom(long long tc)
 
 void DataReport::generateCreateReport(uint32_t int32_appid, std::string str_roomid, std::string str_room_creator, std::string str_nickname, std::string str_push_info, uint32_t int32_is_roomservice)
 {
-	m_createReport.int32_appid = 1252463788; //roomserviceµÄappidÊÇ1252463788
 	m_createReport.int64_tc_create_room = txf_gettickspan(m_createReport.int64_ts_rcv_protol);
 	m_createReport.str_roomid = str_roomid;
 	m_createReport.str_room_creator = str_room_creator;

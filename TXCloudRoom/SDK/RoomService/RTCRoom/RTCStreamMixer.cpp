@@ -27,16 +27,6 @@ RTCStreamMixer::~RTCStreamMixer()
 void RTCStreamMixer::setSdkAppID(int sdkAppID)
 {
     m_sdkAppID = sdkAppID;
-	if (m_sdkAppID == 1400047134 && m_pictureID == -1)
-	{
-		//demo默认的appid对应的水印ID。
-		if (m_multi)
-		{
-			m_pictureID = 33261;
-		}
-		else
-			m_pictureID = 33270;
-	}
 }
 
 void RTCStreamMixer::setRoomID(const std::string& roomID)
