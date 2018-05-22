@@ -24,7 +24,7 @@ LiveRoomList::LiveRoomList(QWidget *parent)
     , m_point()
     , m_createRoom(nullptr)
     , m_authData()
-    , m_httpRequest("https://xzb.qcloud.com/")
+    , m_httpRequest("http://xzb.qcloud.com:8080/roomlist/weapp/webexe_room/")
     , m_roomID("")
     , m_listTimerID(-1)
     , m_hearbeatTimerID(0)
@@ -57,9 +57,9 @@ LiveRoomList::LiveRoomList(QWidget *parent)
 
     // 生成userID
     qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
-    QString userID = QString("%1%2").arg("WinUser_Cpp_").arg(qrand() % 100000);
+    m_userID = QString("%1%2").arg("WinUser_Cpp_").arg(qrand() % 100000).toStdString();
 
-    getLoginInfo(userID.toStdString());
+    getLoginInfo(m_userID);
 
     getRoomList(0, 20);
     m_listTimerID = startTimer(3 * 1000);
@@ -197,7 +197,7 @@ void LiveRoomList::onCreateBtnClicked()
         {
             // 创建房间
 
-            createRoom("", roomName, LIVEROOM_TYPE);
+            createRoom("", roomName, "webexe_liveroom");
         }
     });
 
@@ -253,7 +253,7 @@ void CALLBACK LiveRoomList::onTimerEvent(UINT uTimerID, UINT uMsg, DWORD_PTR dwU
     LiveRoomList* impl = reinterpret_cast<LiveRoomList*>(dwUser);
     if (impl)
     {
-        impl->m_httpRequest.heartbeat(impl->m_roomID, LIVEROOM_TYPE, [=](const Result& res) {});
+        impl->m_httpRequest.heartbeat(impl->m_roomID, "webexe_liveroom", [=](const Result& res) {});
     }
 }
 
@@ -280,9 +280,9 @@ void LiveRoomList::getLoginInfo(const std::string& userID)
     });
 }
 
-void LiveRoomList::createRoom(const std::string& roomID, const std::string& roomInfo, RoomType roomType)
+void LiveRoomList::createRoom(const std::string& roomID, const std::string& roomInfo, const std::string& roomType)
 {
-    m_httpRequest.createRoom("", roomInfo, roomType, [=](const Result& res, const std::string& roomID) {
+    m_httpRequest.createRoom("", m_userID, roomInfo, roomType, [=](const Result& res, const std::string& roomID) {
         emit dispatch([=] {
             if (ROOM_SUCCESS != res.ec)
             {
@@ -336,7 +336,7 @@ void LiveRoomList::createRoom(const std::string& roomID, const std::string& room
 
 void LiveRoomList::getRoomList(int index, int cnt)
 {
-    m_httpRequest.getRoomList(index, cnt, LIVEROOM_TYPE, [=](const Result& res, const std::vector<RoomData>& roomList) {
+    m_httpRequest.getRoomList(index, cnt, "webexe_liveroom", [=](const Result& res, const std::vector<RoomData>& roomList) {
         emit dispatch([=] {
             if (ROOM_SUCCESS != res.ec)
             {

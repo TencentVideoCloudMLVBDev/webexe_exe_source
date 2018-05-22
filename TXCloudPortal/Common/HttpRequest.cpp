@@ -35,7 +35,7 @@ void HttpRequest::getLoginInfo(const std::string& userID, getLoginInfoFunc func)
     std::string jsonStr = writer.write(jsonObj);
 
     std::stringstream buffer;
-    buffer << m_domain << "get_login_info";
+    buffer << m_domain << "get_login_info?userID=" <<userID;
 
     std::wstring url = Ansi2Wide(buffer.str());
 
@@ -43,7 +43,7 @@ void HttpRequest::getLoginInfo(const std::string& userID, getLoginInfoFunc func)
     headers.push_back(L"Content-Type: application/json; charset=utf-8");
 
     std::string respData;
-    DWORD ret = m_httpClient.http_post(url, headers, jsonStr, respData);
+    DWORD ret = m_httpClient.http_get(url, headers, respData);
     LINFO(L"ret: %lu, respData: %s", ret, UTF82Wide(respData).c_str());
     if (0 != ret || true == respData.empty())
     {
@@ -71,51 +71,46 @@ void HttpRequest::getLoginInfo(const std::string& userID, getLoginInfoFunc func)
         message = root["message"].asString();
     }
 
-    if (code != 200)
-    {
-        func({ adaptRTCErrorCode(code), message }, AuthData());
-        return;
-    }
-
-    Json::Value data;
-    if (root.isMember("data"))
-    {
-        data = root["data"];
-    }
+	if (code != 0)
+	{
+		func({ adaptRTCErrorCode(code), message }, AuthData());
+		return;
+	}
 
     AuthData authData;
-    if (data.isMember("sdkAppID"))
+    if (root.isMember("sdkAppID"))
     {
-        authData.sdkAppID = data["sdkAppID"].asInt();
+        authData.sdkAppID = root["sdkAppID"].asInt();
     }
 
-    if (data.isMember("accType"))
+    if (root.isMember("accountType"))
     {
-        authData.accountType = data["accType"].asString();
+        authData.accountType = root["accountType"].asString();
     }
 
-    if (data.isMember("userID"))
+    if (root.isMember("userID"))
     {
-        authData.userID = data["userID"].asString();
+        authData.userID = root["userID"].asString();
     }
 
-    if (data.isMember("userSig"))
+    if (root.isMember("userSig"))
     {
-        authData.userSig = data["userSig"].asString();
+        authData.userSig = root["userSig"].asString();
     }
 
     func({ ROOM_SUCCESS, "" }, authData);
     //});
 }
 
-void HttpRequest::createRoom(const std::string& roomID, const std::string& roomInfo, RoomType roomType, createRoomFunc func)
+void HttpRequest::createRoom(const std::string& roomID, const std::string& userID, const std::string& roomInfo, const std::string& roomType, createRoomFunc func)
 {
     m_taskQueue.post([=]() {
         Json::Value jsonObj;
         jsonObj["roomID"] = roomID;
         jsonObj["roomInfo"] = roomInfo;
-        jsonObj["roomType"] = static_cast<int>(roomType);
-
+        jsonObj["roomType"] = roomType;
+		jsonObj["userID"] = userID;
+		jsonObj["needHeartBeat"] = 0;
         Json::FastWriter writer;
         std::string jsonStr = writer.write(jsonObj);
 
@@ -159,34 +154,28 @@ void HttpRequest::createRoom(const std::string& roomID, const std::string& roomI
             message = root["message"].asString();
         }
 
-        if (code != 200)
+        if (code != 0)
         {
             func({ adaptRTCErrorCode(code), message }, std::string());
             return;
         }
 
-        Json::Value data;
-        if (root.isMember("data"))
-        {
-            data = root["data"];
-        }
-
         std::string roomID;
-        if (data.isMember("roomID"))
+        if (root.isMember("roomID"))
         {
-            roomID = data["roomID"].asString();
+            roomID = root["roomID"].asString();
         }
 
         func({ ROOM_SUCCESS, message }, roomID);
     });
 }
 
-void HttpRequest::destroyRoom(const std::string& roomID, RoomType roomType, destroyRoomFunc func)
+void HttpRequest::destroyRoom(const std::string& roomID, const std::string& roomType, destroyRoomFunc func)
 {
     m_taskQueue.post(true, [=]() {
         Json::Value jsonObj;
         jsonObj["roomID"] = roomID;
-        jsonObj["roomType"] = static_cast<int>(roomType);
+        jsonObj["roomType"] = roomType;
 
         Json::FastWriter writer;
         std::string jsonStr = writer.write(jsonObj);
@@ -241,13 +230,13 @@ void HttpRequest::destroyRoom(const std::string& roomID, RoomType roomType, dest
     });
 }
 
-void HttpRequest::getRoomList(int index, int cnt, RoomType roomType, getRoomListFunc func)
+void HttpRequest::getRoomList(int index, int cnt, const std::string& roomType, getRoomListFunc func)
 {
     m_taskQueue.post([=]() {
         Json::Value jsonObj;
         jsonObj["count"] = cnt;
         jsonObj["index"] = index;
-        jsonObj["roomType"] = static_cast<int>(roomType);
+        jsonObj["roomType"] = roomType;
 
         Json::FastWriter writer;
         std::string jsonStr = writer.write(jsonObj);
@@ -292,19 +281,18 @@ void HttpRequest::getRoomList(int index, int cnt, RoomType roomType, getRoomList
             message = root["message"].asString();
         }
 
-        if (code != 200)
+        if (code != 0)
         {
             func({ adaptRTCErrorCode(code), message }, std::vector<RoomData>());
             return;
         }
 
-        Json::Value data;
-        if (root.isMember("data"))
+        Json::Value rooms;
+        if (root.isMember("rooms"))
         {
-            data = root["data"];
+			rooms = root["rooms"];
         }
 
-        Json::Value rooms = data["list"];
         if (false == rooms.isArray())
         {
             func({ ROOM_ERR_WRONG_JSON, "Json parse failed" }, std::vector<RoomData>());
@@ -319,7 +307,7 @@ void HttpRequest::getRoomList(int index, int cnt, RoomType roomType, getRoomList
             RoomData newRoom;
             newRoom.roomID = roomObj["roomID"].asString();
             newRoom.roomInfo = roomObj["roomInfo"].asString();
-            newRoom.roomType = static_cast<RoomType>(roomObj["roomType"].asInt());
+            newRoom.roomType = roomObj["roomType"].asString();
 
             roomList.push_back(newRoom);
         }
@@ -328,12 +316,12 @@ void HttpRequest::getRoomList(int index, int cnt, RoomType roomType, getRoomList
     });
 }
 
-void HttpRequest::heartbeat(const std::string& roomID, RoomType roomType, heardbeatFunc func)
+void HttpRequest::heartbeat(const std::string& roomID, const std::string& roomType, heardbeatFunc func)
 {
     m_taskQueue.post([=]() {
         Json::Value jsonObj;
         jsonObj["roomID"] = roomID;
-        jsonObj["roomType"] = static_cast<int>(roomType);
+        jsonObj["roomType"] = roomType;
 
         Json::FastWriter writer;
         std::string jsonStr = writer.write(jsonObj);

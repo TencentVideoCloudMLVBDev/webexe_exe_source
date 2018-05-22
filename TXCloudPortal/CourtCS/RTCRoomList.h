@@ -34,7 +34,7 @@ protected:
     static void CALLBACK onTimerEvent(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
 
     void getLoginInfo(const std::string& userID);
-    void createRoom(const std::string& roomID, const std::string& roomInfo, RoomType roomType);
+    void createRoom(const std::string& roomID, const std::string& roomInfo, const std::string& roomType);
     void getRoomList(int index, int cnt);
 	void getConfigInfo(std::string& title, std::string& logo, std::string& domain);
 private:
@@ -48,8 +48,8 @@ private:
     AuthData m_authData;
     HttpRequest m_httpRequest;
     std::string m_roomID;
-    RoomType m_roomType;
-
+    std::string m_roomType;
+	std::string m_userID;
     int m_listTimerID;
     MMRESULT m_hearbeatTimerID;
 };

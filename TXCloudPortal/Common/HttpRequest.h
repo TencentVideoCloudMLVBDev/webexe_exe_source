@@ -24,23 +24,13 @@ struct AuthData
 };
 
 /**
-* \brief：房间类型
-*/
-enum RoomType
-{
-    LIVEROOM_TYPE = 0,
-    DOUBLEROOM_TYPE = 1,
-    MULTIPLEROOM_TYPE = 2,
-};
-
-/**
 * \brief：房间信息
 */
 struct RoomData
 {
     std::string roomID;
     std::string roomInfo;
-    RoomType roomType;
+	std::string roomType;
 };
 
 /**
@@ -134,16 +124,16 @@ public:
     void getLoginInfo(const std::string& userID, getLoginInfoFunc func);
 
     typedef std::function<void(const Result& res, const std::string& roomID)> createRoomFunc;
-    void createRoom(const std::string& roomID, const std::string& roomInfo, RoomType roomType, createRoomFunc func);
+    void createRoom(const std::string& roomID, const std::string& userID, const std::string& roomInfo, const std::string& roomType, createRoomFunc func);
 
     typedef std::function<void(const Result& res)> destroyRoomFunc;
-    void destroyRoom(const std::string& roomID, RoomType roomType, destroyRoomFunc func);   // 同步接口
+    void destroyRoom(const std::string& roomID, const std::string& roomType, destroyRoomFunc func);   // 同步接口
 
     typedef std::function<void(const Result& res, const std::vector<RoomData>& roomList)> getRoomListFunc;
-    void getRoomList(int index, int cnt, RoomType roomType, getRoomListFunc func);
+    void getRoomList(int index, int cnt, const std::string& roomType, getRoomListFunc func);
 
     typedef std::function<void(const Result& res)> heardbeatFunc;
-    void heartbeat(const std::string& roomID, RoomType roomType, heardbeatFunc func);
+    void heartbeat(const std::string& roomID, const std::string& roomType, heardbeatFunc func);
 private:
     std::string m_domain;
     HttpClient m_httpClient;

@@ -26,9 +26,9 @@ RTCRoomList::RTCRoomList(QWidget *parent)
     , m_createRoom(nullptr)
     , m_multi(false)
     , m_authData()
-    , m_httpRequest("https://xzb.qcloud.com/")
+    , m_httpRequest("http://xzb.qcloud.com:8080/roomlist/weapp/webexe_room/")
     , m_roomID("")
-    , m_roomType(MULTIPLEROOM_TYPE)
+    , m_roomType("webexe_multiroom")
     , m_listTimerID(-1)
     , m_hearbeatTimerID(0)
 {
@@ -57,9 +57,9 @@ RTCRoomList::RTCRoomList(QWidget *parent)
 
     // Éú³ÉuserID
     qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
-    QString userID = QString("%1%2").arg("WinUser_Cpp_").arg(qrand() % 100000);
+	m_userID = QString("%1%2").arg("WinUser_Cpp_").arg(qrand() % 100000).toStdString();
 
-    getLoginInfo(userID.toStdString());
+    getLoginInfo(m_userID);
 
     getRoomList(0, 20);
     m_listTimerID = startTimer(3 * 1000);
@@ -110,12 +110,12 @@ void RTCRoomList::setMulti(bool multi)
     m_multi = multi;
     if (true == m_multi)
     {
-        m_roomType = MULTIPLEROOM_TYPE;
+        m_roomType = "webexe_multiroom";
         m_ui.title->setStyleSheet("image: url(:/Portal(Qt)/logo-court.png);");
     }
     else
     {
-        m_roomType = DOUBLEROOM_TYPE;
+        m_roomType = "webexe_doubleroom";
         m_ui.title->setStyleSheet("image: url(:/Portal(Qt)/logo-cs.png);");
     }
 }
@@ -312,9 +312,9 @@ void RTCRoomList::getLoginInfo(const std::string& userID)
     });
 }
 
-void RTCRoomList::createRoom(const std::string& roomID, const std::string& roomInfo, RoomType roomType)
+void RTCRoomList::createRoom(const std::string& roomID, const std::string& roomInfo, const std::string& roomType)
 {
-    m_httpRequest.createRoom("", roomInfo, roomType, [=](const Result& res, const std::string& roomID) {
+    m_httpRequest.createRoom( "", m_userID, roomInfo, roomType, [=](const Result& res, const std::string& roomID) {
         emit dispatch([=] {
             if (ROOM_SUCCESS != res.ec)
             {
