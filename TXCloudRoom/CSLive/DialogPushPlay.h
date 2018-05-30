@@ -26,8 +26,8 @@ public:
     void setLogo(const QString& logo);
 
     void setProxy(const std::string& ip, unsigned short port);
-	void snapShotPlayer(const QString& url);
-	void snapShotPusher(const QString& url);
+	void snapShotPlayer(const QString& path);
+	void snapShotPusher(const QString& path);
 
     void quit();
 public:
@@ -69,4 +69,9 @@ private:
 	bool m_bUserIsResizing;
 	bool m_bTopWindow;
 	Ui::DialogPushPlay ui;
+
+    std::wstring m_pusherSnapshotPath;
+    std::wstring m_playerSnapshotPath;
+    std::string m_pusherURL;
+    std::string m_playerURL;
 };

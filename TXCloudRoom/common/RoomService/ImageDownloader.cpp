@@ -1,4 +1,5 @@
 #include "ImageDownloader.h"
+#include "log.h"
 
 #include <QPixmap>
 #include <assert.h>
@@ -48,6 +49,8 @@ void ImageDownloader::onRequestImage()
     std::string respData;
     DWORD ret = m_httpClient.http_get(m_url, std::vector<std::wstring>(), respData);
     close();
+
+    LINFO(L"m_url: %s, ret: %lu", m_url.c_str(), ret);
 
     if (ERROR_SUCCESS == ret)
     {

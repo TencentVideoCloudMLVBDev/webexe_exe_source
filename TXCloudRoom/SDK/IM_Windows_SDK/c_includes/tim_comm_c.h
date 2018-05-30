@@ -170,6 +170,14 @@ extern "C"
 		void* data;
 	}TIMUserSigExpiredCB;
 
+
+	typedef void(*CBOnRefresh)(void * data);
+	typedef struct _TIMOnRefreshCallBack_c
+	{
+		CBOnRefresh OnRefresh;
+		void* data;
+	}TIMOnRefreshCB;
+
 	typedef void* TIMConversationHandle;
 
 	typedef void* TIMProfileHandle;

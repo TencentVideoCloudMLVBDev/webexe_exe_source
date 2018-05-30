@@ -27,7 +27,7 @@ public:
 	void set_svr_time_diff(int64_t diff);
 	int64_t svr_time_diff() const;
 
-	int Init(const char * socks5_ip, const int & socks5_port);
+	int Init();
 	int Uninit();
 	void Login(int sdk_app_id, 
 			const TIMUser &tim_user, const std::string &user_sig, TIMCallBack *cb);
@@ -59,6 +59,8 @@ public:
 
 	void SetStatusChangeCallback(TIMStatusChangeCallBack *cb);
 	TIMStatusChangeCallBack* GetStatusChangeCallback();
+	void SetOnRefreshCallback(TIMOnRefreshCallBack *cb);
+	TIMOnRefreshCallBack* GetOnRefreshCallback();
 	void SetGroupEventCallback(void* cb);//TIMGroupEventListener* cb
 	void* GetGroupEventCallback();
 	TIMNetworkStatus GetNetWorkStatus();
@@ -69,7 +71,7 @@ public:
 	void SendBatchC2CMsg(std::vector<std::string>&ids, TIMMessage& msg, TIMSendBatchCallBack* callback);
 
 	void SetResendInterval(uint64_t time);
-	void SetProxy();
+	void SetProxy(std::string ip, int port);
 
 private:
 	int env_;
@@ -85,6 +87,7 @@ private:
 	TIMForceOfflineCallBack* offline_cb_;
 	TIMUserSigExpiredCallBack* user_sig_expired_cb_;
 	TIMStatusChangeCallBack *status_change_cb_;
+	TIMOnRefreshCallBack* on_refresh_cb_;
 	void* group_event_cb_;
 };
 

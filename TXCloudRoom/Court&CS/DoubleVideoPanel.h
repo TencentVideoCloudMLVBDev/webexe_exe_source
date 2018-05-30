@@ -55,10 +55,20 @@ private:
 	std::string m_userName;
 	std::string m_userID;
 
+	QPushButton * m_btn_device_manage;
+	QPushButton * m_btn_beauty_manage;
+	QPushButton * m_btn_esc;
+
+	bool m_whiteboard = true;
+	bool m_screenShare = true;
+private:
+	RECT getScreenShareRenderRc();
+
 private slots:
 	void on_selectCaptureArea(QRect rect);
 
 	void on_tabWidget_currentChanged();
 	void on_btn_area_share_clicked();
 	void on_btn_full_share_clicked();
+	void on_btn_esc_clicked();
 };

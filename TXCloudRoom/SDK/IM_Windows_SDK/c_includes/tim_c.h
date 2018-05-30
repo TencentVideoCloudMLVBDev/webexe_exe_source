@@ -41,7 +41,7 @@ extern "C"
 	@return			int 0:成功 非0:失败
 	@exception      none
 	*/
-	TIM_DECL int	TIMInit(const char *ip, const int port);
+	TIM_DECL int	TIMInit();
 
 	/**
 	Description:	解初始化SDK 卸载DLL或退出进程前需调用
@@ -153,6 +153,9 @@ extern "C"
 	TIM_DECL void		TIMSetStatusChangeCallBack(TIMStatusChangeCB *callback);
 	TIM_DECL TIMStatusChangeCB* TIMGetStatusChangeCallBack();
 
+	TIM_DECL void		TIMSetOnRefreshCallBack(TIMOnRefreshCB *callback);
+	TIM_DECL TIMOnRefreshCB* TIMGetOnRefreshCallBack();
+
 	TIM_DECL void TIMSetGroupEventListener(TIMGroupEventListener* callback);
 	TIM_DECL TIMGroupEventListener* TIMGetGroupEventListener();
 
@@ -167,11 +170,13 @@ extern "C"
 	TIM_DECL void TIMSendBatchC2CMsg(const char** ids, uint32_t num, TIMMessageHandle msg_handle, TIMBBatchOprCB* callback);
 
 	/**
-	Description:	设置消息内部重发的间隔，单位毫秒。必须在初始化后调用，有效值[2000,5000]
+	Description:	设置消息内部重发的间隔，单位毫秒。必须在初始化后调用，有效值[1000,5000]
 	@return			
 	@exception      none
 	*/
 	TIM_DECL void	TIMSetResendInterval(uint64_t time);
+
+	TIM_DECL void	TIMSetProxy(const char *ip, int port);
 
 
 };

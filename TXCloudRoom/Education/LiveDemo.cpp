@@ -4,6 +4,7 @@
 #include "LRHttpRequest.h"
 #include "Application.h"
 #include "Base.h"
+#include "log.h"
 
 #include <Dwmapi.h> 
 
@@ -87,7 +88,19 @@ void LiveDemo::onDownloadFinished(bool success, QByteArray image)
 
 void LiveDemo::on_btn_close_clicked()
 {
+	if (m_screenRecord != RecordScreenNone)
+	{
+		HWND recordHwnd = FindWindowExA(HWND_MESSAGE, NULL, "TXCloudRecord", "TXCloudRecordCaption");
+		if (recordHwnd)
+		{
+			std::string message = "RecordExit";
+			COPYDATASTRUCT copy_data = { ScreenRecordExit, message.length() + 1,(LPVOID)message.c_str() };
+			::SendMessage(recordHwnd, WM_COPYDATA, ScreenRecordExit, reinterpret_cast<LPARAM>(&copy_data));
+		}
+	}
+
     Application::instance().pushRoomStatus(2, Wide2UTF8(L"退出房间"));
+	BoardService::instance().reportELK();
 
 	killTimer(m_timerID);
 	m_roomID = "";
@@ -117,11 +130,12 @@ LiveDemo::~LiveDemo()
 	delete roomService;
 }
 
-void LiveDemo::createRoom(const LRAuthData & authData, const QString & serverDomain, const QString & roomID, const QString & roomInfo, bool record, int picture_id)
+void LiveDemo::createRoom(const LRAuthData & authData, const QString & serverDomain, const QString & roomID, const QString & roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
 {
 	m_bCreate = true;
     m_roomID = roomID.toStdString();
 	m_roomInfo = roomInfo;
+	m_screenRecord = screenRecord;
 	BoardService::instance().setRoomID(roomID.toStdString());
 	if (record)
 	{
@@ -132,11 +146,12 @@ void LiveDemo::createRoom(const LRAuthData & authData, const QString & serverDom
 	init(authData, roomInfo);
 }
 
-void LiveDemo::enterRoom(const LRAuthData & authData, const QString & serverDomain, const QString & roomID, const QString & roomInfo, bool record, int picture_id)
+void LiveDemo::enterRoom(const LRAuthData & authData, const QString & serverDomain, const QString & roomID, const QString & roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
 {
 	m_bCreate = false;
     m_roomID = roomID.toStdString();
 	m_roomInfo = roomInfo;
+	m_screenRecord = screenRecord;
 	BoardService::instance().setRoomID(roomID.toStdString());
 	if (record)
 	{
@@ -149,6 +164,8 @@ void LiveDemo::enterRoom(const LRAuthData & authData, const QString & serverDoma
 
 void LiveDemo::setLogo(QString logoURL)
 {
+	LINFO(L"logoURL: %s", logoURL.toStdWString().c_str());
+
     if (true == logoURL.isEmpty())
     {
         ui.label_logo->setStyleSheet("image: url(:/RoomService/logo-edu-demo.png)");
@@ -191,6 +208,35 @@ void LiveDemo::init(const LRAuthData& authData, const QString& roomName)
 	}
 }
 
+void LiveDemo::setInitBeautyValue()
+{
+	QFile file(QCoreApplication::applicationDirPath() + "/beauty-config.ini");
+
+	if (!file.exists())
+	{
+		file.open(QIODevice::ReadWrite);
+		file.close();
+
+		QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/beauty-config.ini", QSettings::IniFormat);
+		setting->beginGroup("config");
+		setting->setValue("style", m_beautyStyle);
+		setting->setValue("beauty", m_beautyLevel);
+		setting->setValue("white", m_whitenessLevel);
+		setting->endGroup();
+	}
+	else
+	{
+		QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/beauty-config.ini", QSettings::IniFormat);
+		setting->beginGroup("config");
+		m_beautyStyle = setting->value("style").toInt();
+		m_beautyLevel = setting->value("beauty").toInt();
+		m_whitenessLevel = setting->value("white").toInt();
+		setting->endGroup();
+	}
+
+	RTCRoom::instance()->setBeautyStyle((RTCBeautyStyle)m_beautyStyle, m_beautyLevel, m_whitenessLevel);
+}
+
 void LiveDemo::onCreateRoom(const LRResult& res, const std::string& roomID)
 {
 	if (LIVEROOM_SUCCESS != res.ec)
@@ -213,7 +259,7 @@ void LiveDemo::onCreateRoom(const LRResult& res, const std::string& roomID)
 			m_timerID = startTimer(5 * 1000);
 			m_mainPanel->initShowVideo();
 		});
-
+		setInitBeautyValue();
         Application::instance().pushRoomStatus(0, Wide2UTF8(L"创建房间成功"));
 	}
 }
@@ -237,7 +283,7 @@ void LiveDemo::onEnterRoom(const LRResult& res)
 			m_timerID = startTimer(5 * 1000);
 			m_mainPanel->initShowVideo();
 		});
-
+		setInitBeautyValue();
         Application::instance().pushRoomStatus(1, Wide2UTF8(L"进入房间成功"));
 	}
 }
@@ -524,6 +570,13 @@ void LiveDemo::onRecvC2CCustomMsg(const char * userID, const char * userName, co
     }
 }
 
+void LiveDemo::onTIMKickOffline()
+{
+    emit dispatch([] {
+        DialogMessage::exec(QStringLiteral("IM强制下线，请检查是否重复登录同一个账号"), DialogMessage::OK);
+    });
+}
+
 void LiveDemo::onError(const LRResult& res, const std::string& userID)
 {
     QString msgContent = QString::fromLocal8Bit(res.msg.c_str());
@@ -777,6 +830,9 @@ void LiveDemo::on_device_manage_cancel(int cameraIndex, int micIndex, int micVol
 
 void LiveDemo::on_beauty_manage_ok(int beautyStyle, int beautyLevel, int whitenessLevel)
 {
+	m_beautyStyle = beautyStyle;
+	m_beautyLevel = beautyLevel;
+	m_whitenessLevel = whitenessLevel;
 	LiveRoom::instance()->setBeautyStyle((LRBeautyStyle)beautyStyle, beautyLevel, whitenessLevel);
 }
 

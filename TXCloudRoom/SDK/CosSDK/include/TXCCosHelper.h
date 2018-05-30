@@ -48,6 +48,7 @@ public:
 
 	bool previewObject(
 		const std::wstring &obj_name, 
+		const std::string &sig,
 		int page, 
 		const std::wstring &file_path, 
 		CosPreviewCallback callback) const;

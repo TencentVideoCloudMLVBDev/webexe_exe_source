@@ -2,6 +2,14 @@
 
 #include <string>
 
+enum ScreenRecordType
+{
+	RecordScreenNone = 0,
+	RecordScreenToServer = 1,
+	RecordScreenToClient = 2,
+	RecordScreenToBoth = 3,
+};
+
 class Application
 {
 protected:

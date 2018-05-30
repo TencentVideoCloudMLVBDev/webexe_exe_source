@@ -53,6 +53,7 @@ class RTCRBussiness
     : public IMRecvMsgCallback
     , public IMGroupOptCallBack
     , public IMGroupChangeCallback
+    , public IMKickOfflineCallBack
 	, public TXLivePlayerCallback
 	, public TXLivePusherCallback
 {
@@ -110,6 +111,8 @@ private:
     virtual void onRecvGroupCustomMsg(const char * groupID, const char * userID, const char * msg);
     virtual void onRecvGroupSystemMsg(const char * groupID, const char * msg);
 
+    virtual void onKickOffline();
+
     virtual void onGroupChangeMessage(IMGroupOptType opType, const char* group_id, const char * user_id);
 
     virtual void onEventCallback(int eventId, const int paramCount, const char **paramKeys, const char **paramValues, void *pUserData);
@@ -154,4 +157,5 @@ private:
 	TXEVideoQualityParamPreset m_quality = TXE_VIDEO_QUALITY_STANDARD_DEFINITION;
 	RTCStreamMixer m_streamMixer;
 	bool m_bRecord = false;
+	bool m_bReport = false;
 };

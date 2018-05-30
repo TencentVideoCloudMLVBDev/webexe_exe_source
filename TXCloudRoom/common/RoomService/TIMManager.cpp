@@ -75,7 +75,11 @@ void TIMManager::onTIMNewMessage(TIMMessageHandle* handles, uint32_t msg_num, vo
 
 void TIMManager::onTIMKickOffline(void* data)
 {
-
+    TIMManager* pIMService = (TIMManager *)data;
+    if (pIMService && pIMService->m_kickOfflineCallBack)
+    {
+        pIMService->m_kickOfflineCallBack->onKickOffline();
+    }
 }
 
 void TIMManager::OnGetWBFileDataSuccess(const char * buf, uint32_t len, void * data)
@@ -157,8 +161,11 @@ void TIMManager::init(const std::string& ip, unsigned short port)
 {
     TIMSetMode(1);
     TIMDisableStorage();
-    TIMInit(ip.c_str(), static_cast<int>(port));
+    TIMInit();
+	TIMSetProxy(ip.c_str(), static_cast<int>(port));
 }
+
+TIMForceOfflineCB g_forceOfflineCB = { 0 };
 
 void TIMManager::login(const IMAccountInfo & IMInfo, TIMCommCB *callback)
 {
@@ -175,10 +182,9 @@ void TIMManager::login(const IMAccountInfo & IMInfo, TIMCommCB *callback)
     cb.OnNewMessage = onTIMNewMessage;
     TIMSetMessageCallBack(&cb);
 
-    TIMForceOfflineCB forceOfflineCB = { 0 };
-    forceOfflineCB.data = this;
-    forceOfflineCB.OnKickOffline = onTIMKickOffline;
-    TIMSetKickOfflineCallBack(&forceOfflineCB);
+    g_forceOfflineCB.data = this;
+    g_forceOfflineCB.OnKickOffline = onTIMKickOffline;
+    TIMSetKickOfflineCallBack(&g_forceOfflineCB);
 }
 
 void onlogoutSuss(void *)
@@ -283,6 +289,11 @@ void TIMManager::setSendWBDataCallBack(IMSendWBDataCallBack * sink)
 void TIMManager::setGroupChangeCallBack(IMGroupChangeCallback * sink)
 {
 	m_groupChangeCallback = sink;
+}
+
+void TIMManager::setKickOfflineCallBack(IMKickOfflineCallBack * sink)
+{
+    m_kickOfflineCallBack = sink;
 }
 
 void TIMManager::sendC2CTextMsg(const char * dstUser, const char * msg)

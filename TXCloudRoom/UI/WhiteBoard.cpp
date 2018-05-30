@@ -5,6 +5,7 @@
 #include <ctime>
 #include "QDialogProgress.h"
 #include "BoardService.h"
+#include "DataReport.h"
 
 WhiteBoard::WhiteBoard(bool enableDraw, QWidget *parent)
 	: QMainWindow(parent)
@@ -204,14 +205,19 @@ void WhiteBoard::on_btnClear_clicked()
 
 void WhiteBoard::on_btnUpload_clicked()
 {
+	DataReport::instance().setClickUpload(DataReport::instance().txf_gettickcount());
+
 	QString fileName = QFileDialog::getOpenFileName(this,
 		QStringLiteral("选择背景文件"),
 		"",
-		QStringLiteral("背景文件 (*.png *.jpg *.jpeg *.bmp *.ppt *.pptx *.pdf)"),
+		QStringLiteral("背景文件 (*.png *.jpg *.jpeg *.bmp *.ppt *.pptx *.pdf *.doc)"),
 		nullptr);
 	if (fileName.isEmpty()) return;
 	emit QDialogProgress::instance().showProgress(QStringLiteral("正在上传"), 0);
 	
+	QFileInfo finfo(fileName);
+	DataReport::instance().setFileSize(finfo.size());
+
 	BoardService::instance().uploadFile(fileName.toStdWString());
 }
 
@@ -378,6 +384,8 @@ void WhiteBoard::connectSignals()
 	connect(this, &WhiteBoard::updatePageWindow, this, &WhiteBoard::on_updatePageWindow);
 	connect(this, &WhiteBoard::setUndoEnabled, ui.btnUndo, &QWidget::setEnabled);
 	connect(this, &WhiteBoard::setRedoEnabled, ui.btnRedo, &QWidget::setEnabled);
+	//connect(this, &WhiteBoard::setCopyEnabled, ui.btnCopy, &QWidget::setEnabled);
+	//connect(this, &WhiteBoard::setRemoveEnabled, ui.btnRemove, &QWidget::setEnabled);
 
 	connect(ui.rdoPen, &QRadioButton::clicked, this, &WhiteBoard::on_tool_toggled);
 	connect(ui.rdoPen, &QRadioButton::toggled, this, &WhiteBoard::on_tool_toggled);
@@ -659,10 +667,12 @@ void WhiteBoard::onUploadResult(bool success)
 	}
 }
 
-void WhiteBoard::onStatusChanged(bool canUndo, bool canRedo)
+void WhiteBoard::onStatusChanged(bool canUndo, bool canRedo, bool canCopy, bool canRemove)
 {
 	emit setUndoEnabled(canUndo);
 	emit setRedoEnabled(canRedo);
+	//emit setCopyEnabled(canCopy);
+	//emit setRemoveEnabled(canRemove);
 }
 
 void WhiteBoard::onSyncEventResult(bool success)

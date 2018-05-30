@@ -29,6 +29,8 @@ signals:
 	void updatePageWindow();
 	void setUndoEnabled(bool enabled);
 	void setRedoEnabled(bool enabled);
+	//void setCopyEnabled(bool enabled);
+	//void setRemoveEnabled(bool enabled);
 
 private slots:
 	void on_chkColorPick_toggled(bool checked);
@@ -86,7 +88,7 @@ private:
 private:
 	void onUploadProgress(int percent) override;
 	void onUploadResult(bool success) override;
-	void onStatusChanged(bool canUndo, bool canRedo) override;
+	void onStatusChanged(bool canUndo, bool canRedo, bool canCopy, bool canRemove) override;
 	void onSyncEventResult(bool success) override;
 
 private:

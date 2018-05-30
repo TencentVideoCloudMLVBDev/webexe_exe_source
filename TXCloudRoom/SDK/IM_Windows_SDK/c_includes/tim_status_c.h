@@ -23,6 +23,7 @@ extern "C"
 		void* data;
 	}TIMStatusChangeCB;
 
+
 	TIM_DECL TIMUserStatusHandle CreateUserStatusHandle();
 	TIM_DECL TIMUserStatusHandle CloneUserStatusHandle(TIMUserStatusHandle handle);
 	TIM_DECL void DestroyUserStatusHandle(TIMUserStatusHandle handle);

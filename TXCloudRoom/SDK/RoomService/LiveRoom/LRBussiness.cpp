@@ -6,11 +6,10 @@
 #include "log.h"
 #include "Base.h"
 #include "DataReport.h"
-
+#include "HttpReportRequest.h"
 #include <ctime>
 #include <strstream>
 #include <assert.h>
-static uint64_t IMLoginTS;
 
 LRMainPublisher::LRMainPublisher()
     : m_userID(NULL)
@@ -140,7 +139,8 @@ LRBussiness::LRBussiness()
 	, m_streamMixer(&m_httpRequest)
 {
 	TIMManager::instance()->setRecvMsgCallBack(this);
-	TIMManager::instance()->setGroupChangeCallBack(this);
+    TIMManager::instance()->setGroupChangeCallBack(this);
+    TIMManager::instance()->setKickOfflineCallBack(this);
 }
 
 LRBussiness::~LRBussiness()
@@ -172,7 +172,6 @@ void LRBussiness::setProxy(const std::string& ip, unsigned short port)
 void LRBussiness::login(const std::string & serverDomain, const LRAuthData & authData, ILoginLiveCallback* callback)
 {
 	LOGGER;
-	DataReport::instance()->setLogin(DataReport::instance()->txf_gettickcount());
 
 	assert(false == serverDomain.empty() && NULL != callback);
 
@@ -190,7 +189,6 @@ void LRBussiness::login(const std::string & serverDomain, const LRAuthData & aut
 	accountInfo.sdkAppID = m_authData.sdkAppID;
 	accountInfo.userID = m_authData.userID;
 	accountInfo.userSig = m_authData.userSig;
-	IMLoginTS = DataReport::instance()->txf_gettickcount();
 
 	TIMManager::instance()->login(accountInfo, &cb);
 
@@ -198,7 +196,7 @@ void LRBussiness::login(const std::string & serverDomain, const LRAuthData & aut
 
 	m_httpRequest.login(serverDomain, m_authData, [=](const LRResult& res, const std::string& userID, const std::string& token) {
 		assert(userID == m_authData.userID);
-
+		DataReport::instance().setCGILogin(DataReport::instance().txf_gettickcount());
 		m_authData.token = token;
 		callback->onLogin(res, m_authData);
 	});
@@ -280,15 +278,13 @@ void LRBussiness::getAudienceList(const std::string& roomID)
 void LRBussiness::createRoom(const std::string& roomID, const std::string& roomInfo)
 {
 	LOGGER;
-	uint64_t ts = DataReport::instance()->txf_gettickcount();
-	DataReport::instance()->setCreate(ts);
 
 	m_roomData.roomID = roomID;
 	m_roomData.roomInfo = roomInfo;
 	m_role = LRMainRole;
 
 	m_httpRequest.getPushURL(m_authData.userID, [=](const LRResult& res, const std::string& pushURL) {
-		DataReport::instance()->setCGIPushURL(DataReport::instance()->txf_gettickspan(ts));
+		DataReport::instance().setCGIPushURL(DataReport::instance().txf_gettickcount());
 		if (LIVEROOM_SUCCESS != res.ec)
 		{
 			if (m_callback)
@@ -364,6 +360,12 @@ void LRBussiness::leaveRoom()
 	// 如果自己是创建房间的大主播，后台销毁这个房间，并且通知各个端房间销毁
 	// 如果自己加入房间的小主播，后台不销毁房间，并且通知各个端成员变化
 	// 目前destroy_room的接口可以认为已失效
+
+	if (!m_bReport)
+	{
+		m_bReport = true;
+		HttpReportRequest::instance().reportELK(DataReport::instance().getInitReport());
+	}
 
     if (LRNullRole == m_role)
     {
@@ -660,11 +662,12 @@ void LRBussiness::setVideoQuality(LRVideoQuality quality, LRAspectRatio ratio)
 void LRBussiness::onTIMLoginSuccess(void* data)
 {
 	LINFO(L"IM login success");
-	DataReport::instance()->setIMLogin(DataReport::instance()->txf_gettickspan(IMLoginTS));
+	DataReport::instance().setIMLogin(DataReport::instance().txf_gettickcount());
 }
 
 void LRBussiness::onTIMLoginError(int code, const char* desc, void* data)
 {
+	DataReport::instance().setIMLogin(1);
 	LINFO(L"IM login failed code: %d, desc: %s", code, desc);
 }
 
@@ -1010,6 +1013,11 @@ void LRBussiness::onRecvGroupSystemMsg(const char * groupID, const char * msg)
 
 }
 
+void LRBussiness::onKickOffline()
+{
+    m_callback->onTIMKickOffline();
+}
+
 void LRBussiness::onGroupChangeMessage(IMGroupOptType opType, const char* group_id, const char * user_id)
 {
 	LINFO(L"opType: %d, group_id: %s, user_id: %s", opType, group_id, user_id);
@@ -1055,11 +1063,12 @@ void LRBussiness::onEventCallback(int eventId, const int paramCount, const char*
 	break;
 	case  PushEvt::PUSH_EVT_CONNECT_SUCC:
 	{
-		DataReport::instance()->setConnectSucc(DataReport::instance()->txf_gettickcount());
+		DataReport::instance().setConnectSucc(DataReport::instance().txf_gettickcount());
 	}
 	break;
 	case PushEvt::PUSH_EVT_PUSH_BEGIN:
 	{
+		DataReport::instance().setPushBegin(DataReport::instance().txf_gettickcount());
 		handlePushBegin();
 	}
 	break;
@@ -1153,6 +1162,11 @@ void LRBussiness::getPushers()
 		if (m_callback)
 		{
 			m_callback->onUpdateRoomData(res, m_roomData);
+		}
+		if (!m_bReport)
+		{
+			m_bReport = true;
+			HttpReportRequest::instance().reportELK(DataReport::instance().getInitReport());
 		}
 	});
 }
@@ -1312,9 +1326,6 @@ void LRBussiness::handlePushBegin()
         return;
     }
 
-	uint64_t ts = DataReport::instance()->txf_gettickcount();
-	DataReport::instance()->setPushBegin(ts);
-
     m_bPushBegin = true;
 
 	switch (m_role)
@@ -1323,9 +1334,7 @@ void LRBussiness::handlePushBegin()
 	{
 		m_streamMixer.mergeStream(10);
 		m_httpRequest.createRoom(m_roomData.roomID, m_roomData.roomInfo, [=](const LRResult& res, const std::string& roomID) {
-			DataReport::instance()->setCGICreateRoom(DataReport::instance()->txf_gettickspan(ts));
-			DataReport::instance()->generateCreateReport(0, m_roomData.roomID, m_authData.userID, m_authData.userName, "", 1);
-			CreateDataReport dataReport = DataReport::instance()->getCreateReport();
+			DataReport::instance().setCGICreateRoom(DataReport::instance().txf_gettickcount());
 
 			if (LIVEROOM_SUCCESS != res.ec)
 			{
@@ -1345,6 +1354,9 @@ void LRBussiness::handlePushBegin()
 				m_timerID = ::timeSetEvent(5000, 1, onTimerEvent, (DWORD_PTR)this, TIME_PERIODIC | TIME_CALLBACK_FUNCTION); // 开启心跳定时器
 
 				m_httpRequest.addPusher(m_roomData.roomID, m_authData.userID, m_authData.userName, m_authData.userAvatar, m_pushUrl, [=](const LRResult& res) {
+					DataReport::instance().setCGIAddPusher(DataReport::instance().txf_gettickcount());
+					DataReport::instance().setRoomInfo(0, m_roomData.roomID, true, m_authData.userID, m_authData.userName);
+
 					if (m_callback)
 					{
 						m_callback->onCreateRoom(res, roomID);

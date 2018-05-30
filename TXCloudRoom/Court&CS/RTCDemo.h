@@ -26,8 +26,8 @@ public:
 	RTCDemo(QWidget *parent = Q_NULLPTR);
 	virtual ~RTCDemo();
 
-	void createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id);
-	void enterRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id);
+	void createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
+	void enterRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
 	void setLogo(QString logoURL, bool multi = true);
 	void setTitle(QString title);
 	void leaveRoom();
@@ -44,6 +44,7 @@ protected:
 	virtual void onRecvRoomTextMsg(const char * roomID, const char * userID, const char * userName, const char * userAvatar, const char * msg);
 	virtual void onRecvRoomCustomMsg(const char * roomID, const char * userID, const char * userName, const char * userAvatar, const char * cmd, const char * message);
     virtual void onRecvC2CCustomMsg(const char * userID, const char * userName, const char * userAvatar, const char * cmd, const char * msg);
+    virtual void onTIMKickOffline();
 	virtual void onError(const RTCResult& res, const std::string& userID);
 
 	virtual void onLogin(const RTCResult& res, const RTCAuthData& authData);
@@ -77,9 +78,14 @@ private:
     ImageDownloader m_imgDownloader;
 	int m_cameraSize = 4;
 	bool m_multi = true;
+	int m_beautyStyle = 1;
+	int m_beautyLevel = 5;
+	int m_whitenessLevel = 5;
+	ScreenRecordType m_screenRecord;
+
 private:
 	void init(const RTCAuthData& authData, const QString& roomName);
-
+	void setInitBeautyValue();
 signals:
 	void dispatch(txfunction func);
 

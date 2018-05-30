@@ -27,7 +27,7 @@ BeautyManage::BeautyManage(QWidget *parent)
 		::DwmExtendFrameIntoClientArea((HWND)winId(), &margins);
 	}
 
-	QFile file("beauty-config.ini");
+	QFile file(QCoreApplication::applicationDirPath() + "/beauty-config.ini");
 
 	if (!file.exists())
 	{
@@ -37,7 +37,7 @@ BeautyManage::BeautyManage(QWidget *parent)
 		ui.radio_nature->setChecked(true);
 		ui.slider_beauty->setValue(5);
 		ui.slider_white->setValue(5);
-		QSettings* setting = new QSettings("beauty-config.ini", QSettings::IniFormat);
+		QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/beauty-config.ini", QSettings::IniFormat);
 		setting->beginGroup("config");
 		setting->setValue("style", 1);
 		setting->setValue("beauty", 5);
@@ -46,7 +46,7 @@ BeautyManage::BeautyManage(QWidget *parent)
 	}
 	else
 	{
-		QSettings* setting = new QSettings("beauty-config.ini", QSettings::IniFormat);
+		QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/beauty-config.ini", QSettings::IniFormat);
 		setting->beginGroup("config");
 		ui.slider_beauty->setValue(setting->value("beauty").toInt());
 		ui.slider_white->setValue(setting->value("white").toInt());
@@ -79,7 +79,7 @@ BeautyManage::~BeautyManage()
 
 void BeautyManage::on_btn_ok_clicked()
 {
-	QSettings* setting = new QSettings("beauty-config.ini", QSettings::IniFormat);
+	QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/beauty-config.ini", QSettings::IniFormat);
 	setting->beginGroup("config");
 	int index = 0;
 	if (ui.radio_nature->isChecked())

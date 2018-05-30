@@ -15,12 +15,17 @@ DialogPushPlay::DialogPushPlay(bool top_window, QWidget *parent)
 	, m_cameraCount(0)
 	, m_pushBegin(false)
 	, m_bUserIsResizing(false)
+    , m_pusherSnapshotPath(L"")
+    , m_playerSnapshotPath(L"")
+    , m_pusherURL("")
+    , m_playerURL("")
 {
 	ui.setupUi(this);
 
 	m_bTopWindow = top_window;
 	if (top_window)
 	{
+		SetForegroundWindow((HWND)winId());
 		setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 
 		QRect rect = QApplication::desktop()->screenGeometry();
@@ -81,6 +86,11 @@ void DialogPushPlay::onEventCallback(int eventId, const int paramCount, const ch
 	case PlayEvt::PLAY_EVT_PLAY_BEGIN: ///< ¿ªÊ¼²¥·Å
 		emit update_event(4);
 		break;
+    case PlayEvt::PLAY_EVT_SNAPSHOT_RESULT:
+        dispatch([=] {
+            Application::instance().pushSnapshotImage(m_playerSnapshotPath, m_playerURL);
+        });
+        break;
 	case PushEvt::PUSH_ERR_NET_DISCONNECT:
 		emit update_event(2);
 		break;
@@ -93,6 +103,11 @@ void DialogPushPlay::onEventCallback(int eventId, const int paramCount, const ch
 	case PushEvt::PUSH_EVT_CAMERA_CLOSED:
 		emit update_event(6);
 		break;
+    case PushEvt::PUSH_EVT_SNAPSHOT_RESULT:
+        dispatch([=] {
+            Application::instance().pushSnapshotImage(m_pusherSnapshotPath, m_pusherURL);
+        });
+        break;
 	default:
 		break;
 	}
@@ -143,6 +158,7 @@ void DialogPushPlay::showEvent(QShowEvent *event)
 {
 	if (m_bTopWindow)
 	{
+		SetForegroundWindow((HWND)winId());
 		setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 
 		QRect rect = QApplication::desktop()->screenGeometry();
@@ -177,7 +193,9 @@ void DialogPushPlay::startPush(const QString& url)
 	m_pusher.startPreview((HWND)ui.widget_video_push->winId(), RECT{ 0, 0, ui.widget_video_push->width(), ui.widget_video_push->height() }, 0);
 	m_pusher.startPush(url.toLocal8Bit());
 	m_pusher.startAudioCapture();
+
 	m_pushing = true;
+    m_pusherURL = url.toLocal8Bit();
 }
 
 void DialogPushPlay::startPlay(const QString& url)
@@ -193,7 +211,9 @@ void DialogPushPlay::startPlay(const QString& url)
 	m_player.setRenderMode(TXE_RENDER_MODE_ADAPT);
 	m_player.setRenderFrame((HWND)ui.widget_video_play->winId(), RECT{ 0, 0, ui.widget_video_play->width(), ui.widget_video_play->height() });
 	m_player.startPlay(url.toLocal8Bit(), PLAY_TYPE_LIVE_RTMP_ACC);
-	m_playing = true;
+
+    m_playing = true;
+    m_playerURL = url.toLocal8Bit();
 }
 
 void DialogPushPlay::stopPush()
@@ -264,16 +284,20 @@ void DialogPushPlay::setProxy(const std::string& ip, unsigned short port)
     }
 }
 
-void DialogPushPlay::snapShotPusher(const QString& url)
+void DialogPushPlay::snapShotPusher(const QString& path)
 {
-    std::wstring tempPath = url.toStdWString();
-    int ret = m_pusher.captureVideoSnapShot((wchar_t *)url.data(), url.size());
+    dispatch([=] {
+        m_pusherSnapshotPath = path.toStdWString();
+        int ret = m_pusher.captureVideoSnapShot(m_pusherSnapshotPath.c_str(), m_pusherSnapshotPath.size());
+    });
 }
 
-void DialogPushPlay::snapShotPlayer(const QString& url)
+void DialogPushPlay::snapShotPlayer(const QString& path)
 {
-    std::wstring tempPath = url.toStdWString();
-    int ret = m_pusher.captureVideoSnapShot((wchar_t *)url.data(), url.size());
+    dispatch([=] {
+        m_playerSnapshotPath = path.toStdWString();
+        int ret = m_player.captureVideoSnapShot(m_playerSnapshotPath.c_str(), m_playerSnapshotPath.size());
+    });
 }
 
 void DialogPushPlay::quit()

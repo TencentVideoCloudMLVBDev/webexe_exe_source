@@ -25,8 +25,8 @@ public:
 	LiveDemo(QWidget *parent = Q_NULLPTR);
 	virtual ~LiveDemo();
 
-    void createRoom(const LRAuthData& authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id);
-	void enterRoom(const LRAuthData& authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id);
+    void createRoom(const LRAuthData& authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
+	void enterRoom(const LRAuthData& authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
 	void setLogo(QString logoURL);
 	void setTitle(QString title);
 	void leaveRoom();
@@ -44,6 +44,7 @@ protected:
 	virtual void onRecvRoomTextMsg(const char * roomID, const char * userID, const char * userName, const char * userAvatar, const char * msg);
 	virtual void onRecvRoomCustomMsg(const char * roomID, const char * userID, const char * userName, const char * userAvatar, const char * cmd, const char * message);
     virtual void onRecvC2CCustomMsg(const char * userID, const char * userName, const char * userAvatar, const char * cmd, const char * msg);
+    virtual void onTIMKickOffline();
 	virtual void onError(const LRResult& res, const std::string& userID);
 	virtual void onRecvJoinPusherRequest(const std::string& roomID, const std::string& userID, const std::string& userName, const std::string& userAvatar);
 	virtual void onRecvAcceptJoinPusher(const std::string& roomID, const std::string& msg);
@@ -80,10 +81,16 @@ private:
     std::list<MemberItem> m_members;
 	int m_demoWidth;
 	int m_cameraSize = 4;
+	int m_beautyStyle = 1;
+	int m_beautyLevel = 5;
+	int m_whitenessLevel = 5;
+
     ImageDownloader m_imgDownloader;
+	ScreenRecordType m_screenRecord;
+
 private:
 	void init(const LRAuthData& authData, const QString& roomName);
-
+	void setInitBeautyValue();
 signals:
 	void dispatch(txfunction func);
 

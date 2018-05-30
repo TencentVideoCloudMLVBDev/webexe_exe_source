@@ -10,7 +10,7 @@
 #include <ctime>
 #include <strstream>
 #include <assert.h>
-static uint64_t IMLoginTS;
+#include "HttpReportRequest.h"
 
 RTCMainPublisher::RTCMainPublisher()
     : m_userID(NULL)
@@ -125,7 +125,8 @@ RTCRBussiness::RTCRBussiness()
 	, m_streamMixer(&m_httpRequest)
 {
     TIMManager::instance()->setRecvMsgCallBack(this);
-	TIMManager::instance()->setGroupChangeCallBack(this);
+    TIMManager::instance()->setGroupChangeCallBack(this);
+    TIMManager::instance()->setKickOfflineCallBack(this);
 }
 
 RTCRBussiness::~RTCRBussiness()
@@ -157,7 +158,6 @@ void RTCRBussiness::setProxy(const std::string& ip, unsigned short port)
 void RTCRBussiness::login(const std::string & serverDomain, const RTCAuthData & authData, ILoginRTCCallback* callback)
 {
     LOGGER;
-	DataReport::instance()->setLogin(DataReport::instance()->txf_gettickcount());
 
     assert(false == serverDomain.empty() && NULL != callback);
 
@@ -175,7 +175,6 @@ void RTCRBussiness::login(const std::string & serverDomain, const RTCAuthData & 
     accountInfo.sdkAppID = m_authData.sdkAppID;
     accountInfo.userID = m_authData.userID;
     accountInfo.userSig = m_authData.userSig;
-	IMLoginTS = DataReport::instance()->txf_gettickcount();
 
     TIMManager::instance()->login(accountInfo, &cb);
 
@@ -183,7 +182,7 @@ void RTCRBussiness::login(const std::string & serverDomain, const RTCAuthData & 
 
     m_httpRequest.login(serverDomain, m_authData, [=](const RTCResult& res, const std::string& userID, const std::string& token) {
         assert(userID == m_authData.userID);
-
+		DataReport::instance().setCGILogin(DataReport::instance().txf_gettickcount());
         m_authData.token = token;
         callback->onLogin(res, m_authData);
     });
@@ -254,11 +253,9 @@ void RTCRBussiness::createRoom(const std::string& roomID, const std::string& roo
     m_roomData.roomID = roomID; //用户指定roomid，若为空，则后台自动生成
     m_roomData.roomInfo = roomInfo;
     m_bCreateRoom = true;
-	uint64_t ts = DataReport::instance()->txf_gettickcount();
-	DataReport::instance()->setCreate(ts);
 
     m_httpRequest.getPushURL(m_authData.userID, [=](const RTCResult& res, const std::string& pushURL) {
-		DataReport::instance()->setCGIPushURL(DataReport::instance()->txf_gettickspan(ts));
+		DataReport::instance().setCGIPushURL(DataReport::instance().txf_gettickcount());
 
 		if (RTCROOM_SUCCESS != res.ec)
 		{
@@ -315,7 +312,12 @@ void RTCRBussiness::enterRoom(const std::string& roomID)
 void RTCRBussiness::leaveRoom()
 {
 	LOGGER;
-
+	if (!m_bReport)
+	{
+		m_bReport = true;
+		HttpReportRequest::instance().reportELK(DataReport::instance().getInitReport());
+	}
+	
 	if (!m_bCreateRoom && !m_bInRoom)
 	{
 		return;
@@ -590,11 +592,12 @@ void RTCRBussiness::setVideoQuality(RTCVideoQuality quality, RTCAspectRatio rati
 void RTCRBussiness::onTIMLoginSuccess(void* data)
 {
     LINFO(L"IM login success");
-	DataReport::instance()->setIMLogin(DataReport::instance()->txf_gettickspan(IMLoginTS));
+	DataReport::instance().setIMLogin(DataReport::instance().txf_gettickcount());
 }
 
 void RTCRBussiness::onTIMLoginError(int code, const char* desc, void* data)
 {
+	DataReport::instance().setIMLogin(1);
     LINFO(L"IM login failed code: %d, desc: %s", code, desc);
 }
 
@@ -844,6 +847,11 @@ void RTCRBussiness::onRecvGroupSystemMsg(const char * groupID, const char * msg)
 
 }
 
+void RTCRBussiness::onKickOffline()
+{
+    m_callback->onTIMKickOffline();
+}
+
 void RTCRBussiness::onGroupChangeMessage(IMGroupOptType opType, const char* group_id, const char * user_id)
 {
     LINFO(L"opType: %d, group_id: %s, user_id: %s", opType, group_id, user_id);
@@ -891,7 +899,7 @@ void RTCRBussiness::onEventCallback(int eventId, const int paramCount, const cha
 	break;
 	case  PushEvt::PUSH_EVT_CONNECT_SUCC:
 	{
-		DataReport::instance()->setConnectSucc(DataReport::instance()->txf_gettickcount());
+		DataReport::instance().setConnectSucc(DataReport::instance().txf_gettickcount());
 	}
 	break;
 	case PushEvt::PUSH_EVT_PUSH_BEGIN:
@@ -902,6 +910,7 @@ void RTCRBussiness::onEventCallback(int eventId, const int paramCount, const cha
 		{
 			return;
 		}
+		DataReport::instance().setPushBegin(DataReport::instance().txf_gettickcount());
 
 		if (m_bCreateRoom)
 		{
@@ -1008,6 +1017,12 @@ void RTCRBussiness::getPushers()
         {
             m_callback->onUpdateRoomData(res, m_roomData);
         }
+
+		if (!m_bReport)
+		{
+			m_bReport = true;
+			HttpReportRequest::instance().reportELK(DataReport::instance().getInitReport());
+		}
     });
 }
 
@@ -1097,8 +1112,6 @@ void RTCRBussiness::handleSketchPad(const std::string& userID, const Json::Value
 void RTCRBussiness::handlePushBeginForCreate()
 {
 	LOGGER;
-	uint64_t ts = DataReport::instance()->txf_gettickcount();
-	DataReport::instance()->setPushBegin(ts);
 
 	m_bPushBegin = true;
 
@@ -1108,9 +1121,7 @@ void RTCRBussiness::handlePushBeginForCreate()
 	}
 
 	m_httpRequest.createRoom(m_roomData.roomID, m_roomData.roomInfo, [=](const RTCResult& res, const std::string& roomID) {
-		DataReport::instance()->setCGICreateRoom(DataReport::instance()->txf_gettickspan(ts));
-		DataReport::instance()->generateCreateReport(0, m_roomData.roomID, m_authData.userID, m_authData.userName, "", 1);
-		CreateDataReport dataReport = DataReport::instance()->getCreateReport();
+		DataReport::instance().setCGICreateRoom(DataReport::instance().txf_gettickcount());
 
 		if (RTCROOM_SUCCESS != res.ec)
 		{
@@ -1129,6 +1140,9 @@ void RTCRBussiness::handlePushBeginForCreate()
 			m_timerID = ::timeSetEvent(5000, 1, onTimerEvent, (DWORD_PTR)this, TIME_PERIODIC | TIME_CALLBACK_FUNCTION); // 开启心跳定时器
 
 			m_httpRequest.addPusher(m_roomData.roomID, m_authData.userID, m_authData.userName, m_authData.userAvatar, m_pushUrl, [=](const RTCResult& res) {
+				DataReport::instance().setCGIAddPusher(DataReport::instance().txf_gettickcount());
+				DataReport::instance().setRoomInfo(0, m_roomData.roomID, true, m_authData.userID, m_authData.userName);
+
 				if (m_callback)
 				{
 					m_callback->onCreateRoom(res, roomID);
@@ -1152,6 +1166,9 @@ void RTCRBussiness::handlePushBeginForEnter()
 	m_timerID = ::timeSetEvent(5000, 1, onTimerEvent, (DWORD_PTR)this, TIME_PERIODIC | TIME_CALLBACK_FUNCTION); // 开启心跳定时器
 
 	m_httpRequest.addPusher(m_roomData.roomID, m_authData.userID, m_authData.userName, m_authData.userAvatar, m_pushUrl, [=](const RTCResult& res) {
+		DataReport::instance().setCGIAddPusher(DataReport::instance().txf_gettickcount());
+		DataReport::instance().setRoomInfo(0, m_roomData.roomID, false, m_authData.userID, m_authData.userName);
+
 		if (m_callback)
 		{
 			m_callback->onEnterRoom(res);

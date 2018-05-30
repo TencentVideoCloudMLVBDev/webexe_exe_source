@@ -23,6 +23,19 @@ enum E_TIMStreamEncode
 	HLS_AND_RTMP = 0X06,
 };
 
+enum E_TIMStreamRecordFileType
+{
+	RecordFile_NONE= 0x00,
+	RecordFile_HLS = 0x01,
+	RecordFile_FLV = 0x02,
+	RecordFile_HLS_FLV = 0x03,
+	RecordFile_MP4 = 0x04,
+	RecordFile_HLS_MP4 = 0x05,
+	RecordFile_FLV_MP4 = 0x06,
+	RecordFile_HLS_FLV_MP4 = 0x07,
+	RecordFile_MP3 = 0x10,
+};
+
 enum E_TIMSDKType
 {
 	SDKType_Normal = 0x01, // 普通开发sdk
@@ -95,6 +108,9 @@ struct TIMStreamParam
 	uint32_t	tape_flag;//推流是否录制 0.默认不录制  1.录制 启动推流的时候携带
 	uint32_t	watermark_flag;//水印标记: 0.默认不带水印 1.带水印；启动推流可选；默认原始码率
 	uint32_t	watermark_id;//水印id: 0.默认水印,其他水印ID需要通过控制台接口去获取;
+	bool        audioOnly;
+	uint32_t		recordId;//用户自定义RecordId(对应录制视频给业务侧服务器回调的字段stream_param的cliRecoId);
+	E_TIMStreamRecordFileType record_file_type;
 	std::vector<RateType> rpt_rate_type;//支持多码率观看；启动推流可选。默认原始码率
 };
 

@@ -250,6 +250,11 @@ public:
     virtual void onRecvC2CCustomMsg(const char * userID, const char * userName, const char * userAvatar, const char * cmd, const char * msg) = 0;
 
     /**
+    * \brief：同一个账号重复登录或者后台强制下线，都会触发该事件
+    */
+    virtual void onTIMKickOffline() = 0;
+
+    /**
     * \brief：LiveRoom内部发生错误的通知
     * \param：res - 执行结果，参考 RTCRoomUtil.h 中定义的 RTCResult 结构体
     * \param：userID - 用户ID

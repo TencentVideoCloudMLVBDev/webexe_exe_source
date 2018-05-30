@@ -123,6 +123,12 @@ public:
 	virtual void OnStatusChange(const std::string &user_id, const std::string &user_defined) {}
 };
 
+class TIM_DECL TIMOnRefreshCallBack {
+public:
+	virtual ~TIMOnRefreshCallBack() {}
+	virtual void OnRefresh() {}
+};
+
 struct TIMBatchOprDetailInfo
 {
 	struct TIMErrInfo

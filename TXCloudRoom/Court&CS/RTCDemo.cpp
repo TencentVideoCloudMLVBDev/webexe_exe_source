@@ -80,7 +80,19 @@ void RTCDemo::onDownloadFinished(bool success, QByteArray image)
 
 void RTCDemo::on_btn_close_clicked()
 {
+	if (m_screenRecord != RecordScreenNone)
+	{
+		HWND recordHwnd = FindWindowExA(HWND_MESSAGE, NULL, "TXCloudRecord", "TXCloudRecordCaption");
+		if (recordHwnd)
+		{
+			std::string message = "RecordExit";
+			COPYDATASTRUCT copy_data = { ScreenRecordExit, message.length() + 1,(LPVOID)message.c_str() };
+			::SendMessage(recordHwnd, WM_COPYDATA, ScreenRecordExit, reinterpret_cast<LPARAM>(&copy_data));
+		}
+	}
+
     Application::instance().pushRoomStatus(2, Wide2UTF8(L"退出房间"));
+	BoardService::instance().reportELK();
 
 	RTCRoom::instance()->leaveRoom();
 	RTCRoom::instance()->logout();
@@ -110,11 +122,12 @@ RTCDemo::~RTCDemo()
 	delete roomService;
 }
 
-void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id)
+void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
 {
 	m_bCreate = true;
     m_roomID = roomID;
 	m_roomInfo = roomInfo;
+	m_screenRecord = screenRecord;
 	BoardService::instance().setRoomID(roomID.toStdString());
 	if (record)
 	{
@@ -124,11 +137,12 @@ void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, cons
 	init(authData, roomInfo);
 }
 
-void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id)
+void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
 {
 	m_bCreate = false;
     m_roomID = roomID;
 	m_roomInfo = roomInfo;
+	m_screenRecord = screenRecord;
 	BoardService::instance().setRoomID(roomID.toStdString());
 	if (record)
 	{
@@ -197,6 +211,35 @@ void RTCDemo::init(const RTCAuthData& authData, const QString& roomName)
 	}
 }
 
+void RTCDemo::setInitBeautyValue()
+{
+	QFile file(QCoreApplication::applicationDirPath() + "/beauty-config.ini");
+
+	if (!file.exists())
+	{
+		file.open(QIODevice::ReadWrite);
+		file.close();
+
+		QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/beauty-config.ini", QSettings::IniFormat);
+		setting->beginGroup("config");
+		setting->setValue("style", m_beautyStyle);
+		setting->setValue("beauty", m_beautyLevel);
+		setting->setValue("white", m_whitenessLevel);
+		setting->endGroup();
+	}
+	else
+	{
+		QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/beauty-config.ini", QSettings::IniFormat);
+		setting->beginGroup("config");
+		m_beautyStyle = setting->value("style").toInt();
+		m_beautyLevel = setting->value("beauty").toInt();
+		m_whitenessLevel = setting->value("white").toInt();
+		setting->endGroup();
+	}
+
+	RTCRoom::instance()->setBeautyStyle((RTCBeautyStyle)m_beautyStyle, m_beautyLevel, m_whitenessLevel);
+}
+
 void RTCDemo::onCreateRoom(const RTCResult& res, const std::string& roomID)
 {
 	if (RTCROOM_SUCCESS != res.ec)
@@ -223,7 +266,7 @@ void RTCDemo::onCreateRoom(const RTCResult& res, const std::string& roomID)
 			m_roomID = roomID.c_str();
 			BoardService::instance().setRoomID(roomID);
 		});
-
+		setInitBeautyValue();
         Application::instance().pushRoomStatus(0, Wide2UTF8(L"创建房间成功"));
 	}
 }
@@ -252,7 +295,7 @@ void RTCDemo::onEnterRoom(const RTCResult& res)
 				m_doublePanel->initShowVideo();
 			}
 		});
-
+		setInitBeautyValue();
         Application::instance().pushRoomStatus(1, Wide2UTF8(L"进入房间成功"));
 	}
 }
@@ -489,6 +532,13 @@ void RTCDemo::onRecvC2CCustomMsg(const char * userID, const char * userName, con
     }
 }
 
+void RTCDemo::onTIMKickOffline()
+{
+    emit dispatch([] {
+        DialogMessage::exec(QStringLiteral("IM强制下线，请检查是否重复登录同一个账号"), DialogMessage::OK);
+    });
+}
+
 void RTCDemo::onError(const RTCResult & res, const std::string & userID)
 {
     QString msgContent = QString::fromLocal8Bit(res.msg.c_str());
@@ -549,7 +599,6 @@ void RTCDemo::initUI(const QString& strTemplate, const QString& userTag, bool bU
 	QVBoxLayout *tabVBoxLayout = new QVBoxLayout(ui.widget_main_share);
 	tabVBoxLayout->setMargin(0);
 	ui.widget_main_share->setLayout(tabVBoxLayout);
-
 	if (m_multi)
 	{
 		m_multiPanel = new MultiVideoPanel(ui.widget_main_share);
@@ -565,15 +614,15 @@ void RTCDemo::initUI(const QString& strTemplate, const QString& userTag, bool bU
 		m_doublePanel->show();
 	}
 
-    if (!m_memberPanel && bUserList)
-    {
-        m_memberPanel = new MemberPanel(ui.widget_member);
-        QVBoxLayout *memberVBoxLayout = new QVBoxLayout(ui.widget_member);
-        memberVBoxLayout->setMargin(0);
-        memberVBoxLayout->addWidget(m_memberPanel);
-        ui.widget_member->setLayout(memberVBoxLayout);
-        m_memberPanel->show();
-    }
+	if (!m_memberPanel && bUserList)
+	{
+		m_memberPanel = new MemberPanel(ui.widget_member);
+		QVBoxLayout *memberVBoxLayout = new QVBoxLayout(ui.widget_member);
+		memberVBoxLayout->setMargin(0);
+		memberVBoxLayout->addWidget(m_memberPanel);
+		ui.widget_member->setLayout(memberVBoxLayout);
+		m_memberPanel->show();
+	}
 
 	if (!m_imPanel && bIMList)
 	{
@@ -739,6 +788,9 @@ void RTCDemo::on_device_manage_cancel(int cameraIndex, int micIndex, int micVolu
 
 void RTCDemo::on_beauty_manage_ok(int beautyStyle, int beautyLevel, int whitenessLevel)
 {
+	m_beautyStyle = beautyStyle;
+	m_beautyLevel = beautyLevel;
+	m_whitenessLevel = whitenessLevel;
 	RTCRoom::instance()->setBeautyStyle((RTCBeautyStyle)beautyStyle, beautyLevel, whitenessLevel);
 }
 

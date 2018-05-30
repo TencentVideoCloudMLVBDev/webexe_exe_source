@@ -506,7 +506,14 @@ background-position: center;</string>
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget_board" native="true"/>
+         <widget class="QWidget" name="widget_board" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>780</width>
+            <height>437</height>
+           </size>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -696,6 +703,16 @@ QPushButton:disable {
 	background: #f2f2f2;
 }</string>
         </property>
+        <widget class="QWidget" name="widget_screen_share" native="true">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>300</width>
+           <height>168</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
       </widget>
      </item>

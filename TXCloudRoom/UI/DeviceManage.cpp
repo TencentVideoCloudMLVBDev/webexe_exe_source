@@ -26,7 +26,7 @@ DeviceManage::DeviceManage(QWidget *parent)
 		::DwmExtendFrameIntoClientArea((HWND)winId(), &margins);
 	}
 
-	QFile file("device-config.ini");
+	QFile file(QCoreApplication::applicationDirPath() + "/device-config.ini");
 
 	if (!file.exists())
 	{
@@ -38,7 +38,7 @@ DeviceManage::DeviceManage(QWidget *parent)
 		ui.cmb_camera->setCurrentIndex(0);
 		ui.cmb_mic->setCurrentIndex(0);
 
-		QSettings* setting = new QSettings("device-config.ini", QSettings::IniFormat);
+		QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/device-config.ini", QSettings::IniFormat);
 		setting->beginGroup("config");
 		setting->setValue("enableCamera", true);
 		setting->setValue("cameraIndex", 0);
@@ -48,7 +48,7 @@ DeviceManage::DeviceManage(QWidget *parent)
 	}
 	else
 	{
-		QSettings* setting = new QSettings("device-config.ini", QSettings::IniFormat);
+		QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/device-config.ini", QSettings::IniFormat);
 		setting->beginGroup("config");
 		setting->setValue("enableCamera", true);
 		setting->setValue("enableMic", true);
@@ -98,7 +98,7 @@ void DeviceManage::setMicVolume(int volume, bool init)
 
 bool DeviceManage::updateUI()
 {
-	QSettings* setting = new QSettings("device-config.ini", QSettings::IniFormat);
+	QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/device-config.ini", QSettings::IniFormat);
 	setting->beginGroup("config");
 	ui.chb_camera->setChecked(setting->value("enableCamera").toBool());
 
@@ -133,7 +133,7 @@ void DeviceManage::on_btn_ok_clicked()
 	bool enableMic = ui.chb_mic->isChecked();
 	int micIndex = ui.cmb_mic->currentIndex();
 
-	QSettings* setting = new QSettings("device-config.ini", QSettings::IniFormat);
+	QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/device-config.ini", QSettings::IniFormat);
 	setting->beginGroup("config");
 	setting->setValue("enableCamera", enableCamera);
 	setting->setValue("cameraIndex", cameraIndex);

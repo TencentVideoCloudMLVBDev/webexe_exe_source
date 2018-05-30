@@ -4,12 +4,13 @@
 #include "TIMManager.h"
 #include "commonType.h"
 #include "json.h"
+#include "HttpReportRequest.h"
 
 struct BoardServiceCallback
 {
 	virtual void onUploadProgress(int percent) = 0;
 	virtual void onUploadResult(bool success) = 0;
-	virtual void onStatusChanged(bool canUndo, bool canRedo) = 0;
+	virtual void onStatusChanged(bool canUndo, bool canRedo, bool canCopy, bool canRemove) = 0;
 	virtual void onSyncEventResult(bool success) = 0;
 };
 
@@ -64,6 +65,8 @@ public:
 
 	void gotoCurrentPage();
 
+	void reportELK();
+
 private:
 	void sendUploadProgress(int percent) const;
 
@@ -87,12 +90,13 @@ private:
 
 private:
 	void onActionsData(const char* data, uint32_t length) override;
-	void onBoardEventData(const char* data, uint32_t length) override;
-	void onStatusChanged(bool canUndo, bool canRedo) override;
+	void onStatusChanged(bool canUndo, bool canRedo, bool canCopy, bool canRemove) override;
 	uint32_t onGetTime() override;
 
 	void onRecvWhiteBoardData(const char* data, uint32_t length) override;
-
+	void onGetBoardData(bool bResult) override;
+	void onRenderFrame() override;
+	void onReportBoardData(const int code, const char * msg) override;
 private:
 	BoardService();
 	~BoardService();
@@ -102,11 +106,14 @@ private:
 
 	bool _canUndo{ false };
 	bool _canRedo{ false };
+	bool _canCopy{ false };
+	bool _canRemove{ false };
 	uint32_t _dataSeq{ 0 };
 
 	BoardSDK* _board;
 
 	TXCCosHelper _cos;
+	std::string _cosSign;
 
 	uint32_t _pageIndex{0};
 	std::vector<std::string> _pagesId;
@@ -115,4 +122,5 @@ private:
 
 	BoardAuthData m_authData;
     std::string m_roomID;
+	bool m_bFirstDownloaded = false;
 };

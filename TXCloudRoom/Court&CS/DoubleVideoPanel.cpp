@@ -71,7 +71,7 @@ void DoubleVideoPanel::onRoomClosed()
 void DoubleVideoPanel::setRoomCreator(const std::string& id)
 {
 	m_roomCreator = id;
-	if (!whiteBoard)
+	if (!whiteBoard && m_whiteboard)
 	{
 		whiteBoard = new WhiteBoard(ui.widget_board);
 		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
@@ -126,10 +126,12 @@ void DoubleVideoPanel::initConfigSetting(bool whiteboard, bool screenShare)
 {
 	if (!screenShare)
 	{
+		m_screenShare = false;
 		ui.tabWidget->removeTab(2);
 	}
 	if (!whiteboard)
 	{
+		m_whiteboard = false;
 		ui.tabWidget->removeTab(1);
 	}
 }
@@ -173,6 +175,7 @@ void DoubleVideoPanel::keyPressEvent(QKeyEvent * event)
 			{
 				RTCRoom::instance()->updateRemotePreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() }, m_remoteID.c_str());
 			}
+			m_btn_esc->hide();
 		}
 	}
 	break;
@@ -207,11 +210,11 @@ void DoubleVideoPanel::initUI()
 	ui.label_tip->setText(QStringLiteral("暂时没有客户登录"));
 	//ui.tabWidget->removeTab(2);
 	//ui.tabWidget->removeTab(1);
-
+	ui.btn_area_share->hide();
 	widget_tab_corner = new QWidget(this);
-	QPushButton * btn_device_manage = new QPushButton(QStringLiteral("设备管理"), widget_tab_corner);
-	QPushButton * btn_beauty_manage = new QPushButton(QStringLiteral("美颜设置"), widget_tab_corner);
-
+	m_btn_device_manage = new QPushButton(QStringLiteral("设备管理"), widget_tab_corner);
+	m_btn_beauty_manage = new QPushButton(QStringLiteral("美颜设置"), widget_tab_corner);
+	m_btn_esc = new QPushButton(QStringLiteral("结束分享"), widget_tab_corner);
 	QString btnStyle =
 		R"(
 QPushButton {
@@ -237,19 +240,25 @@ QPushButton:disable {
 	background:  #f2f2f2;
 }
 )";
-	const QSize btnSize = QSize(72, 26);
-	btn_device_manage->setStyleSheet(btnStyle);
-	btn_device_manage->setFixedSize(btnSize);
+	const QSize btnSize = QSize(84, 26);
+	m_btn_device_manage->setStyleSheet(btnStyle);
+	m_btn_device_manage->setFixedSize(btnSize);
 
-	btn_beauty_manage->setStyleSheet(btnStyle);
-	btn_beauty_manage->setFixedSize(btnSize);
+	m_btn_beauty_manage->setStyleSheet(btnStyle);
+	m_btn_beauty_manage->setFixedSize(btnSize);
 
-	connect(btn_device_manage, SIGNAL(released()), RTCMainWindow, SLOT(on_btn_device_manage_clicked()));
-	connect(btn_beauty_manage, SIGNAL(released()), RTCMainWindow, SLOT(on_btn_beauty_manage_clicked()));
+	m_btn_esc->setStyleSheet(btnStyle);
+	m_btn_esc->setFixedSize(btnSize);
 
+	connect(m_btn_device_manage, SIGNAL(released()), RTCMainWindow, SLOT(on_btn_device_manage_clicked()));
+	connect(m_btn_beauty_manage, SIGNAL(released()), RTCMainWindow, SLOT(on_btn_beauty_manage_clicked()));
+	connect(m_btn_esc, SIGNAL(released()), this, SLOT(on_btn_esc_clicked()));
+
+	m_btn_esc->hide();
 	QHBoxLayout* hLayout = new QHBoxLayout(widget_tab_corner);
-	hLayout->addWidget(btn_beauty_manage);
-	hLayout->addWidget(btn_device_manage);
+	hLayout->addWidget(m_btn_beauty_manage);
+	hLayout->addWidget(m_btn_device_manage);
+	hLayout->addWidget(m_btn_esc);
 	hLayout->setMargin(0);
 	widget_tab_corner->setStyleSheet("margin-top: 2");
 	ui.tabWidget->setCornerWidget(widget_tab_corner);
@@ -264,14 +273,33 @@ void DoubleVideoPanel::on_selectCaptureArea(QRect rect)
 	m_areaRect.right = rect.x() + rect.width();
 	m_areaRect.bottom = rect.y() + rect.height();
 	ui.stacked_screen->setCurrentIndex(1);
-
+	m_btn_esc->show();
 	RTCRoom::instance()->stopLocalPreview();
-	RTCRoom::instance()->startScreenPreview((HWND)ui.page_screen_content->winId(), nullptr, RECT{ 0, 0, ui.page_screen_content->width(), ui.page_screen_content->height() }, m_areaRect);
+	RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, m_areaRect);
+}
+
+
+RECT DoubleVideoPanel::getScreenShareRenderRc()
+{
+	//RECT rc = { 0, 0, ui.page_screen_content->width(), ui.page_screen_content->height() };
+	int width = 300;
+	int height = 168;
+	
+	if (width > ui.page_screen_content->width())
+		width = ui.page_screen_content->width();
+	if (height > ui.page_screen_content->height())
+		height = ui.page_screen_content->height();
+
+	int left = (ui.page_screen_content->width() - width) / 2;
+	int top = (ui.page_screen_content->height() - height) / 2;
+
+	RECT rc = { left , top, left + width , top + height };
+	return rc;
 }
 
 void DoubleVideoPanel::on_tabWidget_currentChanged()
 {
-	if (!whiteBoard)
+	if (!whiteBoard && m_whiteboard)
 	{
 		whiteBoard = new WhiteBoard(ui.widget_board);
 		QVBoxLayout * vBoardLayout = new QVBoxLayout(ui.widget_board);
@@ -282,11 +310,18 @@ void DoubleVideoPanel::on_tabWidget_currentChanged()
 	}
 
 	m_tabIndex = ui.tabWidget->currentIndex();
+	if (!m_whiteboard && m_tabIndex == 1)
+	{
+		m_tabIndex = 2;
+	}
 	switch (m_tabIndex)
 	{
 	case 0:
 	{
 		widget_tab_corner->show();
+		m_btn_beauty_manage->show();
+		m_btn_device_manage->show();
+		m_btn_esc->hide();
 		if (((m_screenFull || m_screenArea) && m_cameraPreview) || (!m_cameraPreview && m_cameraEnabled))
 		{
 			m_cameraPreview = true;
@@ -325,15 +360,19 @@ void DoubleVideoPanel::on_tabWidget_currentChanged()
 	break;
 	case 2:
 	{
-		widget_tab_corner->hide();
+		widget_tab_corner->show();
+		m_btn_beauty_manage->hide();
+		m_btn_device_manage->hide();
+
 		if (!m_screenArea && !m_screenFull)
 			break;
+		m_btn_esc->show();
 
 		RTCRoom::instance()->stopLocalPreview();
 		if (m_screenFull)
-			RTCRoom::instance()->startScreenPreview((HWND)ui.page_screen_content->winId(), nullptr, RECT{ 0, 0, ui.page_screen_content->width(), ui.page_screen_content->height() }, RECT{ 0 });
+			RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, RECT{ 0 });
 		else if (m_screenArea)
-			RTCRoom::instance()->startScreenPreview((HWND)ui.page_screen_content->winId(), nullptr, RECT{ 0, 0, ui.page_screen_content->width(), ui.page_screen_content->height() }, m_areaRect);
+			RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, m_areaRect);
 	}
 	break;
 	default:
@@ -351,7 +390,29 @@ void DoubleVideoPanel::on_btn_area_share_clicked()
 void DoubleVideoPanel::on_btn_full_share_clicked()
 {
 	m_screenFull = true;
+	m_btn_esc->show();
 	ui.stacked_screen->setCurrentIndex(1);
 	RTCRoom::instance()->stopLocalPreview();
-	RTCRoom::instance()->startScreenPreview((HWND)ui.page_screen_content->winId(), nullptr, RECT{ 0, 0, ui.page_screen_content->width(), ui.page_screen_content->height() }, RECT{ 0 });
+	RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, RECT{ 0 });
+}
+
+void DoubleVideoPanel::on_btn_esc_clicked()
+{
+	m_btn_esc->hide();
+	m_screenFull = false;
+	m_screenArea = false;
+	m_cameraPreview = true;
+
+	RTCRoom::instance()->stopScreenPreview();
+	ui.stacked_screen->setCurrentIndex(0);
+
+	RTCRoom::instance()->stopScreenPreview();
+	RTCRoom::instance()->startLocalPreview((HWND)ui.widget_local->winId(), RECT{ 0, 0, ui.widget_local->width(), ui.widget_local->height() });
+
+	if (m_cameraPreview)
+		RTCRoom::instance()->updateLocalPreview((HWND)ui.widget_local->winId(), RECT{ 0, 0, ui.widget_local->width(), ui.widget_local->height() });
+	if (!m_remoteID.empty())
+	{
+		RTCRoom::instance()->updateRemotePreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() }, m_remoteID.c_str());
+	}
 }

@@ -1,6 +1,7 @@
 #include "BoardService.h"
 #include "COSInfo.h"
-
+#include "DataReport.h"
+#include "Base.h"
 BoardService& BoardService::instance()
 {
 	static BoardService instance;
@@ -17,7 +18,6 @@ HWND BoardService::getRenderWindow() const
 {
 	return _board->getRenderWindow();
 }
-
 
 void BoardService::appendActionsData(std::string& data) const
 {
@@ -71,6 +71,12 @@ void BoardService::syncEventData()
 
 void BoardService::uploadFile(const std::wstring& fileName)
 {
+	if (!m_bFirstDownloaded)
+	{
+		std::string whiteboardReport = DataReport::instance().getWhiteboardReport();
+		HttpReportRequest::instance().reportELK(whiteboardReport);
+	}
+	m_bFirstDownloaded = false;
 	fetchCosSig(fileName);
 }
 
@@ -107,6 +113,16 @@ void BoardService::gotoCurrentPage()
     {
         gotoPage(_pageIndex);
     }
+}
+
+void BoardService::reportELK()
+{
+	if (!m_bFirstDownloaded)
+	{
+		m_bFirstDownloaded = true;
+		std::string whiteboardReport = DataReport::instance().getWhiteboardReport();
+		HttpReportRequest::instance().reportELK(whiteboardReport);
+	}
 }
 
 void BoardService::gotoLastPage()
@@ -186,7 +202,7 @@ void BoardService::sendStatusChanged() const
 {
 	if (_callback)
 	{
-		_callback->onStatusChanged(_canUndo, _canRedo);
+		_callback->onStatusChanged(_canUndo, _canRedo, _canCopy, _canRemove);
 	}
 }
 
@@ -228,6 +244,7 @@ void BoardService::fetchCosSig(const std::wstring& fileName)
 		sigRsp.Parse(resp);
 		if (sigRsp.GetCode())
 		{
+			DataReport::instance().setFetchCosSigCode(sigRsp.GetCode());
 			sendUploadResult(false);
 		}
 		else
@@ -243,8 +260,10 @@ void BoardService::fetchCosSig(const std::wstring& fileName)
 
 void BoardService::uploadToCos(const std::string& sig, const std::wstring& fileName)
 {
+	_cosSign = sig;
 	const std::wstring objName = std::to_wstring(static_cast<uint32_t>(time(nullptr))) + L"_" + TXCCosHelper::getFileName(fileName);
-
+	const std::wstring uploadurl = _cos.getUploadUrl(objName);
+	DataReport::instance().setUploadUrl(Wide2UTF8(uploadurl));
 	//COS上传
 	_cos.uploadObject(
 		fileName,
@@ -254,6 +273,7 @@ void BoardService::uploadToCos(const std::string& sig, const std::wstring& fileN
 		{
 			if (done)
 			{
+				DataReport::instance().setUploadtoCosCode(code);
 				if (code != 200)
 				{
 					sendUploadResult(false);
@@ -299,14 +319,19 @@ void BoardService::previewFile(const std::wstring& objName)
 		sendUploadResult(true);
 		return;
 	}
-	
+
+	std::wstring previewUrl = _cos.getPreviewUrl(objName, 1);
+	DataReport::instance().setPreviewUrl(Wide2UTF8(previewUrl));
+
 	//转码文件：分页处理
 	_cos.previewObject(
 		objName,
+		_cosSign,
 		1,
 		L"",
 		[=](int page_count, std::string file_content)
 		{
+			DataReport::instance().setPageCount(page_count);
 			if (page_count > 0)
 			{
 				//删除旧的页面
@@ -395,22 +420,12 @@ void BoardService::onActionsData(const char* data, uint32_t length)
 	TIMManager::instance()->sendWhiteBoardData(m_roomID.c_str(), data, length);
 }
 
-void BoardService::onBoardEventData(const char* data, uint32_t length)
-{
-	Json::Value event;
-	Json::Reader reader;
-	if (!reader.parse(data, event))
-	{
-		return;
-	}
-	event["seq"] = static_cast<uint64_t>(onGetTime()) << 15 | _dataSeq++;
-	reportEvent(event);
-}
-
-void BoardService::onStatusChanged(bool canUndo, bool canRedo)
+void BoardService::onStatusChanged(bool canUndo, bool canRedo, bool canCopy, bool canRemove)
 {
 	_canUndo = canUndo;
 	_canRedo = canRedo;
+	_canCopy = canCopy;
+	_canRemove = canRemove;
 	sendStatusChanged();
 }
 
@@ -422,6 +437,36 @@ uint32_t BoardService::onGetTime()
 void BoardService::onRecvWhiteBoardData(const char* data, uint32_t length)
 {
 	_board->appendActionsData(data, length);
+}
+
+void BoardService::onGetBoardData(bool bResult) //拉取上一次数据成功
+{
+	//initBoardsData();
+	//_fid = getCurrentFile();
+	//refreshPageInfo();
+	//if (!_pageCount)
+	//{
+	//	addPage("#DEFAULT");
+	//	refreshPageInfo();
+	//}
+	//if (_callback) {
+	//	_callback->onGetBoardData(bResult);
+	//}
+}
+
+void BoardService::onRenderFrame()
+{
+	if (!m_bFirstDownloaded)
+	{
+		m_bFirstDownloaded = true;
+		DataReport::instance().setPreview(DataReport::instance().txf_gettickcount());
+		std::string whiteboardReport = DataReport::instance().getWhiteboardReport();
+		HttpReportRequest::instance().reportELK(whiteboardReport);
+	}
+}
+
+void BoardService::onReportBoardData(const int code, const char * msg)
+{
 }
 
 BoardService::BoardService()

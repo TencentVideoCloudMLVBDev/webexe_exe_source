@@ -87,9 +87,6 @@
     <ClCompile Include="Education\LiveDemo.cpp">
       <Filter>Education</Filter>
     </ClCompile>
-    <ClCompile Include="PushPlayTest\GetPushUrlInfo.cpp">
-      <Filter>PushPlayTest</Filter>
-    </ClCompile>
     <ClCompile Include="PushPlayTest\PushPlayDemo.cpp">
       <Filter>PushPlayTest</Filter>
     </ClCompile>
@@ -146,15 +143,6 @@
     </ClCompile>
     <ClCompile Include="Education\LiveVideoWidget.cpp">
       <Filter>Education</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Professional_Release\moc_GetPushUrlInfo.cpp">
-      <Filter>Generated Files\Professional_Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_GetPushUrlInfo.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_GetPushUrlInfo.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Professional_Release\moc_LiveDemo.cpp">
       <Filter>Generated Files\Professional_Release</Filter>
@@ -418,9 +406,6 @@
     <ClCompile Include="common\RoomService\COSInfo.cpp">
       <Filter>Common\RoomService</Filter>
     </ClCompile>
-    <ClCompile Include="common\RoomService\TaskQueue.cpp">
-      <Filter>Common\RoomService</Filter>
-    </ClCompile>
     <ClCompile Include="common\RoomService\TIMManager.cpp">
       <Filter>Common\RoomService</Filter>
     </ClCompile>
@@ -472,13 +457,25 @@
     <ClCompile Include="common\RoomService\DataReport.cpp">
       <Filter>Common\RoomService</Filter>
     </ClCompile>
+    <ClCompile Include="PushPlayTest\GetPushUrlInfo.cpp">
+      <Filter>PushPlayTest</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_GetPushUrlInfo.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_GetPushUrlInfo.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_GetPushUrlInfo.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="common\HttpReportRequest.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Education\LiveDemo.h">
       <Filter>Education</Filter>
-    </CustomBuild>
-    <CustomBuild Include="PushPlayTest\GetPushUrlInfo.h">
-      <Filter>PushPlayTest</Filter>
     </CustomBuild>
     <CustomBuild Include="PushPlayTest\PushPlayDemo.h">
       <Filter>PushPlayTest</Filter>
@@ -607,6 +604,9 @@
     <CustomBuild Include="UI\BeautyManage.ui">
       <Filter>UI</Filter>
     </CustomBuild>
+    <CustomBuild Include="PushPlayTest\GetPushUrlInfo.h">
+      <Filter>PushPlayTest</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -665,9 +665,6 @@
       <Filter>Common\RoomService</Filter>
     </ClInclude>
     <ClInclude Include="common\RoomService\COSInfo.h">
-      <Filter>Common\RoomService</Filter>
-    </ClInclude>
-    <ClInclude Include="common\RoomService\TaskQueue.h">
       <Filter>Common\RoomService</Filter>
     </ClInclude>
     <ClInclude Include="common\RoomService\TIMManager.h">
@@ -744,6 +741,9 @@
     </ClInclude>
     <ClInclude Include="common\RoomService\DataReport.h">
       <Filter>Common\RoomService</Filter>
+    </ClInclude>
+    <ClInclude Include="common\HttpReportRequest.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

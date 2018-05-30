@@ -2,22 +2,22 @@
 
 #include <assert.h>
 #include <memory>
-#include "curl.h"
 #include "Base.h"
 
 /**************************************************************************/
 
 #define USER_CURL 1
-CURL *g_httpcurl = nullptr;
+
 HttpClient::HttpClient(const std::wstring& user_agent)
 	: m_user_agent(user_agent)
 	, m_hSession(NULL)
 	, m_hConnect(NULL)
 	, m_hRequest(NULL)
+    , m_curl(NULL)
     , m_proxyIP("")
     , m_proxyPort(1080)
 {
-	g_httpcurl = curl_easy_init();
+
 }
 
 HttpClient::~HttpClient()
@@ -29,8 +29,8 @@ HttpClient::~HttpClient()
 size_t req_reply(void *ptr, size_t size, size_t nmemb, void *stream)
 {
 	std::string *str = (std::string*)stream;
-	(*str).append((char*)ptr, size*nmemb);
-	return str->size();
+	(*str).append((char*)ptr, size * nmemb);
+	return (size * nmemb);
 }
 
 void HttpClient::setProxy(const std::string& ip, unsigned short port)
@@ -42,52 +42,54 @@ void HttpClient::setProxy(const std::string& ip, unsigned short port)
 DWORD HttpClient::http_get(const std::wstring& url
 	, const std::vector<std::wstring>& headers, std::string& resp_data)
 {
-
 #ifndef USER_CURL
 	DWORD ret = request(url, L"GET", headers, std::string(), resp_data);
 	http_close();
 	return ret;
 #else
+    assert(NULL == m_curl);
+
 	std::string url_temp = Wide2UTF8(url);
-	CURL *curl = curl_easy_init();
+	m_curl = curl_easy_init();
 	CURLcode res;
-	if (curl)
-	{
-		// set params  
-		curl_easy_setopt(curl, CURLOPT_URL, url_temp.c_str()); // url  
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, req_reply);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&resp_data);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5000);
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5000);
+    if (m_curl)
+    {
+        // set params  
+        curl_easy_setopt(m_curl, CURLOPT_URL, url_temp.c_str()); // url  
+        curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, req_reply);
+        curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, (void *)&resp_data);
+        curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYHOST, 0L);
+        curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(m_curl, CURLOPT_CONNECTTIMEOUT, 5000);
+        curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 5000);
 
         if (false == m_proxyIP.empty())
         {
-            curl_easy_setopt(curl, CURLOPT_PROXY, m_proxyIP.c_str());
-            curl_easy_setopt(curl, CURLOPT_PROXYPORT, m_proxyPort);
-            curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5_HOSTNAME);
+            curl_easy_setopt(m_curl, CURLOPT_PROXY, m_proxyIP.c_str());
+            curl_easy_setopt(m_curl, CURLOPT_PROXYPORT, m_proxyPort);
+            curl_easy_setopt(m_curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5_HOSTNAME);
         }
 
+        struct curl_slist *headerlist = NULL;
+        size_t headerlength = headers.size();
+        for (int i = 0; i < headerlength; i++)
+        {
+            headerlist = curl_slist_append(headerlist, Wide2UTF8(headers[i]).c_str());
+        }
 
-		struct curl_slist *headerlist = NULL;
-		size_t headerlength = headers.size();
-		for (int i = 0; i < headerlength; i++)
-		{
-			headerlist = curl_slist_append(headerlist, Wide2UTF8(headers[i]).c_str());
-		}
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
-		// start req  
-		res = curl_easy_perform(curl);
+        curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, headerlist);
+        // start req  
+        res = curl_easy_perform(m_curl);
 
-		curl_slist_free_all(headerlist);
-	}
-	// release curl  
-	curl_easy_cleanup(curl);
+        curl_slist_free_all(headerlist);
+    }
+
+    http_close();
+    m_curl = NULL;
+
 	return res;
 #endif // !USER_CURL
 }
-
 
 DWORD HttpClient::http_post(const std::wstring& url
 	, const std::vector<std::wstring>& headers, const std::string& body, std::string& resp_data)
@@ -98,28 +100,29 @@ DWORD HttpClient::http_post(const std::wstring& url
 	http_close();
 	return ret;
 #else
+    assert(NULL == m_curl);
 
 	std::string url_temp = Wide2UTF8(url);
-	CURL *curl = curl_easy_init();
+	m_curl = curl_easy_init();
 	CURLcode res;
-	if (curl)
+	if (m_curl)
 	{
 		// set params  
-		curl_easy_setopt(curl, CURLOPT_POST, 1); // post req  
-		curl_easy_setopt(curl, CURLOPT_URL, url_temp.c_str()); // url  
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str()); // params  
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, req_reply);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&resp_data);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5000);
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5000);
+		curl_easy_setopt(m_curl, CURLOPT_POST, 1); // post req  
+		curl_easy_setopt(m_curl, CURLOPT_URL, url_temp.c_str()); // url  
+		curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, body.c_str()); // params  
+		curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, req_reply);
+		curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, (void *)&resp_data);
+		curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		curl_easy_setopt(m_curl, CURLOPT_SSL_VERIFYPEER, 0L);
+		curl_easy_setopt(m_curl, CURLOPT_CONNECTTIMEOUT, 5000);
+		curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 5000);
 
         if (false == m_proxyIP.empty())
         {
-            curl_easy_setopt(curl, CURLOPT_PROXY, m_proxyIP.c_str());
-            curl_easy_setopt(curl, CURLOPT_PROXYPORT, m_proxyPort);
-            curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5_HOSTNAME);
+            curl_easy_setopt(m_curl, CURLOPT_PROXY, m_proxyIP.c_str());
+            curl_easy_setopt(m_curl, CURLOPT_PROXYPORT, m_proxyPort);
+            curl_easy_setopt(m_curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5_HOSTNAME);
         }
 
 		struct curl_slist *headerlist = NULL;
@@ -128,13 +131,15 @@ DWORD HttpClient::http_post(const std::wstring& url
 		{
 			headerlist = curl_slist_append(headerlist, Wide2UTF8(headers[i]).c_str());
 		}
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+		curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, headerlist);
 		// start req  
-		res = curl_easy_perform(curl);
+		res = curl_easy_perform(m_curl);
 		curl_slist_free_all(headerlist);
 	}
-	// release curl  
-	curl_easy_cleanup(curl);
+
+    http_close();
+    m_curl = NULL;
+
 	return res;
 #endif
 }
@@ -144,29 +149,35 @@ DWORD HttpClient::http_put(const std::wstring& url
 {
 	DWORD ret = request(url, L"PUT", headers, body, resp_data);
 	http_close();
+    m_curl = NULL;
 
 	return ret;
 }
 
 void HttpClient::http_close()
 {
-	if (m_hRequest)
-	{
-		WinHttpCloseHandle(m_hRequest);
-		m_hRequest = NULL;
-	}
+    if (m_hRequest)
+    {
+        WinHttpCloseHandle(m_hRequest);
+        m_hRequest = NULL;
+    }
 
-	if (m_hConnect)
-	{
-		WinHttpCloseHandle(m_hConnect);
-		m_hConnect = NULL;
-	}
+    if (m_hConnect)
+    {
+        WinHttpCloseHandle(m_hConnect);
+        m_hConnect = NULL;
+    }
 
-	if (m_hSession)
-	{
-		WinHttpCloseHandle(m_hSession);
-		m_hSession = NULL;
-	}
+    if (m_hSession)
+    {
+        WinHttpCloseHandle(m_hSession);
+        m_hSession = NULL;
+    }
+
+    if (NULL != m_curl)
+    {
+        curl_easy_cleanup(m_curl);
+    }
 }
 
 DWORD HttpClient::request(const std::wstring& url, const std::wstring& method

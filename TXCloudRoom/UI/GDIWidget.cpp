@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "libyuv.h"
 
-using namespace Gdiplus;
+//using namespace Gdiplus;
 
 extern QWidget * mainWindow;
 
@@ -245,31 +245,31 @@ int GDIWidget::inputDataToARGB(unsigned char * yuvBuf, int width, int height)
 void GDIWidget::displayFrame(const unsigned char * data, unsigned int width, unsigned int height)
 {
 	emit dispatch([this, data, width, height] {
-		inputDataToARGB((uint8_t*)data, width, height);
+		//inputDataToARGB((uint8_t*)data, width, height);
 
-		int x = 0, y = 0, showWidth = width, showHeight = height;
-		calAdaptPos(x, y, showWidth, showHeight);
+		//int x = 0, y = 0, showWidth = width, showHeight = height;
+		//calAdaptPos(x, y, showWidth, showHeight);
 
-		Gdiplus::Graphics graphics((HWND)this->winId());
-		Gdiplus::Bitmap bitmap(width, height, width * 4, PixelFormat32bppARGB, (BYTE*)argbBuf);
+		//Gdiplus::Graphics graphics((HWND)this->winId());
+		//Gdiplus::Bitmap bitmap(width, height, width * 4, PixelFormat32bppARGB, (BYTE*)argbBuf);
 
-		Image *pImage = (Image *)&bitmap;
+		//Image *pImage = (Image *)&bitmap;
 
-		int screenWidth = this->width();
-		int screenHeight = this->height();
+		//int screenWidth = this->width();
+		//int screenHeight = this->height();
 
-		Gdiplus::SolidBrush black(Gdiplus::Color::Black);
-		graphics.DrawImage(pImage, x, y, showWidth, showHeight);
-		if (x != 0)
-		{
-			graphics.FillRectangle(&black, 0, 0, x, showHeight);
-			graphics.FillRectangle(&black, x + showWidth, 0, screenWidth - x - showWidth, showHeight);
-		}
-		else if (y != 0)
-		{
-			graphics.FillRectangle(&black, 0, 0, showWidth, y);
-			graphics.FillRectangle(&black, 0, y + showHeight, showWidth, screenHeight - y - showHeight);
-		}
+		//Gdiplus::SolidBrush black(Gdiplus::Color::Black);
+		//graphics.DrawImage(pImage, x, y, showWidth, showHeight);
+		//if (x != 0)
+		//{
+		//	graphics.FillRectangle(&black, 0, 0, x, showHeight);
+		//	graphics.FillRectangle(&black, x + showWidth, 0, screenWidth - x - showWidth, showHeight);
+		//}
+		//else if (y != 0)
+		//{
+		//	graphics.FillRectangle(&black, 0, 0, showWidth, y);
+		//	graphics.FillRectangle(&black, 0, y + showHeight, showWidth, screenHeight - y - showHeight);
+		//}
 	});
 }
 

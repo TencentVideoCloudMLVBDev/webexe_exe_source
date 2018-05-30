@@ -71,6 +71,13 @@ public:
 	virtual void onSendWBData(int err, const char * errMsg) = 0;
 };
 
+class IMKickOfflineCallBack
+{
+public:
+    virtual ~IMKickOfflineCallBack() = default;
+    virtual void onKickOffline() = 0;
+};
+
 class TIMManager
 {
 public:
@@ -92,7 +99,8 @@ public:
 	void setRecvWBDataCallBack(IMRecvWBDataCallback * sink);
 	void setSendMsgCallBack(IMSendMsgCallBack * sink);
 	void setSendWBDataCallBack(IMSendWBDataCallBack * sink);
-	void setGroupChangeCallBack(IMGroupChangeCallback * sink);
+    void setGroupChangeCallBack(IMGroupChangeCallback * sink);
+    void setKickOfflineCallBack(IMKickOfflineCallBack * sink);
 
 	void sendC2CTextMsg(const char * dstUser, const char * msg);
 	void sendGroupTextMsg(const char* groupId, const char * msg);
@@ -117,7 +125,8 @@ private:
 	IMSendWBDataCallBack * m_sendWBDataCallback = nullptr;
 	IMRecvMsgCallback * m_recvMsgCallback = nullptr;
 	IMRecvWBDataCallback * m_recvWBDataCallback = nullptr;
-	IMGroupChangeCallback * m_groupChangeCallback = nullptr;
+    IMGroupChangeCallback * m_groupChangeCallback = nullptr;
+    IMKickOfflineCallBack * m_kickOfflineCallBack = nullptr;
 	unsigned int m_seq = 1;
 	std::string m_msgHead;
 };

@@ -131,8 +131,8 @@ bool Application::openAndWait(const std::string& jsonUTF8)
     LINFO(L"cmd: %s", cmd.c_str());
 
     DWORD pathValueType = 0;
-    DWORD pathValueLength = MAX_PATH + 32;
-    wchar_t pathValue[MAX_PATH + 32] = { 0 };
+    DWORD pathValueLength = MAX_PATH * 2;
+    wchar_t pathValue[MAX_PATH * 2] = { 0 };
     LONG regRet = ::RegGetValueW(HKEY_CLASSES_ROOT, L"TXCloudRoom\\shell\\open\\command", L"", RRF_RT_REG_SZ, &pathValueType, pathValue, &pathValueLength);
     if (ERROR_SUCCESS != regRet)
     {
@@ -313,7 +313,7 @@ bool Application::regProtol()
 
     std::unique_ptr<HKEY, decltype(deleter)> txcloudLiteAVPtr(&root, deleter);
 
-    std::wstring value = L"TXCloud LiteAV Protocol";
+    std::wstring value = L"TXCloudRoom Protocol";
     ::RegSetValueExW(*txcloudLiteAVPtr, NULL, 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), (value.size() + 1) * 2);
 
     value = path;
