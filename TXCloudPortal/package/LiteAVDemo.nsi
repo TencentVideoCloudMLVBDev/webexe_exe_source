@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "TXCloudRoom"
-!define PRODUCT_VERSION "3.0.1.0"
+!define PRODUCT_VERSION "3.1.2.0"
 !define PRODUCT_PUBLISHER "腾讯云"
 !define PRODUCT_WEB_SITE "https://cloud.tencent.com/document/product/454/6555#Windows"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}.exe"
@@ -78,14 +78,18 @@ Section "MainSection" SEC01
   SetOutPath "$INSTDIR\translations\"
   File "..\Build\Bin\Release\translations\*.qm"
   
-  
   SetOutPath "$INSTDIR"
   File "..\Build\Bin\Release\*.dll"
   File "..\Build\Bin\Release\*.exe"
   
+  SetOutPath "$INSTDIR"
+  File "vc_redist.x86.exe"
+
+  Exec "$INSTDIR\vc_redist.x86.exe /q" ;若不存在，执行静默安装
+  
   CreateShortCut "$SMPROGRAMS\TXCloudRoom\${PRODUCT_NAME}.lnk" "$INSTDIR\TXCloudPortal.exe"
   
-  WriteRegStr HKCR "TXCloudRoom" "" "TXCloud LiteAV Protocol"
+  WriteRegStr HKCR "TXCloudRoom" "" "TXCloudRoom Protocol"
   WriteRegStr HKCR "TXCloudRoom" "URL Protocol" "$INSTDIR\TXCloudRoom.exe"
   WriteRegStr HKCR "TXCloudRoom\DefaultIcon" "" "$INSTDIR\TXCloudRoom.exe,1"
   WriteRegStr HKCR "TXCloudRoom\shell\open\command" "" '"$INSTDIR\TXCloudRoom.exe","%1"'
