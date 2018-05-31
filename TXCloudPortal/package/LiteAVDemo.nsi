@@ -64,7 +64,7 @@ Section "MainSection" SEC01
   CreateDirectory "$INSTDIR\platforms\"
   CreateDirectory "$INSTDIR\translations\"
   
-  SetOverwrite ifnewer
+  SetOverwrite on
   
   SetOutPath "$INSTDIR\iconengines\"
   File "..\Build\Bin\Release\iconengines\*.dll"
