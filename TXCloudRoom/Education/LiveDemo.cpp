@@ -234,7 +234,7 @@ void LiveDemo::setInitBeautyValue()
 		setting->endGroup();
 	}
 
-	RTCRoom::instance()->setBeautyStyle((RTCBeautyStyle)m_beautyStyle, m_beautyLevel, m_whitenessLevel);
+	LiveRoom::instance()->setBeautyStyle((LRBeautyStyle)m_beautyStyle, m_beautyLevel, m_whitenessLevel);
 }
 
 void LiveDemo::onCreateRoom(const LRResult& res, const std::string& roomID)

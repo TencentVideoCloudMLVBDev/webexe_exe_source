@@ -39,8 +39,6 @@ private:
     HINTERNET m_hConnect;
     HINTERNET m_hRequest;
 
-    CURL* m_curl;
-
     std::string m_proxyIP;
     unsigned short m_proxyPort;
 };

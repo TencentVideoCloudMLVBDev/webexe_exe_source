@@ -547,7 +547,7 @@ void RTCDemo::onError(const RTCResult & res, const std::string & userID)
 		DialogMessage::exec(msgContent, DialogMessage::OK);
 	});
 
-    if (LIVEROOM_SUCCESS != res.ec)
+    if (RTCROOM_SUCCESS != res.ec)
     {
         Application::instance().pushRoomStatus(res.ec, msgContent.toUtf8().toStdString());
     }
