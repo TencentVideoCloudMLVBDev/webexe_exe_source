@@ -25,14 +25,12 @@ public:
 	LiveDemo(QWidget *parent = Q_NULLPTR);
 	virtual ~LiveDemo();
 
-    void createRoom(const LRAuthData& authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
-	void enterRoom(const LRAuthData& authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
+    void createRoom(const LRAuthData& authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
+	void enterRoom(const LRAuthData& authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
 	void setLogo(QString logoURL);
 	void setTitle(QString title);
 	void leaveRoom();
 	void initUI(const QString& strTemplate, const QString& userTag, bool bUserList, bool bIMList, bool whiteboard, bool screenShare);
-
-    void setProxy(const std::string& ip, unsigned short port);
 protected:
 	virtual void onCreateRoom(const LRResult& res, const std::string& roomID);
 	virtual void onEnterRoom(const LRResult& res);
@@ -89,7 +87,7 @@ private:
 	ScreenRecordType m_screenRecord;
 
 private:
-	void init(const LRAuthData& authData, const QString& roomName);
+	void init(const LRAuthData& authData, const QString& roomName, const std::string& ip, unsigned short port);
 	void setInitBeautyValue();
 signals:
 	void dispatch(txfunction func);

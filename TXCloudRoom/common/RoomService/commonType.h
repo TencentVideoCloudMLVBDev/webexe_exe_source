@@ -56,13 +56,43 @@ struct MemberItem
     std::string status;
 };
 
-struct InitDataReport
+enum DataReportType
 {
-	uint32_t int32_appid;
-	std::string str_roomid;
-	std::string str_room_type;
+	DataReportEnter = 0,
+	DataReportLeave = 1,
+	DataReportError = 2,
+	DataReportWBupload = 3,
+	DataReportWBLast = 4,
+	DataReportWBNext = 5,
+};
+
+struct CommonDataReport
+{
+	std::string type;
+	std::string str_app_name;
 	std::string str_token;
+	uint32_t int32_sdkapp_id;
+
+	std::string str_room_type;
+	std::string str_roomid;
 	bool bool_room_creator;
+	std::string str_userid;
+	std::string str_nickname;
+
+	std::string str_device_type;
+	std::string str_app_version;
+	std::string str_sdk_version;
+
+	CommonDataReport()
+	{
+		this->int32_sdkapp_id = 0;
+		this->type = "webexe";
+		this->str_app_name = "TXCloudRoom";
+	}
+};
+
+struct EnterDataReport
+{
 	uint64_t int64_ts_exe_launch;
 	uint64_t int64_ts_enter_demo;
 	uint64_t int64_ts_local_http;
@@ -74,19 +104,16 @@ struct InitDataReport
 	uint64_t int64_ts_cgi_create_room;
 	uint64_t int64_ts_cgi_add_pusher;
 
-	std::string str_app_version;
-	std::string str_sdk_version;
-	std::string str_userid;
-	std::string str_nickname;
-	std::string str_device_type;
-
 	bool bool_proxy;
 	bool bool_record;
 	uint32_t int32_record_screen;
 
-	InitDataReport()
+	std::string str_action;
+	std::string str_result;
+	std::string str_reason;
+
+	EnterDataReport()
 	{
-		this->int32_appid = 0;
 		this->int64_ts_exe_launch = 0;
 		this->int64_ts_enter_demo = 0;
 		this->int64_ts_local_http = 0;
@@ -101,21 +128,37 @@ struct InitDataReport
 		this->bool_proxy = false;
 		this->bool_record = false;
 		this->int32_record_screen = 0;
-		this->bool_room_creator = false;
+
+		this->str_action = "enter";
 	}
 };
 
-struct WhiteboardReport
+struct LeaveDataReport
 {
-	uint32_t int32_appid;
-	std::string str_token;
+	std::string str_action;
+	std::string str_result;
+	std::string str_reason;
 
-	std::string str_room_type;
-	std::string str_roomid;
-	bool bool_room_creator;
-	std::string str_userid;
-	std::string str_nickname;
+	LeaveDataReport()
+	{
+		this->str_action = "leave";
+	}
+};
 
+struct ErrorDataReport
+{
+	std::string str_action;
+	std::string str_result;
+	std::string str_reason;
+
+	ErrorDataReport()
+	{
+		this->str_action = "error";
+	}
+};
+
+struct WhiteboardUploadReport
+{
 	uint32_t int32_fetchcossig_code;
 	std::string str_uploadurl;
 	uint32_t int32_uploadtocos_code;
@@ -124,16 +167,15 @@ struct WhiteboardReport
 	uint32_t int32_filesize;
 	uint64_t int64_ts_click_upload;
 	uint64_t int64_ts_preview;
-
-	std::string str_device_type;
-	std::string str_app_version;
-	std::string str_sdk_version;
 	
 	bool bool_proxy;
 
-	WhiteboardReport()
+	std::string str_action;
+	std::string str_result;
+	std::string str_reason;
+
+	WhiteboardUploadReport()
 	{
-		this->int32_appid = 0;
 		this->int32_fetchcossig_code = 0;
 		this->int32_uploadtocos_code = 0;
 		this->int32_pagecount = 0;
@@ -142,6 +184,31 @@ struct WhiteboardReport
 		this->int64_ts_preview = 0;
 
 		this->bool_proxy = false;
-		this->bool_room_creator = false;
+
+		this->str_action = "whiteboard_upload";
+	}
+};
+
+struct WhiteboardLastReport
+{
+	std::string str_action;
+	std::string str_result;
+	std::string str_reason;
+
+	WhiteboardLastReport()
+	{
+		this->str_action = "whiteboard_last";
+	}
+};
+
+struct WhiteboardNextReport
+{
+	std::string str_action;
+	std::string str_result;
+	std::string str_reason;
+
+	WhiteboardNextReport()
+	{
+		this->str_action = "whiteboard_next";
 	}
 };

@@ -190,7 +190,6 @@ QGroupBox::title{
 	border: none;
 	background: #f2f2f2;
 	font: 9pt &quot;Microsoft YaHei&quot;;
-	color: #bbbbbb;
 }</string>
        </property>
        <property name="placeholderText">

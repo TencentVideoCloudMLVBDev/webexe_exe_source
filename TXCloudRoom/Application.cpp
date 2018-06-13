@@ -8,12 +8,12 @@
 #include <combaseapi.h>
 #include <shellapi.h>
 #include <QApplication>
-#include <QDesktopWidget>  
+#include <QDesktopWidget>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <TlHelp32.h> 
-#include <iostream>  
-#include <fstream>  
+#include <TlHelp32.h>
+#include <iostream>
+#include <fstream>
 #include "DataReport.h"
 
 #define  RecordExe "TXCloudRecord.exe"
@@ -88,6 +88,10 @@ Application::Application(QObject *parent)
     , m_dataList()
     , m_maxDataListCount(500)
     , m_mutex()
+    , m_tempPath(L"")
+    , m_screenRecord(RecordScreenNone)
+    , m_proxyIP("")
+    , m_proxyPort(0)
 {
     ::CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
@@ -113,7 +117,9 @@ int Application::run(int &argc, char **argv)
 {
     LOGGER;
 
+#ifdef _DEBUG
     //::MessageBoxW(NULL, NULL, NULL, MB_OK);   // ·½±ã¸½¼Óµ÷ÊÔ
+#endif // DEBUG
 
 	DataReport::instance().setExeLaunch(DataReport::instance().txf_gettickcount());
     curl_global_init(CURL_GLOBAL_ALL);
@@ -774,14 +780,20 @@ bool Application::resolveProtol(const Json::Value& root)
 	DataReport::instance().setRoomType(type);
 	DataReport::instance().setRecordScreen(m_screenRecord);
 
-    if (m_screenRecord != RecordScreenNone)
+    if (m_screenRecord != RecordScreenNone )
     {
-        std::string recordUrl;
-        if (root.isMember("recordUrl"))
-        {
-            recordUrl = root["recordUrl"].asString();
-        }
-        runRecord(recordUrl);
+		std::string recordUrl;
+		if (root.isMember("recordUrl"))
+		{
+			recordUrl = root["recordUrl"].asString();
+		}
+
+		std::string recordPath;
+		if (root.isMember("recordPath"))
+		{
+			recordPath = root["recordPath"].asString();
+		}
+        runRecord(recordUrl, recordPath);
     }
 
     return ret;
@@ -844,7 +856,8 @@ bool Application::resolveNormalLiveProtol(const Json::Value& root)
 
     m_normalLive->setProxy(m_proxyIP, m_proxyPort);
 	DataReport::instance().setEnterDemo(DataReport::instance().txf_gettickcount());
-	HttpReportRequest::instance().reportELK(DataReport::instance().getInitReport());
+	DataReport::instance().setResult(DataReportEnter, "success");
+	HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
     m_normalLive->show();
 
     return true;
@@ -905,7 +918,8 @@ bool Application::resolveCSLiveProtol(const Json::Value& root)
         m_csLive = new DialogPushPlay(top_window);
 
 		DataReport::instance().setEnterDemo(DataReport::instance().txf_gettickcount());
-		HttpReportRequest::instance().reportELK(DataReport::instance().getInitReport());
+		DataReport::instance().setResult(DataReportEnter, "success");
+		HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
         m_csLive->setProxy(m_proxyIP, m_proxyPort);
 
         m_csLive->setTitle(title.c_str());
@@ -938,8 +952,6 @@ bool Application::resolveLiveRoomProtol(const Json::Value& root)
             m_liveDemo = new LiveDemo();
         }
 
-        m_liveDemo->setProxy(m_proxyIP, m_proxyPort);
-
         std::string serverDomain;
         int sdkAppID = 0;
         std::string accountType;
@@ -963,6 +975,7 @@ bool Application::resolveLiveRoomProtol(const Json::Value& root)
 		getConfigInfo(root, serverDomain, sdkAppID, accountType, userID, userSig, userName, userAvatar, roomID, roomInfo, strTemplate,userTag, userList, IMList, whiteboard, screenShare, picture_id, mixRecord, title, logo);
 		
 		std::transform(strTemplate.begin(), strTemplate.end(), strTemplate.begin(), ::tolower);
+
 		LRAuthData authData;
 		authData.accountType = accountType;
 		authData.sdkAppID = sdkAppID;
@@ -978,10 +991,18 @@ bool Application::resolveLiveRoomProtol(const Json::Value& root)
 
 		DataReport::instance().setEnterDemo(DataReport::instance().txf_gettickcount());
 		DataReport::instance().setRecord(true);
+
 		if (action == "createRoom")
-			m_liveDemo->createRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
+		{
+			DataReport::instance().setUserInfo(authData.sdkAppID, authData.userID, authData.userName, true);
+			m_liveDemo->createRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
+		}
 		else
-			m_liveDemo->enterRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
+		{
+			DataReport::instance().setUserInfo(authData.sdkAppID, authData.userID, authData.userName, false);
+			DataReport::instance().setRoomInfo(roomID);
+			m_liveDemo->enterRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
+		}
 
 		m_liveDemo->show();
     }
@@ -1018,8 +1039,6 @@ bool Application::resolveRTCRoomProtol(const Json::Value& root)
             m_RTCDemo = new RTCDemo();
         }
 
-        m_RTCDemo->setProxy(m_proxyIP, m_proxyPort);
-
 		std::string serverDomain;
 		int sdkAppID = 0;
 		std::string accountType;
@@ -1053,11 +1072,19 @@ bool Application::resolveRTCRoomProtol(const Json::Value& root)
 		m_RTCDemo->initUI(strTemplate.c_str(), QString::fromUtf8(userTag.c_str()), userList, IMList, whiteboard, screenShare);
 		
 		DataReport::instance().setEnterDemo(DataReport::instance().txf_gettickcount());
-		if (action == "createRoom")
-			m_RTCDemo->createRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
-		else
-			m_RTCDemo->enterRoom(authData, serverDomain.c_str(), roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
 
+		if (action == "createRoom")
+		{
+			DataReport::instance().setUserInfo(authData.sdkAppID, authData.userID, authData.userName, true);
+			m_RTCDemo->createRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
+		}
+		else
+		{
+			DataReport::instance().setRoomInfo(roomID);
+			DataReport::instance().setUserInfo(authData.sdkAppID, authData.userID, authData.userName, false);
+			m_RTCDemo->enterRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
+		}
+			
 		DataReport::instance().setRecord(mixRecord);
 		m_RTCDemo->setTitle(title.c_str());
 		m_RTCDemo->setLogo(logo.c_str(), strTemplate != "1v1");
@@ -1224,7 +1251,7 @@ void Application::getSnapShotPath(std::wstring& fullpath)
     fullpath.append(tmp);
 }
 
-void Application::runRecord(std::string recordUrl)
+void Application::runRecord(std::string recordUrl, std::string recordPath)
 {
     if (recordUrl.empty())
     {
@@ -1236,6 +1263,7 @@ void Application::runRecord(std::string recordUrl)
     root["recordUrl"] = recordUrl;
     root["recordExe"] = "TXCloudRoom.exe";
     root["recordType"] = m_screenRecord;
+	root["recordPath"] = recordPath;
 
     Json::FastWriter writer;
     std::string jsonUTF8 = writer.write(root);

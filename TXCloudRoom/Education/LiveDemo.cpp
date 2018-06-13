@@ -5,7 +5,7 @@
 #include "Application.h"
 #include "Base.h"
 #include "log.h"
-
+#include "DataReport.h"
 #include <Dwmapi.h> 
 
 QWidget * LiveMainWindow = nullptr;
@@ -76,6 +76,7 @@ void LiveDemo::timerEvent(QTimerEvent *event)
 void LiveDemo::showEvent(QShowEvent * event)
 {
 	this->setAttribute(Qt::WA_Mapped);
+	this->update();
 	QMainWindow::showEvent(event);
 }
 
@@ -107,6 +108,9 @@ void LiveDemo::on_btn_close_clicked()
 	LiveRoom::instance()->leaveRoom();
 	LiveRoom::instance()->logout();
 
+	DataReport::instance().setResult(DataReportLeave, "success");
+	HttpReportRequest::instance().reportELK(DataReport::instance().getLeaveReport());
+
 	this->close();
     Application::instance().quit(0);
 }
@@ -130,8 +134,11 @@ LiveDemo::~LiveDemo()
 	delete roomService;
 }
 
-void LiveDemo::createRoom(const LRAuthData & authData, const QString & serverDomain, const QString & roomID, const QString & roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
+void LiveDemo::createRoom(const LRAuthData & authData, const QString & serverDomain, const std::string& ip, unsigned short port, const QString & roomID, const QString & roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
 {
+    LiveRoom::instance()->setProxy(ip, port);
+    m_imgDownloader.setProxy(ip, port);
+
 	m_bCreate = true;
     m_roomID = roomID.toStdString();
 	m_roomInfo = roomInfo;
@@ -141,13 +148,17 @@ void LiveDemo::createRoom(const LRAuthData & authData, const QString & serverDom
 	{
 		LiveRoom::instance()->recordVideo(picture_id);
 	}
+
 	LiveRoom::instance()->login(serverDomain.toStdString(), authData, this);
 
-	init(authData, roomInfo);
+	init(authData, roomInfo, ip, port);
 }
 
-void LiveDemo::enterRoom(const LRAuthData & authData, const QString & serverDomain, const QString & roomID, const QString & roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
+void LiveDemo::enterRoom(const LRAuthData & authData, const QString & serverDomain, const std::string& ip, unsigned short port, const QString & roomID, const QString & roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
 {
+    LiveRoom::instance()->setProxy(ip, port);
+    m_imgDownloader.setProxy(ip, port);
+
 	m_bCreate = false;
     m_roomID = roomID.toStdString();
 	m_roomInfo = roomInfo;
@@ -157,14 +168,15 @@ void LiveDemo::enterRoom(const LRAuthData & authData, const QString & serverDoma
 	{
 		LiveRoom::instance()->recordVideo(picture_id);
 	}
-	LiveRoom::instance()->login(serverDomain.toStdString(), authData, this);
 
-	init(authData, roomInfo);
+    LiveRoom::instance()->login(serverDomain.toStdString(), authData, this);
+
+    init(authData, roomInfo, ip, port);
 }
 
 void LiveDemo::setLogo(QString logoURL)
 {
-	LINFO(L"logoURL: %s", logoURL.toStdWString().c_str());
+    LINFO(L"logoURL: %s", logoURL.toStdWString().c_str());
 
     if (true == logoURL.isEmpty())
     {
@@ -189,7 +201,7 @@ void LiveDemo::leaveRoom()
     on_btn_close_clicked();
 }
 
-void LiveDemo::init(const LRAuthData& authData, const QString& roomName)
+void LiveDemo::init(const LRAuthData& authData, const QString& roomName, const std::string& ip, unsigned short port)
 {
     m_authData = authData;
 
@@ -572,8 +584,26 @@ void LiveDemo::onRecvC2CCustomMsg(const char * userID, const char * userName, co
 
 void LiveDemo::onTIMKickOffline()
 {
-    emit dispatch([] {
+    emit dispatch([this] {
         DialogMessage::exec(QStringLiteral("IM强制下线，请检查是否重复登录同一个账号"), DialogMessage::OK);
+
+		if (m_screenRecord != RecordScreenNone)
+		{
+			HWND recordHwnd = FindWindowExA(HWND_MESSAGE, NULL, "TXCloudRecord", "TXCloudRecordCaption");
+			if (recordHwnd)
+			{
+				std::string message = "RecordExit";
+				COPYDATASTRUCT copy_data = { ScreenRecordExit, message.length() + 1,(LPVOID)message.c_str() };
+				::SendMessage(recordHwnd, WM_COPYDATA, ScreenRecordExit, reinterpret_cast<LPARAM>(&copy_data));
+			}
+		}
+
+		Application::instance().pushRoomStatus(2, Wide2UTF8(L"IM强制下线，退出房间"));
+
+		LiveRoom::instance()->leaveRoom();
+		LiveRoom::instance()->logout();
+
+		onRoomClosed("");
     });
 }
 
@@ -727,13 +757,6 @@ void LiveDemo::initUI(const QString& strTemplate, const QString& userTag,
 	}
 
 	m_toast = new QWidgetToast(this);
-}
-
-void LiveDemo::setProxy(const std::string& ip, unsigned short port)
-{
-    LiveRoom::instance()->setProxy(ip, port);
-
-    m_imgDownloader.setProxy(ip, port);
 }
 
 void LiveDemo::on_btn_device_manage_clicked()

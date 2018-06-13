@@ -66,9 +66,10 @@ struct BoardCallback
 	virtual void onReportBoardData(const int code, const char * msg) = 0;
 
     /**
-    * \brief 渲染完成一帧（此时所有添加到白板的操作元数据都已渲染完成）
+    * \brief 渲染完成一帧
+	* \param render  渲染结果
     */
-    virtual void onRenderFrame() = 0;
+    virtual void onRenderFrame(bool render) = 0;
 };
 
 /**
@@ -96,6 +97,14 @@ public:
 	 */
 	BoardSDK(const char *userID, HWND parentHWnd = nullptr);
 	~BoardSDK();
+
+    /**
+    * \brief：设置代理地址
+    * \param：ip - 代理服务器的ip
+    * \param：port - 代理服务器的端口
+    * \return 无
+    */
+    static void setProxy(const std::string& ip, unsigned short port);
 
 	/**
 	 * \brief 获取白板渲染窗口句柄

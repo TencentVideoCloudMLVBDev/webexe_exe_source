@@ -18,6 +18,7 @@ public:
 	void setBucket(const std::wstring &bucket);
 	void setRegion(const std::wstring &region);
 	void setPath(const std::wstring &path);
+    void setProxy(const std::string& ip, unsigned short port);
 
 	const std::wstring &appid() const;
 	const std::wstring &bucket() const;

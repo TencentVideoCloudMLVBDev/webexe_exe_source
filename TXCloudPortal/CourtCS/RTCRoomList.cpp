@@ -346,7 +346,6 @@ void RTCRoomList::createRoom(const std::string& roomID, const std::string& roomI
 				root["userTag"] = userTag.toStdString();
 				root["whiteboard"] = true;
 				root["screenShare"] = true;
-				root["record"] = true;
                 root["title"] = title;
                 root["logo"] = logo;
                 root["port"] = ((::time(NULL) % 15000) + 50000);    // 建议范围限制[50000, 65535]

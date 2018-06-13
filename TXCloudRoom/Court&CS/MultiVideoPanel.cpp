@@ -409,7 +409,7 @@ void MultiVideoPanel::on_selectCaptureArea(QRect rect)
 	ui.stacked_screen->setCurrentIndex(1);
 
 	RTCRoom::instance()->stopLocalPreview();
-	RTCRoom::instance()->startScreenPreview((HWND)ui.page_screen_content->winId(), nullptr, RECT{ 0, 0, ui.page_screen_content->width(), ui.page_screen_content->height() }, m_areaRect);
+	RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, m_areaRect);
 }
 
 void MultiVideoPanel::on_tabWidget_currentChanged()
@@ -470,9 +470,9 @@ void MultiVideoPanel::on_tabWidget_currentChanged()
 
 		RTCRoom::instance()->stopLocalPreview();
 		if (m_screenFull)
-			RTCRoom::instance()->startScreenPreview((HWND)ui.page_screen_content->winId(), nullptr, RECT{ 0, 0, ui.page_screen_content->width(), ui.page_screen_content->height() }, RECT{ 0 });
+			RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, RECT{ 0 });
 		else if (m_screenArea)
-			RTCRoom::instance()->startScreenPreview((HWND)ui.page_screen_content->winId(), nullptr, RECT{ 0, 0, ui.page_screen_content->width(), ui.page_screen_content->height() }, m_areaRect);
+			RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, m_areaRect);
 	}
 	break;
 	default:
@@ -492,5 +492,5 @@ void MultiVideoPanel::on_btn_full_share_clicked()
 	m_screenFull = true;
 	ui.stacked_screen->setCurrentIndex(1);
 	RTCRoom::instance()->stopLocalPreview();
-	RTCRoom::instance()->startScreenPreview((HWND)ui.page_screen_content->winId(), nullptr, RECT{ 0, 0, ui.page_screen_content->width(), ui.page_screen_content->height() }, RECT{ 0 });
+	RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, RECT{ 0 });
 }

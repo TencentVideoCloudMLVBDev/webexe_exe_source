@@ -1,5 +1,6 @@
 #pragma once
 #include "commonType.h"
+#include "json.h"
 
 class DataReport
 {
@@ -14,6 +15,10 @@ public:
 	*/
 	static DataReport& instance();
 
+	uint64_t txf_gettickcount();
+	uint64_t txf_gettickspan(uint64_t lastTick);
+
+	//enter
 	void setExeLaunch(uint64_t ts);
 	void setCGILogin(uint64_t ts);
 	void setIMLogin(uint64_t ts);
@@ -25,14 +30,14 @@ public:
 	void setCGIAddPusher(uint64_t ts);
 	void setRecord(bool record);
 	void setProxy(bool proxy);
-	void setRoomType(std::string str_roomType);
 	void setRecordScreen(uint32_t recordScreenType);
 	void setLocalHttp(uint64_t ts);
-	void setRoomInfo(uint32_t int32_appid, std::string str_roomid, bool bool_room_creator, std::string str_userid, std::string str_nickname);
-	std::string getInitReport();
-	uint64_t txf_gettickcount();
-	uint64_t txf_gettickspan(uint64_t lastTick);
-
+	//common
+	void setRoomType(std::string str_roomType);
+	void setUserInfo(uint32_t int32_appid, std::string str_userid, std::string str_nickname, bool bool_room_creator);
+	void setRoomInfo(std::string str_roomid);
+	
+	//whiteboard
 	void setFetchCosSigCode(uint32_t code);
 	void setUploadUrl(std::string str_uploadUrl);
 	void setUploadtoCosCode(uint32_t code);
@@ -41,9 +46,25 @@ public:
 	void setFileSize(uint32_t size);
 	void setClickUpload(uint64_t ts);
 	void setPreview(uint64_t ts);
-	std::string getWhiteboardReport();
+
+	//result
+	void setResult(DataReportType type, std::string result, std::string reason = "");
+
+	//getreport
+	void getCommonReport(Json::Value & root);
+	std::string getEnterReport();
+	std::string getLeaveReport();
+	std::string getErrorReport();
+	std::string getWhiteboardUploadReport();
+	std::string getWhiteboardLastReport();
+	std::string getWhiteboardNextReport();
 
 private:
-	InitDataReport m_initReport;
-	WhiteboardReport m_whiteBoardReport;
+	EnterDataReport m_enterReport;
+	LeaveDataReport m_leaveReport;
+	ErrorDataReport m_errorReport;
+	WhiteboardUploadReport m_whiteBoardUploadReport;
+	WhiteboardLastReport m_whiteBoardLastReport;
+	WhiteboardNextReport m_whiteBoardNextReport;
+	CommonDataReport m_commonReport;
 };

@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "TXCloudRoom"
-!define PRODUCT_VERSION "3.1.2.0"
+!define PRODUCT_VERSION "3.1.4.0"
 !define PRODUCT_PUBLISHER "ÌÚÑ¶ÔÆ"
 !define PRODUCT_WEB_SITE "https://cloud.tencent.com/document/product/454/6555#Windows"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}.exe"

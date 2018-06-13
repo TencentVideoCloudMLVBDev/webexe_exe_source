@@ -1,7 +1,6 @@
 #include "DataReport.h"
 #include <time.h>
 #include <windows.h>
-#include "json.h"
 
 DataReport::DataReport()
 {
@@ -19,126 +18,86 @@ DataReport & DataReport::instance()
 
 void DataReport::setExeLaunch(uint64_t ts)
 {
-	m_initReport.int64_ts_exe_launch = ts;
+	m_enterReport.int64_ts_exe_launch = ts;
 }
 
 void DataReport::setCGILogin(uint64_t ts)
 {
-	m_initReport.int64_ts_cgi_login = ts;
+	m_enterReport.int64_ts_cgi_login = ts;
 }
 
 void DataReport::setIMLogin(uint64_t tc)
 {
-	m_initReport.int64_ts_im_login = tc;
+	m_enterReport.int64_ts_im_login = tc;
 }
 
 void DataReport::setEnterDemo(uint64_t ts)
 {
-	m_initReport.int64_ts_enter_demo = ts;
+	m_enterReport.int64_ts_enter_demo = ts;
 }
 
 void DataReport::setCGIPushURL(uint64_t tc)
 {
-	m_initReport.int64_ts_cgi_get_pushurl = tc;
+	m_enterReport.int64_ts_cgi_get_pushurl = tc;
 }
 
 void DataReport::setConnectSucc(uint64_t ts)
 {
-	m_initReport.int64_ts_connect_succ = ts;
+	m_enterReport.int64_ts_connect_succ = ts;
 }
 
 void DataReport::setPushBegin(uint64_t ts)
 {
-	m_initReport.int64_ts_push_begin = ts;
+	m_enterReport.int64_ts_push_begin = ts;
 }
 
 void DataReport::setCGICreateRoom(uint64_t tc)
 {
-	m_initReport.int64_ts_cgi_create_room = tc;
+	m_enterReport.int64_ts_cgi_create_room = tc;
 }
 
 void DataReport::setCGIAddPusher(uint64_t ts)
 {
-	m_initReport.int64_ts_cgi_add_pusher = ts;
+	m_enterReport.int64_ts_cgi_add_pusher = ts;
 }
 
 void DataReport::setRecord(bool record)
 {
-	m_initReport.bool_record = record;
+	m_enterReport.bool_record = record;
 }
 
 void DataReport::setProxy(bool proxy)
 {
-	m_initReport.bool_proxy = proxy;
-	m_whiteBoardReport.bool_proxy = proxy;
+	m_enterReport.bool_proxy = proxy;
+	m_whiteBoardUploadReport.bool_proxy = proxy;
 }
 
 void DataReport::setRoomType(std::string str_roomType)
 {
-	m_initReport.str_room_type = str_roomType;
-	m_whiteBoardReport.str_room_type = str_roomType;
+	m_commonReport.str_room_type = str_roomType;
 }
 
 void DataReport::setRecordScreen(uint32_t recordScreenType)
 {
-	m_initReport.int32_record_screen = recordScreenType;
+	m_enterReport.int32_record_screen = recordScreenType;
 }
 
 void DataReport::setLocalHttp(uint64_t ts)
 {
-	m_initReport.int64_ts_local_http = ts;
+	m_enterReport.int64_ts_local_http = ts;
 }
 
-void DataReport::setRoomInfo(uint32_t int32_appid, std::string str_roomid, bool bool_room_creator, std::string str_userid, std::string str_nickname)
+void DataReport::setUserInfo(uint32_t int32_appid, std::string str_userid, std::string str_nickname, bool bool_room_creator)
 {
-	m_initReport.str_roomid = str_roomid;
-	m_initReport.bool_room_creator = bool_room_creator;
-	m_initReport.str_userid = str_userid;
-	m_initReport.str_nickname = str_nickname;
-
-	m_whiteBoardReport.str_roomid = str_roomid;
-	m_whiteBoardReport.bool_room_creator = bool_room_creator;
-	m_whiteBoardReport.str_userid = str_userid;
-	m_whiteBoardReport.str_nickname = str_nickname;
+	m_commonReport.int32_sdkapp_id = int32_appid;
+	m_commonReport.str_userid = str_userid;
+	m_commonReport.str_nickname = str_nickname;
+	m_commonReport.bool_room_creator = bool_room_creator;
 }
 
-std::string DataReport::getInitReport()
+void DataReport::setRoomInfo(std::string str_roomid)
 {
-	std::string jsonUTF8;
-	Json::Value root;
-	root["type"] = "webexe";
-	root["str_app_name"] = "TXCloudRoom.exe";
-	root["str_token"] = m_initReport.str_token;
-	root["int32_app_id"] = m_initReport.int32_appid;
-
-	root["int64_ts_exe_launch"] = m_initReport.int64_ts_exe_launch;
-	root["int64_ts_enter_demo"] = m_initReport.int64_ts_enter_demo;
-	root["int64_ts_local_http"] = m_initReport.int64_ts_local_http;
-	root["int64_ts_cgi_login"] = m_initReport.int64_ts_cgi_login;
-	root["int64_ts_im_login"] = m_initReport.int64_ts_im_login;
-	root["int64_ts_cgi_get_pushurl"] = m_initReport.int64_ts_cgi_get_pushurl;
-	root["int64_ts_connect_succ"] = m_initReport.int64_ts_connect_succ;
-	root["int64_ts_push_begin"] = m_initReport.int64_ts_push_begin;
-	root["int64_ts_cgi_create_room"] = m_initReport.int64_ts_cgi_create_room;
-	root["int64_ts_cgi_add_pusher"] = m_initReport.int64_ts_cgi_add_pusher;
-
-	root["bool_proxy"] = m_initReport.bool_proxy;
-	root["bool_record"] = m_initReport.bool_record;
-	root["int32_record_screen"] = m_initReport.int32_record_screen;
-
-	root["str_room_type"] = m_initReport.str_room_type;
-	root["str_roomid"] = m_initReport.str_roomid;
-	root["bool_room_creator"] = m_initReport.bool_room_creator;
-	root["str_userid"] = m_initReport.str_userid;
-	root["str_nickname"] = m_initReport.str_nickname;
-
-	root["str_device_type"] = m_initReport.str_device_type;
-	root["str_app_version"] = m_initReport.str_app_version;
-	root["str_sdk_version"] = m_initReport.str_sdk_version;
-
-	Json::FastWriter writer;
-	jsonUTF8 = writer.write(root);
-	return jsonUTF8;
+	m_commonReport.str_roomid = str_roomid;
 }
 
 int gettimeofday(struct timeval *tp, void *tzp)
@@ -177,77 +136,91 @@ uint64_t DataReport::txf_gettickspan(uint64_t lastTick) {
 
 void DataReport::setFetchCosSigCode(uint32_t code)
 {
-	m_whiteBoardReport.int32_fetchcossig_code = code;
+	m_whiteBoardUploadReport.int32_fetchcossig_code = code;
 }
 
 void DataReport::setUploadUrl(std::string str_uploadUrl)
 {
-	m_whiteBoardReport.str_uploadurl = str_uploadUrl;
+	m_whiteBoardUploadReport.str_uploadurl = str_uploadUrl;
 }
 
 void DataReport::setUploadtoCosCode(uint32_t code)
 {
-	m_whiteBoardReport.int32_uploadtocos_code = code;
+	m_whiteBoardUploadReport.int32_uploadtocos_code = code;
 }
 
 void DataReport::setPreviewUrl(std::string str_previewUrl)
 {
-	m_whiteBoardReport.str_previewurl = str_previewUrl;
+	m_whiteBoardUploadReport.str_previewurl = str_previewUrl;
 }
 
 void DataReport::setPageCount(uint32_t count)
 {
-	m_whiteBoardReport.int32_pagecount = count;
+	m_whiteBoardUploadReport.int32_pagecount = count;
 }
 
 void DataReport::setFileSize(uint32_t size)
 {
-	m_whiteBoardReport.int32_filesize = size;
+	m_whiteBoardUploadReport.int32_filesize = size;
 }
 
 void DataReport::setClickUpload(uint64_t ts)
 {
-	m_whiteBoardReport.int64_ts_click_upload = ts;
+	m_whiteBoardUploadReport.int64_ts_click_upload = ts;
 }
 
 void DataReport::setPreview(uint64_t ts)
 {
-	m_whiteBoardReport.int64_ts_preview = ts;
+	m_whiteBoardUploadReport.int64_ts_preview = ts;
 }
 
-std::string DataReport::getWhiteboardReport()
+void DataReport::setResult(DataReportType type, std::string result, std::string reason)
 {
-	std::string jsonUTF8;
-	Json::Value root;
-	root["type"] = "webexe";
-	root["str_app_name"] = "TXCloudRoom.exe";
-	root["str_token"] = m_whiteBoardReport.str_token;
-	root["int32_app_id"] = m_whiteBoardReport.int32_appid;
-
-	root["int32_fetchcossig_code"] = m_whiteBoardReport.int32_fetchcossig_code;
-	root["str_uploadurl"] = m_whiteBoardReport.str_uploadurl;
-	root["int32_uploadtocos_code"] = m_whiteBoardReport.int32_uploadtocos_code;
-	root["str_previewurl"] = m_whiteBoardReport.str_previewurl;
-	root["int32_pagecount"] = m_whiteBoardReport.int32_pagecount;
-	root["int32_filesize"] = m_whiteBoardReport.int32_filesize;
-	root["int64_ts_upload"] = m_whiteBoardReport.int64_ts_click_upload;
-	root["int64_ts_preview"] = m_whiteBoardReport.int64_ts_preview;
-
-	root["bool_proxy"] = m_whiteBoardReport.bool_proxy;
-
-	root["str_room_type"] = m_whiteBoardReport.str_room_type;
-	root["str_roomid"] = m_whiteBoardReport.str_roomid;
-	root["bool_room_creator"] = m_whiteBoardReport.bool_room_creator;
-	root["str_userid"] = m_whiteBoardReport.str_userid;
-	root["str_nickname"] = m_whiteBoardReport.str_nickname;
-
-	root["str_device_type"] = m_whiteBoardReport.str_device_type;
-	root["str_app_version"] = m_whiteBoardReport.str_app_version;
-	root["str_sdk_version"] = m_whiteBoardReport.str_sdk_version;
-
-	Json::FastWriter writer;
-	jsonUTF8 = writer.write(root);
-	return jsonUTF8;
+	switch (type)
+	{
+	case DataReportEnter:
+	{
+		if (!m_enterReport.str_result.empty())
+		{
+			break;;
+		}
+		m_enterReport.str_result = result;
+		m_enterReport.str_reason = reason;
+	}
+		break;
+	case DataReportLeave:
+	{
+		m_leaveReport.str_result = result;
+		m_leaveReport.str_reason = reason;
+	}
+		break;
+	case DataReportError:
+	{
+		m_errorReport.str_result = result;
+		m_errorReport.str_reason = reason;
+	}
+		break;
+	case DataReportWBupload:
+	{
+		m_whiteBoardUploadReport.str_result = result;
+		m_whiteBoardUploadReport.str_reason = reason;
+	}
+		break;
+	case DataReportWBLast:
+	{
+		m_whiteBoardLastReport.str_result = result;
+		m_whiteBoardLastReport.str_reason = reason;
+	}
+		break;
+	case DataReportWBNext:
+	{
+		m_whiteBoardNextReport.str_result = result;
+		m_whiteBoardNextReport.str_reason = reason;
+	}
+		break;
+	default:
+		break;
+	}
 }
 
 uint64_t DataReport::txf_gettickcount() {
@@ -268,4 +241,138 @@ uint64_t DataReport::txf_gettickcount() {
 	tickGet += s_TickDelta;
 
 	return tickGet;
+}
+
+void DataReport::getCommonReport(Json::Value & root)
+{
+	root["type"] = m_commonReport.type;
+	root["str_app_name"] = m_commonReport.str_app_name;
+	root["str_token"] = m_commonReport.str_token;
+	root["int32_sdkapp_id"] = m_commonReport.int32_sdkapp_id;
+
+	root["str_room_type"] = m_commonReport.str_room_type;
+	root["str_roomid"] = m_commonReport.str_roomid;
+	root["bool_room_creator"] = m_commonReport.bool_room_creator;
+	root["str_userid"] = m_commonReport.str_userid;
+	root["str_nickname"] = m_commonReport.str_nickname;
+
+	root["str_device_type"] = m_commonReport.str_device_type;
+	root["str_app_version"] = m_commonReport.str_app_version;
+	root["str_sdk_version"] = m_commonReport.str_sdk_version;
+}
+
+std::string DataReport::getEnterReport()
+{
+	std::string jsonUTF8;
+	Json::Value root;
+	getCommonReport(root);
+
+	root["int64_ts_exe_launch"] = m_enterReport.int64_ts_exe_launch;
+	root["int64_ts_enter_demo"] = m_enterReport.int64_ts_enter_demo;
+	root["int64_ts_local_http"] = m_enterReport.int64_ts_local_http;
+	root["int64_ts_cgi_login"] = m_enterReport.int64_ts_cgi_login;
+	root["int64_ts_im_login"] = m_enterReport.int64_ts_im_login;
+	root["int64_ts_cgi_get_pushurl"] = m_enterReport.int64_ts_cgi_get_pushurl;
+	root["int64_ts_connect_succ"] = m_enterReport.int64_ts_connect_succ;
+	root["int64_ts_push_begin"] = m_enterReport.int64_ts_push_begin;
+	root["int64_ts_cgi_create_room"] = m_enterReport.int64_ts_cgi_create_room;
+	root["int64_ts_cgi_add_pusher"] = m_enterReport.int64_ts_cgi_add_pusher;
+
+	root["bool_proxy"] = m_enterReport.bool_proxy;
+	root["bool_record"] = m_enterReport.bool_record;
+	root["int32_record_screen"] = m_enterReport.int32_record_screen;
+
+	root["str_action"] = m_enterReport.str_action;
+	root["str_result"] = m_enterReport.str_result;
+	root["str_reason"] = m_enterReport.str_reason;
+
+	Json::FastWriter writer;
+	jsonUTF8 = writer.write(root);
+	return jsonUTF8;
+}
+
+std::string DataReport::getLeaveReport()
+{
+	std::string jsonUTF8;
+	Json::Value root;
+	getCommonReport(root);
+
+	root["str_action"] = m_leaveReport.str_action;
+	root["str_result"] = m_leaveReport.str_result;
+	root["str_reason"] = m_leaveReport.str_reason;
+
+	Json::FastWriter writer;
+	jsonUTF8 = writer.write(root);
+	return jsonUTF8;
+}
+
+std::string DataReport::getErrorReport()
+{
+	std::string jsonUTF8;
+	Json::Value root;
+	getCommonReport(root);
+
+	root["str_action"] = m_errorReport.str_action;
+	root["str_result"] = m_errorReport.str_result;
+	root["str_reason"] = m_errorReport.str_reason;
+
+	Json::FastWriter writer;
+	jsonUTF8 = writer.write(root);
+	return jsonUTF8;
+}
+
+std::string DataReport::getWhiteboardUploadReport()
+{
+	std::string jsonUTF8;
+	Json::Value root;
+	getCommonReport(root);
+
+	root["int32_fetchcossig_code"] = m_whiteBoardUploadReport.int32_fetchcossig_code;
+	root["str_uploadurl"] = m_whiteBoardUploadReport.str_uploadurl;
+	root["int32_uploadtocos_code"] = m_whiteBoardUploadReport.int32_uploadtocos_code;
+	root["str_previewurl"] = m_whiteBoardUploadReport.str_previewurl;
+	root["int32_pagecount"] = m_whiteBoardUploadReport.int32_pagecount;
+	root["int32_filesize"] = m_whiteBoardUploadReport.int32_filesize;
+	root["int64_ts_upload"] = m_whiteBoardUploadReport.int64_ts_click_upload;
+	root["int64_ts_preview"] = m_whiteBoardUploadReport.int64_ts_preview;
+
+	root["bool_proxy"] = m_whiteBoardUploadReport.bool_proxy;
+
+	root["str_action"] = m_whiteBoardUploadReport.str_action;
+	root["str_result"] = m_whiteBoardUploadReport.str_result;
+	root["str_reason"] = m_whiteBoardUploadReport.str_reason;
+
+	Json::FastWriter writer;
+	jsonUTF8 = writer.write(root);
+	return jsonUTF8;
+}
+
+std::string DataReport::getWhiteboardLastReport()
+{
+	std::string jsonUTF8;
+	Json::Value root;
+	getCommonReport(root);
+
+	root["str_action"] = m_whiteBoardLastReport.str_action;
+	root["str_result"] = m_whiteBoardLastReport.str_result;
+	root["str_reason"] = m_whiteBoardLastReport.str_reason;
+
+	Json::FastWriter writer;
+	jsonUTF8 = writer.write(root);
+	return jsonUTF8;
+}
+
+std::string DataReport::getWhiteboardNextReport()
+{
+	std::string jsonUTF8;
+	Json::Value root;
+	getCommonReport(root);
+
+	root["str_action"] = m_whiteBoardNextReport.str_action;
+	root["str_result"] = m_whiteBoardNextReport.str_result;
+	root["str_reason"] = m_whiteBoardNextReport.str_reason;
+
+	Json::FastWriter writer;
+	jsonUTF8 = writer.write(root);
+	return jsonUTF8;
 }

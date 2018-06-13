@@ -6,6 +6,7 @@
 #include "QDialogProgress.h"
 #include "BoardService.h"
 #include "DataReport.h"
+#include "log.h"
 
 WhiteBoard::WhiteBoard(bool enableDraw, QWidget *parent)
 	: QMainWindow(parent)
@@ -578,6 +579,7 @@ void WhiteBoard::showPagesWindow()
 {
 	if (_mainUser)
 	{
+		_pagesWindow->hide();
 		_pagesWindow->resize(ui.centralWidget->width(), 42);
 		_pagesWindow->move(0, ui.centralWidget->height() - _pagesWindow->height());
 		_pagesWindow->show();

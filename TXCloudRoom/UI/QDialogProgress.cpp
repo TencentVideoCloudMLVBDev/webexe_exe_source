@@ -7,7 +7,7 @@ QDialogProgress::QDialogProgress(QWidget *parent)
 {
 	ui.setupUi(this);
 
-	setWindowFlags(Qt::Tool | Qt::Window | Qt::FramelessWindowHint);
+	setWindowFlags(Qt::Tool | Qt::Window | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
 	setAttribute(Qt::WA_TranslucentBackground);
 
 	QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);

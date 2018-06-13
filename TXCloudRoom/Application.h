@@ -12,7 +12,6 @@
 #include "LiveDemo.h"
 #include "RTCDemo.h"
 #include "DialogPushPlay.h"
-#include "HttpServer.h"
 
 typedef std::function<void(void)> ApplicationFunction;
 
@@ -73,7 +72,7 @@ private:
 		std::string& userSig, std::string& userName, std::string& userAvatar, std::string& roomID, std::string& roomInfo,
 		std::string& strTemplate, std::string& userTag, bool & userList, bool & IMList, bool & whiteboard, bool & screenShare, int & pictureID, bool & mixRecord, std::string& title, std::string& logo);
 	void getSnapShotPath(std::wstring& fullpath);
-	void runRecord(std::string recordURL);
+	void runRecord(std::string recordUrl, std::string recordPath);
 private:
     ULONG_PTR m_gdiplusToken;
     PushPlayDemo* m_normalLive;
@@ -87,7 +86,7 @@ private:
     const size_t m_maxDataListCount;    // 最大缓存数量
     std::mutex m_mutex;
 	std::wstring m_tempPath;
-	ScreenRecordType m_screenRecord = RecordScreenNone;
+	ScreenRecordType m_screenRecord;
 	std::string m_proxyIP;
 	int m_proxyPort;
 };

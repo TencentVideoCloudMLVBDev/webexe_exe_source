@@ -26,14 +26,12 @@ public:
 	RTCDemo(QWidget *parent = Q_NULLPTR);
 	virtual ~RTCDemo();
 
-	void createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
-	void enterRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
+	void createRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
+	void enterRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
 	void setLogo(QString logoURL, bool multi = true);
 	void setTitle(QString title);
 	void leaveRoom();
 	void initUI(const QString& strTemplate, const QString& userTag, bool bUserList, bool bIMList, bool whiteboard, bool screenShare);
-
-    void setProxy(const std::string& ip, unsigned short port);
 protected:
 	virtual void onCreateRoom(const RTCResult& res, const std::string& roomID);
 	virtual void onEnterRoom(const RTCResult& res);
@@ -84,7 +82,7 @@ private:
 	ScreenRecordType m_screenRecord;
 
 private:
-	void init(const RTCAuthData& authData, const QString& roomName);
+	void init(const RTCAuthData& authData, const QString& roomName, const std::string& ip, unsigned short port);
 	void setInitBeautyValue();
 signals:
 	void dispatch(txfunction func);

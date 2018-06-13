@@ -71,12 +71,11 @@ void BoardService::syncEventData()
 
 void BoardService::uploadFile(const std::wstring& fileName)
 {
-	if (!m_bFirstDownloaded)
+	if (m_bUpload)
 	{
-		std::string whiteboardReport = DataReport::instance().getWhiteboardReport();
-		HttpReportRequest::instance().reportELK(whiteboardReport);
+		HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
 	}
-	m_bFirstDownloaded = false;
+	m_bUpload = true;
 	fetchCosSig(fileName);
 }
 
@@ -117,10 +116,10 @@ void BoardService::gotoCurrentPage()
 
 void BoardService::reportELK()
 {
-	if (!m_bFirstDownloaded)
+	if (m_bUpload)
 	{
-		m_bFirstDownloaded = true;
-		std::string whiteboardReport = DataReport::instance().getWhiteboardReport();
+		m_bUpload = false;
+		std::string whiteboardReport = DataReport::instance().getWhiteboardUploadReport();
 		HttpReportRequest::instance().reportELK(whiteboardReport);
 	}
 }
@@ -129,6 +128,7 @@ void BoardService::gotoLastPage()
 {
 	if(_pageIndex > 0)
 	{
+		m_bLast = true;
 		gotoPage(_pageIndex - 1);
 	}
 }
@@ -137,6 +137,7 @@ void BoardService::gotoNextPage()
 {
 	if (_pageIndex < _pagesId.size() - 1)
 	{
+		m_bNext = true;
 		gotoPage(_pageIndex + 1);
 	}
 }
@@ -221,38 +222,42 @@ std::wstring BoardService::url() const
 	if (!m_authData.token.empty())
 	{
 		url.append(L"&identifier=")
-			.append(TXCHttpRequest::a2w(m_authData.userID))
+			.append(TXCHttpClient::a2w(m_authData.userID))
 			.append(L"&user_token=")
-			.append(TXCHttpRequest::a2w(m_authData.token));
+			.append(TXCHttpClient::a2w(m_authData.token));
 	}
 	return url;
 }
 
 void BoardService::fetchCosSig(const std::wstring& fileName)
 {
-	HttpHeadersPtr headers = std::make_shared<HttpHeaders>();
-	headers->set_content_type(L"application/json; charset=utf-8");
+    std::vector<std::string> headers;
+    headers.push_back("Content-Type: application/json; charset=utf-8");
 
 	//获取COS上传权限签名
 	_cos.httpClient()->asyn_post(
-		url(),
+		TXCHttpClient::w2a(url(), CP_UTF8),
 		headers,
 		CosSigReq("pc/", "").GenReq(),
-		[=](int code, std::string resp)
+		[=](int code, std::string resp, const std::vector<std::string>& respHeaders)
 	{
 		CosSigRsp sigRsp;
 		sigRsp.Parse(resp);
 		if (sigRsp.GetCode())
 		{
 			DataReport::instance().setFetchCosSigCode(sigRsp.GetCode());
+			m_bUpload = false;
+			DataReport::instance().setResult(DataReportWBupload, "fail:1001", std::to_string(sigRsp.GetCode()));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
+
 			sendUploadResult(false);
 		}
 		else
 		{
 			_cos.setAppID(L"1253488539");
-			_cos.setBucket(TXCHttpRequest::a2w(sigRsp.GetBucket()));
+			_cos.setBucket(TXCHttpClient::a2w(sigRsp.GetBucket()));
 			_cos.setPath(L"pc/");
-			_cos.setRegion(TXCHttpRequest::a2w(sigRsp.GetRegion()));
+			_cos.setRegion(TXCHttpClient::a2w(sigRsp.GetRegion()));
 			uploadToCos(sigRsp.GetSig(), fileName);
 		}
 	});
@@ -274,9 +279,12 @@ void BoardService::uploadToCos(const std::string& sig, const std::wstring& fileN
 			if (done)
 			{
 				DataReport::instance().setUploadtoCosCode(code);
-				if (code != 200)
+				if (code != 0)
 				{
 					sendUploadResult(false);
+					m_bUpload = false;
+					DataReport::instance().setResult(DataReportWBupload, "fail:1002", std::to_string(code));
+					HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
 					return;
 				}
 				previewFile(objName);
@@ -360,6 +368,9 @@ void BoardService::previewFile(const std::wstring& objName)
 			}
 			else
 			{
+				m_bUpload = false;
+				DataReport::instance().setResult(DataReportWBupload, "fail:1003", "page count is 0");
+				HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
 				sendUploadResult(false);
 			}
 		});
@@ -454,14 +465,53 @@ void BoardService::onGetBoardData(bool bResult) //拉取上一次数据成功
 	//}
 }
 
-void BoardService::onRenderFrame()
+void BoardService::onRenderFrame(bool render)
 {
-	if (!m_bFirstDownloaded)
+	if (m_bUpload)
 	{
-		m_bFirstDownloaded = true;
+		m_bUpload = false;
 		DataReport::instance().setPreview(DataReport::instance().txf_gettickcount());
-		std::string whiteboardReport = DataReport::instance().getWhiteboardReport();
-		HttpReportRequest::instance().reportELK(whiteboardReport);
+
+		if (render)
+		{
+			DataReport::instance().setResult(DataReportWBupload, "success");
+			HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
+		}
+		else
+		{
+			DataReport::instance().setResult(DataReportWBupload, "fail:1003", "download fail");
+			HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
+		}
+	}
+
+	if (m_bLast)
+	{
+		m_bLast = false;
+		if (render)
+		{
+			DataReport::instance().setResult(DataReportWBLast, "success");
+			HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardLastReport());
+		}
+		else
+		{
+			DataReport::instance().setResult(DataReportWBLast, "fail:1003", "download fail");
+			HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardLastReport());
+		}
+	}
+
+	if (m_bNext)
+	{
+		m_bNext = false;
+		if (render)
+		{
+			DataReport::instance().setResult(DataReportWBNext, "success");
+			HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardNextReport());
+		}
+		else
+		{
+			DataReport::instance().setResult(DataReportWBNext, "fail:1003", "download fail");
+			HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardNextReport());
+		}
 	}
 }
 

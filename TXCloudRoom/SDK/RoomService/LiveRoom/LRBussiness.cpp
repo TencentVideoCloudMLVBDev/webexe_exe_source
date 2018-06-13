@@ -138,9 +138,7 @@ LRBussiness::LRBussiness()
 	, m_role(LRNullRole)
 	, m_streamMixer(&m_httpRequest)
 {
-	TIMManager::instance()->setRecvMsgCallBack(this);
-    TIMManager::instance()->setGroupChangeCallBack(this);
-    TIMManager::instance()->setKickOfflineCallBack(this);
+
 }
 
 LRBussiness::~LRBussiness()
@@ -175,6 +173,10 @@ void LRBussiness::login(const std::string & serverDomain, const LRAuthData & aut
 
 	assert(false == serverDomain.empty() && NULL != callback);
 
+    TIMManager::instance()->setRecvMsgCallBack(this);
+    TIMManager::instance()->setGroupChangeCallBack(this);
+    TIMManager::instance()->setKickOfflineCallBack(this);
+
 	m_authData = authData;
 	m_streamMixer.setSdkAppID(m_authData.sdkAppID);
     m_streamMixer.setUserID(m_authData.userID);
@@ -199,6 +201,12 @@ void LRBussiness::login(const std::string & serverDomain, const LRAuthData & aut
 		DataReport::instance().setCGILogin(DataReport::instance().txf_gettickcount());
 		m_authData.token = token;
 		callback->onLogin(res, m_authData);
+		if (res.ec != LIVEROOM_SUCCESS)
+		{
+			m_bReport = true;
+			DataReport::instance().setResult(DataReportEnter, "fail:1002", res.msg);
+			HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
+		}
 	});
 }
 
@@ -291,6 +299,9 @@ void LRBussiness::createRoom(const std::string& roomID, const std::string& roomI
 			{
 				m_callback->onCreateRoom(res, std::string());
 			}
+			m_bReport = true;
+			DataReport::instance().setResult(DataReportEnter, "fail:1002", res.msg);
+			HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
 		}
 		else
 		{
@@ -364,7 +375,7 @@ void LRBussiness::leaveRoom()
 	if (!m_bReport)
 	{
 		m_bReport = true;
-		HttpReportRequest::instance().reportELK(DataReport::instance().getInitReport());
+		HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
 	}
 
     if (LRNullRole == m_role)
@@ -668,6 +679,8 @@ void LRBussiness::onTIMLoginSuccess(void* data)
 void LRBussiness::onTIMLoginError(int code, const char* desc, void* data)
 {
 	DataReport::instance().setIMLogin(1);
+	DataReport::instance().setResult(DataReportEnter, "fail:1001", desc);
+
 	LINFO(L"IM login failed code: %d, desc: %s", code, desc);
 }
 
@@ -1016,6 +1029,8 @@ void LRBussiness::onRecvGroupSystemMsg(const char * groupID, const char * msg)
 void LRBussiness::onKickOffline()
 {
     m_callback->onTIMKickOffline();
+	DataReport::instance().setResult(DataReportError, "fail:1001", "IM kickoffline");
+	HttpReportRequest::instance().reportELK(DataReport::instance().getErrorReport());
 }
 
 void LRBussiness::onGroupChangeMessage(IMGroupOptType opType, const char* group_id, const char * user_id)
@@ -1032,6 +1047,9 @@ void LRBussiness::onGroupChangeMessage(IMGroupOptType opType, const char* group_
 			{
 				m_callback->onRoomClosed(m_roomData.roomID.c_str());
 			}
+
+			DataReport::instance().setResult(DataReportLeave, "fail:1001", "im group delete");
+			HttpReportRequest::instance().reportELK(DataReport::instance().getLeaveReport());
 		}
 	}
 }
@@ -1051,6 +1069,39 @@ void LRBussiness::onEventCallback(int eventId, const int paramCount, const char*
 
 	switch (eventId)
 	{
+	case PushEvt::PUSH_ERR_OPEN_CAMERA_FAIL:
+	{
+		LINFO(L"Pusher open camera fail, userID: %s", Ansi2Wide(userID).c_str());
+
+		//if (!m_bReport)
+		//{
+		//	m_bReport = true;
+		//	DataReport::instance().setResult(DataReportEnter, "fail:1003", std::to_string(eventId));
+		//	HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
+		//}
+		//else
+		//{
+		//	DataReport::instance().setResult(DataReportError, "fail:1003", std::to_string(eventId));
+		//	HttpReportRequest::instance().reportELK(DataReport::instance().getErrorReport());
+		//}
+	}
+	break;
+	case PushEvt::PUSH_WARNING_DNS_FAIL || PushEvt::PUSH_WARNING_SEVER_CONN_FAIL || PushEvt::PUSH_WARNING_SHAKE_FAIL || PushEvt::PUSH_WARNING_SERVER_DISCONNECT || PushEvt::PUSH_WARNING_SERVER_NO_DATA:
+	{
+		LINFO(L"Pusher rtmp connect fail, userID: %s, eventid: %d", Ansi2Wide(userID).c_str(), eventId);
+		if (m_bReport)
+		{
+			DataReport::instance().setResult(DataReportError, "fail:1003", std::to_string(eventId));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getErrorReport());
+		}
+		else
+		{
+			m_bReport = true;
+			DataReport::instance().setResult(DataReportEnter, "fail:1003", std::to_string(eventId));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
+		}
+	}
+	break;
     case PushEvt::PUSH_WARNING_RECONNECT:
     {
         LINFO(L"Pusher reconnect, userID: %s", Ansi2Wide(userID).c_str());
@@ -1059,6 +1110,17 @@ void LRBussiness::onEventCallback(int eventId, const int paramCount, const char*
 	case PushEvt::PUSH_ERR_NET_DISCONNECT:
 	{
 		handlePushDisconnect(userID);
+		if (m_bReport)
+		{
+			DataReport::instance().setResult(DataReportError, "fail:1003", std::to_string(eventId));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getErrorReport());
+		}
+		else
+		{
+			m_bReport = true;
+			DataReport::instance().setResult(DataReportEnter, "fail:1003", std::to_string(eventId));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
+		}
 	}
 	break;
 	case  PushEvt::PUSH_EVT_CONNECT_SUCC:
@@ -1080,6 +1142,18 @@ void LRBussiness::onEventCallback(int eventId, const int paramCount, const char*
 		{
 			m_callback->onError({ LIVEROOM_ERR_CAMERA_OCCUPY, "摄像头占用" }, m_authData.userID);
 		}
+
+		if (m_bReport)
+		{
+			DataReport::instance().setResult(DataReportError, "fail:1003", std::to_string(eventId));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getErrorReport());
+		}
+		else
+		{
+			m_bReport = true;
+			DataReport::instance().setResult(DataReportEnter, "fail:1003", std::to_string(eventId));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
+		}
 	}
 	break;
 	case PushEvt::PUSH_EVT_CAMERA_REMOVED:
@@ -1089,6 +1163,18 @@ void LRBussiness::onEventCallback(int eventId, const int paramCount, const char*
 		if (m_callback)
 		{
 			m_callback->onError({ LIVEROOM_ERR_CAMERA_REMOVED, "摄像头被拔出" }, m_authData.userID);
+		}
+
+		if (m_bReport)
+		{
+			DataReport::instance().setResult(DataReportError, "fail:1003", std::to_string(eventId));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getErrorReport());
+		}
+		else
+		{
+			m_bReport = true;
+			DataReport::instance().setResult(DataReportEnter, "fail:1003", std::to_string(eventId));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
 		}
 	}
 	break;
@@ -1100,6 +1186,9 @@ void LRBussiness::onEventCallback(int eventId, const int paramCount, const char*
 	case  PlayEvt::PLAY_ERR_NET_DISCONNECT:
 	{
         handlePlayDisconnect(userID);
+
+		DataReport::instance().setResult(DataReportEnter, "fail:1003", std::to_string(eventId));
+		HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
 	}
     break;
     case PlayEvt::PLAY_EVT_CHANGE_RESOLUTION:
@@ -1166,7 +1255,8 @@ void LRBussiness::getPushers()
 		if (!m_bReport)
 		{
 			m_bReport = true;
-			HttpReportRequest::instance().reportELK(DataReport::instance().getInitReport());
+			DataReport::instance().setResult(DataReportEnter, "success");
+			HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
 		}
 	});
 }
@@ -1342,6 +1432,9 @@ void LRBussiness::handlePushBegin()
 				{
 					m_callback->onCreateRoom(res, roomID);
 				}
+				m_bReport = true;
+				DataReport::instance().setResult(DataReportEnter, "fail:1002", res.msg);
+				HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
 			}
 			else
 			{
@@ -1355,8 +1448,8 @@ void LRBussiness::handlePushBegin()
 
 				m_httpRequest.addPusher(m_roomData.roomID, m_authData.userID, m_authData.userName, m_authData.userAvatar, m_pushUrl, [=](const LRResult& res) {
 					DataReport::instance().setCGIAddPusher(DataReport::instance().txf_gettickcount());
-					DataReport::instance().setRoomInfo(0, m_roomData.roomID, true, m_authData.userID, m_authData.userName);
-
+					DataReport::instance().setRoomInfo(m_roomData.roomID);
+					
 					if (m_callback)
 					{
 						m_callback->onCreateRoom(res, roomID);
@@ -1365,6 +1458,12 @@ void LRBussiness::handlePushBegin()
 					if (LIVEROOM_SUCCESS == res.ec)
 					{
 						getPushers();
+					}
+					else
+					{
+						m_bReport = true;
+						DataReport::instance().setResult(DataReportEnter, "fail:1002", res.msg);
+						HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
 					}
 				});
 			}

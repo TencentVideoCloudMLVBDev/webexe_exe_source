@@ -6,7 +6,7 @@
 #include "RTCRHttpRequest.h"
 #include "Application.h"
 #include "Base.h"
-
+#include "DataReport.h"
 #include <Dwmapi.h> 
 
 QWidget * RTCMainWindow = nullptr;
@@ -68,6 +68,7 @@ void RTCDemo::mouseMoveEvent(QMouseEvent *e)
 void RTCDemo::showEvent(QShowEvent * event)
 {
 	this->setAttribute(Qt::WA_Mapped);
+	this->update();
 	QMainWindow::showEvent(event);
 }
 
@@ -97,6 +98,9 @@ void RTCDemo::on_btn_close_clicked()
 	RTCRoom::instance()->leaveRoom();
 	RTCRoom::instance()->logout();
 
+	DataReport::instance().setResult(DataReportLeave, "success");
+	HttpReportRequest::instance().reportELK(DataReport::instance().getLeaveReport());
+
 	this->close();
 	Application::instance().quit(0);
 }
@@ -122,8 +126,11 @@ RTCDemo::~RTCDemo()
 	delete roomService;
 }
 
-void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
+void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
 {
+    RTCRoom::instance()->setProxy(ip, port);
+    m_imgDownloader.setProxy(ip, port);
+
 	m_bCreate = true;
     m_roomID = roomID;
 	m_roomInfo = roomInfo;
@@ -133,12 +140,17 @@ void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, cons
 	{
 		RTCRoom::instance()->recordVideo(m_multi, picture_id);
 	}
-	RTCRoom::instance()->login(serverDomain.toStdString(), authData, this);	
-	init(authData, roomInfo);
+
+	RTCRoom::instance()->login(serverDomain.toStdString(), authData, this);
+
+	init(authData, roomInfo, ip, port);
 }
 
-void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
+void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
 {
+    RTCRoom::instance()->setProxy(ip, port);
+    m_imgDownloader.setProxy(ip, port);
+
 	m_bCreate = false;
     m_roomID = roomID;
 	m_roomInfo = roomInfo;
@@ -148,8 +160,10 @@ void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const
 	{
 		RTCRoom::instance()->recordVideo(m_multi, picture_id);
 	}
+
 	RTCRoom::instance()->login(serverDomain.toStdString(), authData, this);
-	init(authData, roomInfo);
+
+	init(authData, roomInfo, ip, port);
 }
 
 void RTCDemo::setLogo(QString logoURL, bool multi)
@@ -184,7 +198,7 @@ void RTCDemo::leaveRoom()
     on_btn_close_clicked();
 }
 
-void RTCDemo::init(const RTCAuthData& authData, const QString& roomName)
+void RTCDemo::init(const RTCAuthData& authData, const QString& roomName, const std::string& ip, unsigned short port)
 {
     m_authData = authData;
 
@@ -534,8 +548,26 @@ void RTCDemo::onRecvC2CCustomMsg(const char * userID, const char * userName, con
 
 void RTCDemo::onTIMKickOffline()
 {
-    emit dispatch([] {
+    emit dispatch([this] {
         DialogMessage::exec(QStringLiteral("IM强制下线，请检查是否重复登录同一个账号"), DialogMessage::OK);
+
+		if (m_screenRecord != RecordScreenNone)
+		{
+			HWND recordHwnd = FindWindowExA(HWND_MESSAGE, NULL, "TXCloudRecord", "TXCloudRecordCaption");
+			if (recordHwnd)
+			{
+				std::string message = "RecordExit";
+				COPYDATASTRUCT copy_data = { ScreenRecordExit, message.length() + 1,(LPVOID)message.c_str() };
+				::SendMessage(recordHwnd, WM_COPYDATA, ScreenRecordExit, reinterpret_cast<LPARAM>(&copy_data));
+			}
+		}
+
+		Application::instance().pushRoomStatus(2, Wide2UTF8(L"IM强制下线，退出房间"));
+
+		RTCRoom::instance()->leaveRoom();
+		RTCRoom::instance()->logout();
+
+		onRoomClosed("");
     });
 }
 
@@ -664,13 +696,6 @@ void RTCDemo::initUI(const QString& strTemplate, const QString& userTag, bool bU
 	{
 		m_toast = new QWidgetToast(this);
 	}
-}
-
-void RTCDemo::setProxy(const std::string& ip, unsigned short port)
-{
-    RTCRoom::instance()->setProxy(ip, port);
-
-    m_imgDownloader.setProxy(ip, port);
 }
 
 void RTCDemo::handle(txfunction func)

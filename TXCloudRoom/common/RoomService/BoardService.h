@@ -95,7 +95,7 @@ private:
 
 	void onRecvWhiteBoardData(const char* data, uint32_t length) override;
 	void onGetBoardData(bool bResult) override;
-	void onRenderFrame() override;
+	void onRenderFrame(bool render) override;
 	void onReportBoardData(const int code, const char * msg) override;
 private:
 	BoardService();
@@ -122,5 +122,7 @@ private:
 
 	BoardAuthData m_authData;
     std::string m_roomID;
-	bool m_bFirstDownloaded = false;
+	bool m_bUpload = false;
+	bool m_bLast = false;
+	bool m_bNext = false;
 };
