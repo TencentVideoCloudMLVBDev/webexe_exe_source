@@ -31,6 +31,10 @@ public:
 	void onRecvGroupTextMsg(const char * groupId, const char * userId, const char * userName, const char * msg);
 
     void onRoomClosed();
+
+protected:
+	virtual void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
+
 private:
 	void addMsgContent(const QString& userId, const QString& userName, const QString& msg);
 	void sendGroupMsg(const std::string& msg);

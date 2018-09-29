@@ -167,10 +167,10 @@ void RTCRBussiness::login(const std::string & serverDomain, const RTCAuthData & 
 	m_streamMixer.setSdkAppID(m_authData.sdkAppID);
 	m_streamMixer.setUserID(m_authData.userID);
 
-    TIMCommCB cb = { 0 };
-    cb.data = this;
-    cb.OnSuccess = onTIMLoginSuccess;
-    cb.OnError = onTIMLoginError;
+	TIMCommCB cb = { 0 };
+	cb.data = this;
+	cb.OnSuccess = onTIMLoginSuccess;
+	cb.OnError = onTIMLoginError;
 
     IMAccountInfo accountInfo;
     accountInfo.accType = m_authData.accountType;
@@ -178,22 +178,12 @@ void RTCRBussiness::login(const std::string & serverDomain, const RTCAuthData & 
     accountInfo.userID = m_authData.userID;
     accountInfo.userSig = m_authData.userSig;
 
+	m_serverDomain = serverDomain;
+	m_loginCallback = callback;
+
     TIMManager::instance()->login(accountInfo, &cb);
 
     LINFO(L"%s", Ansi2Wide(serverDomain).c_str());
-
-    m_httpRequest.login(serverDomain, m_authData, [=](const RTCResult& res, const std::string& userID, const std::string& token) {
-        assert(userID == m_authData.userID);
-		DataReport::instance().setCGILogin(DataReport::instance().txf_gettickcount());
-        m_authData.token = token;
-        callback->onLogin(res, m_authData);
-		if (res.ec != RTCROOM_SUCCESS)
-		{
-			m_bReport = true;
-			DataReport::instance().setResult(DataReportEnter, "fail:1002", res.msg);
-			HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
-		}
-    });
 }
 
 void RTCRBussiness::recordVideo(bool multi, int picture_id)
@@ -356,11 +346,12 @@ void RTCRBussiness::leaveRoom()
         m_mainPublisher.pusher()->stopPush();
     }
 
-	TIMManager::instance()->opGroup(kgQuitGroup, m_roomData.roomID.c_str(), this);
-
-	m_httpRequest.deletePusher(m_roomData.roomID, m_authData.userID, [=](const RTCResult& res) {});
+	m_httpRequest.deletePusher(m_roomData.roomID, m_authData.userID, [=](const RTCResult& res) {
+        TIMManager::instance()->opGroup(kgQuitGroup, m_roomData.roomID.c_str(), this);
+    });
 
 	::timeKillEvent(m_timerID);
+    m_timerID = 0;
 
 	m_bInRoom = false;
 	m_bCreateRoom = false;
@@ -433,6 +424,15 @@ void RTCRBussiness::startLocalPreview(HWND rendHwnd, const RECT & rect)
 {
     LINFO(L"rendHwnd: 0x%08X, rect: <%ld, %ld, %ld, %ld>", rendHwnd, rect.left, rect.top, rect.right, rect.bottom);
 
+	if (m_cameraCount == 0)
+	{
+		m_cameraCount = m_mainPublisher.pusher()->enumCameras(); //重新检查摄像头
+		if (m_cameraCount <= 0 && m_callback)
+		{
+			m_callback->onError({ RTCROOM_ERR_CAMERA_MISSED, "未检测到摄像头，无法正常开课，请先接入摄像头。" }, m_authData.userID);
+		}
+	}
+
     m_mainPublisher.pusher()->setRenderMode(TXE_RENDER_MODE_ADAPT);
 	if (m_bRecord)
 		m_mainPublisher.pusher()->setVideoQualityParamPreset(m_quality, TXE_VIDEO_RATIO_16_9);
@@ -459,7 +459,7 @@ void RTCRBussiness::stopLocalPreview()
     m_mainPublisher.pusher()->stopPreview();
 }
 
-bool RTCRBussiness::startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT & renderRect, const RECT & captureRect)
+bool RTCRBussiness::startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT & renderRect, const RECT & captureRect, bool bFollowWndRect)
 {
     LINFO(L"rendHwnd: 0x%08X, renderRect: <%ld, %ld, %ld, %ld>, captureHwnd: 0x%08X, captureRect: <%ld, %ld, %ld, %ld>"
         , rendHwnd, renderRect.left, renderRect.top, renderRect.right, renderRect.bottom
@@ -467,13 +467,14 @@ bool RTCRBussiness::startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RE
 
     m_mainPublisher.pusher()->setVideoQualityParamPreset(TXE_VIDEO_QUALITY_STILLIMAGE_DEFINITION);     // todo 目前屏幕分享的画质，不适合实时音视频通话
     m_mainPublisher.pusher()->setVideoFPS(10);
-    m_mainPublisher.pusher()->setScreenCaptureParam(captureHwnd, captureRect);
+
+    m_mainPublisher.pusher()->setScreenCaptureParam(captureHwnd, captureRect, bFollowWndRect);
     bool ret = m_mainPublisher.pusher()->startPreview(TXE_VIDEO_SRC_SDK_SCREEN, rendHwnd, renderRect);
 
     //sdk内部默认是镜像模式（针对摄像头），但是录屏出来的源数据本来就是镜像模式。
     m_mainPublisher.pusher()->setRenderYMirror(false);
     m_mainPublisher.pusher()->setOutputYMirror(false);
-
+	m_mainPublisher.pusher()->openSystemVoiceInput();
     return ret;
 }
 
@@ -481,6 +482,7 @@ void RTCRBussiness::stopScreenPreview()
 {
     LOGGER;
 
+	m_mainPublisher.pusher()->closeSystemVoiceInput();
     m_mainPublisher.pusher()->stopPreview();
 }
 
@@ -604,6 +606,24 @@ void RTCRBussiness::onTIMLoginSuccess(void* data)
 {
     LINFO(L"IM login success");
 	DataReport::instance().setIMLogin(DataReport::instance().txf_gettickcount());
+
+	RTCRBussiness* pImpl = reinterpret_cast<RTCRBussiness*>(data);
+	if (NULL != pImpl)
+	{
+		pImpl->m_httpRequest.login(pImpl->m_serverDomain, pImpl->m_authData, [=](const RTCResult& res, const std::string& userID, const std::string& token) {
+			assert(userID == pImpl->m_authData.userID);
+			pImpl->m_authData.token = token;
+			pImpl->m_loginCallback->onLogin(res, pImpl->m_authData);
+			if (res.ec != RTCROOM_SUCCESS)
+			{
+				pImpl->m_bReport = true;
+				DataReport::instance().setResult(DataReportEnter, "fail:1002", res.msg);
+				HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
+			}
+
+			DataReport::instance().setCGILogin(DataReport::instance().txf_gettickcount());
+		});
+	}
 }
 
 void RTCRBussiness::onTIMLoginError(int code, const char* desc, void* data)
@@ -611,6 +631,13 @@ void RTCRBussiness::onTIMLoginError(int code, const char* desc, void* data)
 	DataReport::instance().setIMLogin(1);
 	DataReport::instance().setResult(DataReportEnter, "fail:1001", desc);
     LINFO(L"IM login failed code: %d, desc: %s", code, desc);
+
+	RTCRBussiness* pImpl = reinterpret_cast<RTCRBussiness*>(data);
+	if (NULL != pImpl)
+	{
+		RTCResult res = { adaptRTCErrorCode(code), desc };
+		pImpl->m_loginCallback->onLogin(res, pImpl->m_authData);
+	}
 }
 
 void RTCRBussiness::setBeautyStyle(RTCBeautyStyle beautyStyle, int beautyLevel, int whitenessLevel)
@@ -862,7 +889,7 @@ void RTCRBussiness::onRecvGroupSystemMsg(const char * groupID, const char * msg)
 void RTCRBussiness::onKickOffline()
 {
     m_callback->onTIMKickOffline();
-	DataReport::instance().setResult(DataReportError, "fail:1001", "IM kickoffline");
+	DataReport::instance().setResult(DataReportError, "fail:1004", "IM kickoffline");
 	HttpReportRequest::instance().reportELK(DataReport::instance().getErrorReport());
 }
 
@@ -957,6 +984,10 @@ void RTCRBussiness::onEventCallback(int eventId, const int paramCount, const cha
 			DataReport::instance().setResult(DataReportEnter, "fail:1003", std::to_string(eventId));
 			HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
 		}
+		DataReport::instance().setResult(DataReportStream, "fail", "push_disconnect");
+		DataReport::instance().setStreamAction("PusherQuit");
+		DataReport::instance().setStreamID(getStreamID(m_pushUrl));
+		HttpReportRequest::instance().reportELK(DataReport::instance().getStreamReport());
 	}
 	break;
 	case  PushEvt::PUSH_EVT_CONNECT_SUCC:
@@ -974,6 +1005,11 @@ void RTCRBussiness::onEventCallback(int eventId, const int paramCount, const cha
 		}
 		DataReport::instance().setPushBegin(DataReport::instance().txf_gettickcount());
 
+		DataReport::instance().setResult(DataReportStream, "success", "push_begin");
+		DataReport::instance().setStreamAction("PusherJoin");
+		DataReport::instance().setStreamID(getStreamID(m_pushUrl));
+		HttpReportRequest::instance().reportELK(DataReport::instance().getStreamReport());
+
 		if (m_bCreateRoom)
 		{
 			handlePushBeginForCreate();
@@ -990,7 +1026,7 @@ void RTCRBussiness::onEventCallback(int eventId, const int paramCount, const cha
 
 		if (m_callback)
 		{
-			m_callback->onError({ RTCROOM_ERR_CAMERA_OCCUPY, "摄像头占用" }, m_authData.userID);
+			m_callback->onError({ RTCROOM_ERR_CAMERA_OCCUPY, "摄像头已被占用，无法正常开课，请关闭正在使用摄像头的程序后重试。" }, m_authData.userID);
 		}
 
 		if (m_bReport)
@@ -1012,7 +1048,7 @@ void RTCRBussiness::onEventCallback(int eventId, const int paramCount, const cha
 
 		if (m_callback)
 		{
-			m_callback->onError({ RTCROOM_ERR_CAMERA_REMOVED, "摄像头被拔出" }, m_authData.userID);
+			m_callback->onError({ RTCROOM_ERR_CAMERA_REMOVED, "摄像头被拔出，无法正常开课，请先接入摄像头。" }, m_authData.userID);
 		}
 
 		if (m_bReport)
@@ -1036,9 +1072,6 @@ void RTCRBussiness::onEventCallback(int eventId, const int paramCount, const cha
 	case  PlayEvt::PLAY_ERR_NET_DISCONNECT:
 	{
         handlePlayDisconnect(userID);
-
-		DataReport::instance().setResult(DataReportEnter, "fail:1003", std::to_string(eventId));
-		HttpReportRequest::instance().reportELK(DataReport::instance().getEnterReport());
 	}
 	break;
 	case PlayEvt::PLAY_EVT_CHANGE_RESOLUTION:
@@ -1085,7 +1118,7 @@ void RTCRBussiness::onEventCallback(int eventId, const int paramCount, const cha
 void CALLBACK RTCRBussiness::onTimerEvent(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
 {
     RTCRBussiness* impl = reinterpret_cast<RTCRBussiness*>(dwUser);
-    if (impl)
+    if (impl && 0 != impl->m_timerID)
     {
         impl->m_httpRequest.heartbeat(impl->m_roomData.roomID, impl->m_authData.userID, [=](const RTCResult& res) {});
     }
@@ -1132,6 +1165,10 @@ void RTCRBussiness::mergePushers(const std::vector<RTCMemberData>& tempPushers)
         if (!flag && tempPushers[i].userID != m_authData.userID && m_callback)
         {
             m_callback->onPusherQuit(tempPushers[i]);
+			DataReport::instance().setResult(DataReportStream, "success", "quit");
+			DataReport::instance().setStreamAction("PusherQuit");
+			DataReport::instance().setStreamID(getStreamID(tempPushers[i].accelerateURL));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getStreamReport());
             LINFO(L"%s", Ansi2Wide(tempPushers[i].userID).c_str());
 
 			std::string streamID = getStreamID(tempPushers[i].accelerateURL);
@@ -1156,6 +1193,10 @@ void RTCRBussiness::mergePushers(const std::vector<RTCMemberData>& tempPushers)
         if (!flag&& m_roomData.members[i].userID != m_authData.userID && m_callback)
         {
             m_callback->onPusherJoin(m_roomData.members[i]);
+			DataReport::instance().setResult(DataReportStream, "success", "join");
+			DataReport::instance().setStreamAction("PusherJoin");
+			DataReport::instance().setStreamID(getStreamID(m_roomData.members[i].accelerateURL));
+			HttpReportRequest::instance().reportELK(DataReport::instance().getStreamReport());
             LINFO(L"%s", Ansi2Wide(m_roomData.members[i].userID).c_str());
         }
     }
@@ -1324,9 +1365,17 @@ void RTCRBussiness::handlePlayDisconnect(const std::string& userID)
         if (userID == it->userID)
         {
             m_callback->onPusherQuit(*it);
-
+			DataReport::instance().setResult(DataReportStream, "fail", "play_disconnect");
+			DataReport::instance().setStreamAction("PusherQuit");
+			std::string streamID = getStreamID(it->accelerateURL);
+			DataReport::instance().setStreamID(streamID);
+			HttpReportRequest::instance().reportELK(DataReport::instance().getStreamReport());
             m_roomData.members.erase(it);
 
+			if (false == streamID.empty() && m_bRecord && m_bCreateRoom)
+			{
+				m_streamMixer.removeSubStream(streamID);
+			}
             break;
         }
     }

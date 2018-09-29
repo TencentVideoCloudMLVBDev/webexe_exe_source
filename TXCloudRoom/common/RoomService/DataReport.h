@@ -42,10 +42,14 @@ public:
 	void setUploadUrl(std::string str_uploadUrl);
 	void setUploadtoCosCode(uint32_t code);
 	void setPreviewUrl(std::string str_previewUrl);
-	void setPageCount(uint32_t count);
+	void setPageCount(int32_t count);
 	void setFileSize(uint32_t size);
 	void setClickUpload(uint64_t ts);
 	void setPreview(uint64_t ts);
+
+	//stream
+	void setStreamID(std::string str_stream_id);
+	void setStreamAction(std::string str_stream_action);
 
 	//result
 	void setResult(DataReportType type, std::string result, std::string reason = "");
@@ -58,6 +62,7 @@ public:
 	std::string getWhiteboardUploadReport();
 	std::string getWhiteboardLastReport();
 	std::string getWhiteboardNextReport();
+	std::string getStreamReport();
 
 private:
 	EnterDataReport m_enterReport;
@@ -66,5 +71,6 @@ private:
 	WhiteboardUploadReport m_whiteBoardUploadReport;
 	WhiteboardLastReport m_whiteBoardLastReport;
 	WhiteboardNextReport m_whiteBoardNextReport;
+	StreamDataReport m_streamReport;
 	CommonDataReport m_commonReport;
 };

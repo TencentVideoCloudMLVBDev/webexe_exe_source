@@ -26,6 +26,8 @@
     <file>tools/upload-press.png</file>
   </qresource>
   <qresource prefix="pages">
+    <file>pages/history-normal.png</file>
+    <file>pages/history-press.png</file>
     <file>pages/add-normal.png</file>
     <file>pages/add-press.png</file>
     <file>pages/delete-normal.png</file>

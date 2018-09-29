@@ -26,7 +26,7 @@ RTCRoomList::RTCRoomList(QWidget *parent)
     , m_createRoom(nullptr)
     , m_multi(false)
     , m_authData()
-    , m_httpRequest("http://xzb.qcloud.com:8080/roomlist/weapp/webexe_room/")
+    , m_httpRequest("http://xzb.qcloud.com/roomlist/weapp/webexe_room/")
     , m_roomID("")
     , m_roomType("webexe_multiroom")
     , m_listTimerID(-1)
@@ -62,7 +62,7 @@ RTCRoomList::RTCRoomList(QWidget *parent)
     getLoginInfo(m_userID);
 
     getRoomList(0, 20);
-    m_listTimerID = startTimer(3 * 1000);
+    m_listTimerID = startTimer(5 * 1000);
 
     m_ui.lw_room_list->verticalScrollBar()->setStyleSheet(
         R"(QScrollBar{

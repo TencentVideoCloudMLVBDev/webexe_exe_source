@@ -15,8 +15,8 @@
 #include <iostream>
 #include <fstream>
 #include "DataReport.h"
+#include "TXCloudRecordCmd.h"
 
-#define  RecordExe "TXCloudRecord.exe"
 
 static unsigned char ToHex(unsigned char x)
 {
@@ -181,6 +181,10 @@ int Application::run(int &argc, char **argv)
 
     LINFO(L"run ret: %d", ret);
 
+    HttpReportRequest::instance().close();
+
+    LINFO(L"curl_global_cleanup");
+
     curl_global_cleanup();
 
     return ret;
@@ -188,8 +192,7 @@ int Application::run(int &argc, char **argv)
 
 void Application::quit(int retcode)
 {
-    LOGGER;
-
+	LOGGER;
     QApplication::exit(retcode);
 }
 
@@ -368,6 +371,18 @@ void Application::onGetRequest(const std::wstring& absPath, DWORD& statusCode, s
     {
         handleSnapshotPlayer(absPath, statusCode, respDataUTF8);
     }
+	else if (0 == absPath.find(L"/csliveSetMute?"))
+	{
+		handleCSLiveSetMute(absPath, statusCode, respDataUTF8);
+	}
+	else if (0 == absPath.find(L"/csliveAddPusher?"))
+	{
+		handleCSAddPusher(absPath, statusCode, respDataUTF8);
+	}
+	else if (0 == absPath.find(L"/csliveDelPusher?"))
+	{
+		handleCSDelPusher(absPath, statusCode, respDataUTF8);
+	}
 }
 
 void Application::onLog(HSLogLevel level, const std::string& content)
@@ -382,6 +397,12 @@ void Application::onClose(ULONGLONG requestId)
 
 void Application::handleQuery(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8)
 {
+    static int logFlag = 0;
+    if (0 == logFlag++ % 100)   // 因query较频繁，故首次或每100次时，输出一次log
+    {
+        LINFO(L"absPath: %s", absPath.c_str());
+    }
+
     std::wstring callbackValue = getCallbackName(absPath);
 
     Json::Value data;
@@ -433,7 +454,7 @@ void Application::handleQuit(const std::wstring& absPath, DWORD& statusCode, std
 
         if (nullptr != m_csLive)
         {
-            m_csLive->quit();
+            m_csLive->destroysession();
             delete m_csLive;
             m_csLive = nullptr;
         }
@@ -517,10 +538,15 @@ void Application::handleCreateSession(const std::wstring& absPath, DWORD& status
     QString pullURL = query.queryItemValue("pullURL");
     std::string pullURLDecode = URLDecode(pullURL.toStdString());
 
+	QString title = query.queryItemValue("title");
+	std::string titleDecode = URLDecode(title.toStdString());
+
     if (NULL != m_csLive)
-    {
-        m_csLive->startPush(pushURLDecode.c_str());
-        m_csLive->startPlay(pullURLDecode.c_str());
+	{
+		m_csLive->creatsession(QString::fromStdString(pushURLDecode), QString::fromStdString(pullURLDecode));
+		m_csLive->setTitle(titleDecode.c_str());
+        //m_csLive->startPush(QString::fromStdString(pushURLDecode));
+        //m_csLive->startPlay(QString::fromStdString(pullURLDecode));
     }
 
     statusCode = 200;
@@ -543,7 +569,7 @@ void Application::handleDestroySession(const std::wstring& absPath, DWORD& statu
 
     if (NULL != m_csLive)
     {
-        m_csLive->quit();
+        m_csLive->destroysession();
     }
 
     statusCode = 200;
@@ -622,6 +648,95 @@ void Application::handleSnapshotPlayer(const std::wstring& absPath, DWORD& statu
     }
 }
 
+void Application::handleCSLiveSetMute(const std::wstring & absPath, DWORD & statusCode, std::string & respDataUTF8)
+{
+	LINFO(L"absPath: %s", absPath.c_str());
+
+	std::wstring callbackValue = getCallbackName(absPath);
+
+	QString queryString = QString::fromStdWString(absPath);
+
+	QUrlQuery query(queryString.replace("/csliveSetMute?", ""));
+
+	QString bMuteStr = query.queryItemValue("setMute");
+
+	bool bMute = bMuteStr.toInt();
+	if (NULL != m_csLive)
+	{
+		m_csLive->setMute(bMute);
+		//m_csLive->startPlay(pullURLDecode.c_str());
+	}
+
+	statusCode = 200;
+	if (true == callbackValue.empty())
+	{
+		respDataUTF8 = "{\"code\": 0, \"message\" : \"\"}";
+	}
+	else
+	{
+		respDataUTF8 = Wide2UTF8(callbackValue);
+		respDataUTF8.append("({\"code\": 0, \"message\" : \"\"})");
+	}
+}
+
+void Application::handleCSAddPusher(const std::wstring & absPath, DWORD & statusCode, std::string & respDataUTF8)
+{
+	LINFO(L"absPath: %s", absPath.c_str());
+
+	std::wstring callbackValue = getCallbackName(absPath);
+
+	QString queryString = QString::fromStdWString(absPath);
+
+	QUrlQuery query(queryString.replace("/csliveAddPusher?", ""));
+
+	QString pushUrlStr = query.queryItemValue("url");
+	std::string pushURLDecode = URLDecode(pushUrlStr.toStdString());
+	if (NULL != m_csLive)
+	{
+		m_csLive->addPlayer(QString::fromStdString(pushURLDecode));
+	}
+
+	statusCode = 200;
+	if (true == callbackValue.empty())
+	{
+		respDataUTF8 = "{\"code\": 0, \"message\" : \"\"}";
+	}
+	else
+	{
+		respDataUTF8 = Wide2UTF8(callbackValue);
+		respDataUTF8.append("({\"code\": 0, \"message\" : \"\"})");
+	}
+}
+
+void Application::handleCSDelPusher(const std::wstring & absPath, DWORD & statusCode, std::string & respDataUTF8)
+{
+	LINFO(L"absPath: %s", absPath.c_str());
+
+	std::wstring callbackValue = getCallbackName(absPath);
+
+	QString queryString = QString::fromStdWString(absPath);
+
+	QUrlQuery query(queryString.replace("/csliveDelPusher?", ""));
+
+	QString pushUrlStr = query.queryItemValue("url");
+	std::string pushURLDecode = URLDecode(pushUrlStr.toStdString());
+	if (NULL != m_csLive)
+	{
+		m_csLive->delPlayer(QString::fromStdString(pushURLDecode));
+	}
+
+	statusCode = 200;
+	if (true == callbackValue.empty())
+	{
+		respDataUTF8 = "{\"code\": 0, \"message\" : \"\"}";
+	}
+	else
+	{
+		respDataUTF8 = Wide2UTF8(callbackValue);
+		respDataUTF8.append("({\"code\": 0, \"message\" : \"\"})");
+	}
+}
+
 bool Application::resolve(const std::string& json)
 {
     LINFO(L"json: %s", Ansi2Wide(json).c_str());
@@ -640,36 +755,46 @@ bool Application::resolve(const std::string& json)
     if (root.isMember("port"))
     {
         m_httpPort = root["port"].asInt();
-        if (-1 != m_httpPort)
-        {
-            std::wstring queryURL = format(L"http://localhost:%d/query", m_httpPort);
-            std::wstring quitURL = format(L"http://localhost:%d/quit", m_httpPort);
-            std::wstring externalProtolURL = format(L"http://localhost:%d/externalProtol", m_httpPort);
-            std::wstring createSessionURL = format(L"http://localhost:%d/csliveCreateSession", m_httpPort);
-            std::wstring destroySessionURL = format(L"http://localhost:%d/csliveDestroySession", m_httpPort);
-            std::wstring snapshotPusherURL = format(L"http://localhost:%d/csliveSnapshotPusher", m_httpPort);
-            std::wstring snapshotPlayerURL = format(L"http://localhost:%d/csliveSnapshotPlayer", m_httpPort);
-            std::vector<std::wstring> urls = {
-                queryURL,
-                quitURL,
-                externalProtolURL,
-                createSessionURL,
-                destroySessionURL,
-                snapshotPusherURL,
-                snapshotPlayerURL
-            };
-
-            DWORD hsRet = m_httpServer.listen(urls);
-			DataReport::instance().setLocalHttp(DataReport::instance().txf_gettickcount());
-            LINFO(L"Http server listen ret: %lu, port: %d", hsRet, m_httpPort);
-        }
     }
 
     std::string dataChannel;
     if (root.isMember("dataChannel"))
-    {
         dataChannel = root["dataChannel"].asString();
-    }
+
+	int isHttpsPro = 0;
+	if (root.isMember("isHttpsPro"))
+		isHttpsPro = root["isHttpsPro"].asInt();
+
+	if (-1 != m_httpPort)
+	{
+		std::wstring protocalHeader = L"http://127.0.0.1";
+		if (isHttpsPro == 1)
+			protocalHeader = L"https://127.0.0.1";
+
+		std::wstring queryURL = format(L"%s:%d/query", protocalHeader.c_str(), m_httpPort);
+		std::wstring quitURL = format(L"%s:%d/quit", protocalHeader.c_str(), m_httpPort);
+		std::wstring externalProtolURL = format(L"%s:%d/externalProtol", protocalHeader.c_str(), m_httpPort);
+		std::wstring createSessionURL = format(L"%s:%d/csliveCreateSession", protocalHeader.c_str(), m_httpPort);
+		std::wstring destroySessionURL = format(L"%s:%d/csliveDestroySession", protocalHeader.c_str(), m_httpPort);
+		std::wstring snapshotPusherURL = format(L"%s:%d/csliveSnapshotPusher", protocalHeader.c_str(), m_httpPort);
+		std::wstring snapshotPlayerURL = format(L"%s:%d/csliveSnapshotPlayer", protocalHeader.c_str(), m_httpPort);
+		std::wstring csliveSetMuteUrl = format(L"%s:%d/csliveSetMute", protocalHeader.c_str(), m_httpPort);
+		std::wstring csliveAddPusher = format(L"%s:%d/csliveAddPusher", protocalHeader.c_str(), m_httpPort);
+		std::wstring csliveDelPusher = format(L"%s:%d/csliveDelPusher", protocalHeader.c_str(), m_httpPort);
+		std::vector<std::wstring> urls = {
+			queryURL, quitURL, externalProtolURL, createSessionURL, destroySessionURL, snapshotPusherURL,
+			snapshotPlayerURL, csliveSetMuteUrl, csliveAddPusher, csliveDelPusher };
+		DWORD hsRet = 0;
+		hsRet = m_httpServer.listenHttps(urls);
+		/*
+		if (isHttpsPro == 1)
+			hsRet = m_httpServer.listenHttps(urls);
+		else
+			hsRet = m_httpServer.listenHttp(urls);
+		*/
+		DataReport::instance().setLocalHttp(DataReport::instance().txf_gettickcount());
+		LINFO(L"Http server listen ret: %lu, port: %d", hsRet, m_httpPort);
+	}
 
     if (dataChannel == "localHttp")
     {
@@ -721,15 +846,6 @@ bool Application::resolveProtol(const Json::Value& root)
         {
             return false;
         }
-
-        //singleton情况下，如果启动程序时还在录制，可能是room.exe退出时没有正确关闭record,需要先关了再重启。
-        HWND recordHwnd = FindWindowExA(HWND_MESSAGE, NULL, "TXCloudRecord", "TXCloudRecordCaption");
-        if (recordHwnd)
-        {
-            std::string message = "RecordExit";
-            COPYDATASTRUCT copy_data = { ScreenRecordExit, message.length() + 1,(LPVOID)message.c_str() };
-            ::SendMessage(recordHwnd, WM_COPYDATA, ScreenRecordExit, reinterpret_cast<LPARAM>(&copy_data));
-        }
     }
 
     if (root.isMember("screenRecord"))
@@ -749,6 +865,19 @@ bool Application::resolveProtol(const Json::Value& root)
 		if (proxy.isMember("port"))
 		{
 			m_proxyPort = static_cast<unsigned short>( proxy["port"].asInt());
+		}
+	}
+
+	if (m_screenRecord != RecordScreenNone)
+	{
+		if (root.isMember("recordUrl"))
+		{
+			m_recordUrl = root["recordUrl"].asString();
+		}
+
+		if (root.isMember("recordPath"))
+		{
+			m_recordPath = root["recordPath"].asString();
 		}
 	}
 
@@ -781,20 +910,9 @@ bool Application::resolveProtol(const Json::Value& root)
 	DataReport::instance().setRecordScreen(m_screenRecord);
 
     if (m_screenRecord != RecordScreenNone )
-    {
-		std::string recordUrl;
-		if (root.isMember("recordUrl"))
-		{
-			recordUrl = root["recordUrl"].asString();
-		}
-
-		std::string recordPath;
-		if (root.isMember("recordPath"))
-		{
-			recordPath = root["recordPath"].asString();
-		}
-        runRecord(recordUrl, recordPath);
-    }
+	{
+		runRecord(m_recordUrl, m_recordPath);
+	}
 
     return ret;
 }
@@ -924,8 +1042,9 @@ bool Application::resolveCSLiveProtol(const Json::Value& root)
 
         m_csLive->setTitle(title.c_str());
         m_csLive->setLogo(logo.c_str());
-        m_csLive->startPush(pushURL.c_str());
-        m_csLive->startPlay(playURL.c_str());
+		m_csLive->creatsession(QString::fromStdString(pushURL), QString::fromStdString(playURL));
+        //m_csLive->startPush(QString::fromStdString(pushURL));
+        //m_csLive->startPlay(QString::fromStdString(playURL));
     }
     else
     {
@@ -987,7 +1106,7 @@ bool Application::resolveLiveRoomProtol(const Json::Value& root)
 		m_liveDemo->setTitle(title.c_str());
         m_liveDemo->setLogo(logo.c_str());
 
-		m_liveDemo->initUI(strTemplate.c_str(), QString::fromUtf8(userTag.c_str()), userList, IMList, whiteboard, screenShare);
+		m_liveDemo->initUI(strTemplate.c_str(), QString::fromUtf8(userTag.c_str()), userList, IMList, whiteboard, screenShare, m_screenRecord);
 
 		DataReport::instance().setEnterDemo(DataReport::instance().txf_gettickcount());
 		DataReport::instance().setRecord(true);
@@ -995,13 +1114,13 @@ bool Application::resolveLiveRoomProtol(const Json::Value& root)
 		if (action == "createRoom")
 		{
 			DataReport::instance().setUserInfo(authData.sdkAppID, authData.userID, authData.userName, true);
-			m_liveDemo->createRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
+			m_liveDemo->createRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id);
 		}
 		else
 		{
 			DataReport::instance().setUserInfo(authData.sdkAppID, authData.userID, authData.userName, false);
 			DataReport::instance().setRoomInfo(roomID);
-			m_liveDemo->enterRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
+			m_liveDemo->enterRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id);
 		}
 
 		m_liveDemo->show();
@@ -1069,20 +1188,20 @@ bool Application::resolveRTCRoomProtol(const Json::Value& root)
 		authData.userName = QString::fromUtf8(userName.c_str()).toStdString();
 		authData.userID = userID;
 		authData.userSig = userSig;
-		m_RTCDemo->initUI(strTemplate.c_str(), QString::fromUtf8(userTag.c_str()), userList, IMList, whiteboard, screenShare);
+		m_RTCDemo->initUI(strTemplate.c_str(), QString::fromUtf8(userTag.c_str()), userList, IMList, whiteboard, screenShare, m_screenRecord);
 		
 		DataReport::instance().setEnterDemo(DataReport::instance().txf_gettickcount());
 
 		if (action == "createRoom")
 		{
 			DataReport::instance().setUserInfo(authData.sdkAppID, authData.userID, authData.userName, true);
-			m_RTCDemo->createRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
+			m_RTCDemo->createRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id);
 		}
 		else
 		{
 			DataReport::instance().setRoomInfo(roomID);
 			DataReport::instance().setUserInfo(authData.sdkAppID, authData.userID, authData.userName, false);
-			m_RTCDemo->enterRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id, m_screenRecord);
+			m_RTCDemo->enterRoom(authData, serverDomain.c_str(), m_proxyIP, m_proxyPort, roomID.c_str(), QString::fromUtf8(roomInfo.c_str()), mixRecord, picture_id);
 		}
 			
 		DataReport::instance().setRecord(mixRecord);
@@ -1253,53 +1372,23 @@ void Application::getSnapShotPath(std::wstring& fullpath)
 
 void Application::runRecord(std::string recordUrl, std::string recordPath)
 {
-    if (recordUrl.empty())
+	//如果启动程序时还在录制，可能是room.exe退出时没有正确关闭record,需要先关了再重启。
+    TXCloudRecordCmd::instance().cleanProcess();
+
+    if (recordUrl.empty() && recordPath.empty())
     {
-        DialogMessage::exec(QStringLiteral("缺少录制屏幕所需推流地址!"), DialogMessage::OK);
+        DialogMessage::exec(QStringLiteral("请先在设置-录制中填写参数后再开启录制!"), DialogMessage::OK);
         return;
     }
 
-    Json::Value root;
-    root["recordUrl"] = recordUrl;
-    root["recordExe"] = "TXCloudRoom.exe";
-    root["recordType"] = m_screenRecord;
-	root["recordPath"] = recordPath;
+	RecordData recordData;
 
-    Json::FastWriter writer;
-    std::string jsonUTF8 = writer.write(root);
-    std::string encodeJson = URLEncode(jsonUTF8);
+	//strcpy(recordData.recordExe, "TXCloudRoom.exe");
+	strcpy(recordData.recordUrl, recordUrl.c_str());
+	strcpy(recordData.recordPath, recordPath.c_str());
+	recordData.recordType = m_screenRecord;
+	recordData.sliceTime = 60;
+	recordData.winID = (int)GetDesktopWindow();
 
-    std::string cmd = "\"txcloudrecord://liteav/params?json=";
-    cmd.append(encodeJson);
-    cmd.append("\\");
-
-    char szFilePath[MAX_PATH + 1] = { 0 };
-    GetModuleFileNameA(NULL, szFilePath, MAX_PATH);
-    (strrchr(szFilePath, '\\'))[0] = 0;
-    std::string path = szFilePath;
-    path.append("\\");
-    path.append(RecordExe);
-
-    SHELLEXECUTEINFOA sei = { 0 };
-    sei.cbSize = sizeof(SHELLEXECUTEINFOA);
-    sei.fMask = SEE_MASK_NOCLOSEPROCESS;
-    sei.hwnd = NULL;
-    sei.lpVerb = "open";
-    sei.lpFile = path.c_str();
-    sei.lpParameters = cmd.c_str();
-    sei.lpDirectory = NULL;
-    sei.nShow = SW_HIDE;
-    sei.hInstApp = NULL;
-    sei.lpIDList = NULL;
-    sei.lpClass = NULL;
-    sei.hkeyClass = NULL;
-    sei.dwHotKey = NULL;
-    sei.hIcon = NULL;
-    sei.hProcess = NULL;
-
-    BOOL ret = ::ShellExecuteExA(&sei);
-    if (FALSE == ret)
-    {
-        LERROR(L"ShellExecuteExW recordexe failed: %lu", ::GetLastError());
-    }
+	TXCloudRecordCmd::instance().runAndRecord(recordData);
 }

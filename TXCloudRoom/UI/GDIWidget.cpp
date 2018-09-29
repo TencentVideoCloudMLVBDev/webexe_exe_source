@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <gdiplus.h>
 #include <stdio.h>
+#include <QMouseEvent>
 #include "libyuv.h"
 
 //using namespace Gdiplus;
@@ -28,10 +29,10 @@ GDIWidget::GDIWidget(QWidget *parent)
 	render_menu_->addAction(pActOpenMic);
 	render_menu_->addAction(pActStopLinkMic);
 
-	render_menu_->setStyleSheet(".QMenu{background-color:#444444;\
-		color: rgb(255,255,255);\
-		font: 9pt \"Î¢ÈíÑÅºÚ\";}");
-	connect(pActEnterMain, &QAction::triggered, this, [this] { emit doubleClicked(); m_menuInfo.fullScreen = true; });
+	//render_menu_->setStyleSheet(".QMenu{background-color:#444444;\
+	//	color: rgb(255,255,255);\
+	//	font: 9pt \"Î¢ÈíÑÅºÚ\";}");\
+	//connect(pActEnterMain, &QAction::triggered, this, [this] { emit doubleClicked(); m_menuInfo.fullScreen = true; });
 	connect(pActStopLinkMic, &QAction::triggered, this, [this] { emit actLinkMic(); });
 	connect(pActStopCamera, &QAction::triggered, this, [this] { emit actCamera(false); m_menuInfo.camera = false; });
 	connect(pActStopMic, &QAction::triggered, this, [this] { emit actMic(false); m_menuInfo.mic = false; });

@@ -80,7 +80,7 @@ public:
     void startLocalPreview(HWND rendHwnd, const RECT &rect);
     void updateLocalPreview(HWND rendHwnd, const RECT &rect);
     void stopLocalPreview();
-    bool startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT &renderRect, const RECT &captureRect);
+    bool startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT &renderRect, const RECT &captureRect, bool bFollowWndRect);
     void stopScreenPreview();
     void addRemoteView(HWND rendHwnd, const RECT &rect, const char * userID);
     void removeRemoteView(const char * userID);
@@ -116,7 +116,6 @@ private:
     virtual void onGroupChangeMessage(IMGroupOptType opType, const char* group_id, const char * user_id);
 
     virtual void onEventCallback(int eventId, const int paramCount, const char **paramKeys, const char **paramValues, void *pUserData);
-
 private:
     void getPushers();
     void mergePushers(const std::vector<RTCMemberData>& tempPushers);
@@ -141,6 +140,9 @@ private:
     IRTCRoomCallback * m_callback;
     MMRESULT m_timerID;
 
+	std::string m_serverDomain;
+	ILoginRTCCallback* m_loginCallback;
+
     std::vector<RTCRoomData> m_roomList;
 
     RTCRoomData m_roomData;
@@ -158,4 +160,5 @@ private:
 	RTCStreamMixer m_streamMixer;
 	bool m_bRecord = false;
 	bool m_bReport = false;
+	int m_cameraCount = 0;
 };

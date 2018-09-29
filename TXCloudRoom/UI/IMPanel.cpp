@@ -87,7 +87,7 @@ void IMPanel::addMsgContent(const QString& userId, const QString& userName, cons
 	QString content;
 	if (m_roomCreator == userId)
 	{
-		content = QString("<b>%1: %2</b>").arg(m_nickName).arg(msg);
+		content = QString("<b>%1: %2</b>").arg(userName).arg(msg);
 	}
 	else
 	{
@@ -96,6 +96,7 @@ void IMPanel::addMsgContent(const QString& userId, const QString& userName, cons
 
 	IMItemView *itemView = new IMItemView();
 	itemView->setMsgContent(content);
+	itemView->setFixedWidth(ui.lw_msg_list->width());
 
 	QListWidgetItem *item = new QListWidgetItem();
 	item->setSizeHint(itemView->size());
@@ -190,4 +191,9 @@ void IMPanel::onCtrlEnterPress()
 
 	ui.tb_msg->setPlainText(msg);
 	ui.tb_msg->moveCursor(QTextCursor::End);
+}
+
+void IMPanel::resizeEvent(QResizeEvent* event)
+{
+	ui.lw_msg_list->setFixedWidth(this->geometry().width());
 }

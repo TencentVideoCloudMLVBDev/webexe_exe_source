@@ -20,7 +20,7 @@ class TXCTaskQueue
 public:
     TXCTaskQueue();
 
-	void stop();
+	void Stop();
     
     template<class F, class... Args>
     auto PostTask(F&& f, Args&&... args)
@@ -31,8 +31,6 @@ public:
     -> std::future<typename std::result_of<F(Args...)>::type>;
     
     bool BelongsToCurrentThread() const;
-
-	bool IsTaskExcuting();
     
 private:
 	~TXCTaskQueue();
@@ -64,8 +62,8 @@ private:
     std::queue< std::function<void()> > _tasks;
     std::priority_queue< DelayTask, std::vector<DelayTask>, DelayTaskCmp > _delay_tasks;
     std::mutex _queue_mutex;
-	std::mutex _task_mutex;
     std::condition_variable _condition;
+    std::condition_variable _stop_condition;
     bool _stop;
 };
 

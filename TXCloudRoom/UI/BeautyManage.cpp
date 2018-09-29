@@ -17,15 +17,6 @@ BeautyManage::BeautyManage(QWidget *parent)
 
 	ui.radio_nature->setChecked(true);
 
-	BOOL bEnable = false;
-	::DwmIsCompositionEnabled(&bEnable);
-	if (bEnable)
-	{
-		DWMNCRENDERINGPOLICY ncrp = DWMNCRP_ENABLED;
-		::DwmSetWindowAttribute((HWND)winId(), DWMWA_NCRENDERING_POLICY, &ncrp, sizeof(ncrp));
-		MARGINS margins = { -1 };
-		::DwmExtendFrameIntoClientArea((HWND)winId(), &margins);
-	}
 
 	QFile file(QCoreApplication::applicationDirPath() + "/beauty-config.ini");
 

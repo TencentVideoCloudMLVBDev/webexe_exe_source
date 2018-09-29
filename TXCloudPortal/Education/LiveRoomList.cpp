@@ -24,7 +24,7 @@ LiveRoomList::LiveRoomList(QWidget *parent)
     , m_point()
     , m_createRoom(nullptr)
     , m_authData()
-    , m_httpRequest("http://xzb.qcloud.com:8080/roomlist/weapp/webexe_room/")
+    , m_httpRequest("http://xzb.qcloud.com/roomlist/weapp/webexe_room/")
     , m_roomID("")
     , m_listTimerID(-1)
     , m_hearbeatTimerID(0)
@@ -46,8 +46,6 @@ LiveRoomList::LiveRoomList(QWidget *parent)
 
     m_ui.widge_no_room->setHidden(true);
 
-    m_ui.btn_join->hide();
-
     m_ui.btn_create->setEnabled(false);
     m_ui.btn_join->setEnabled(false);
 
@@ -61,8 +59,8 @@ LiveRoomList::LiveRoomList(QWidget *parent)
 
     getLoginInfo(m_userID);
 
-    getRoomList(0, 20);
-    m_listTimerID = startTimer(3 * 1000);
+    getRoomList(0, 100);
+    m_listTimerID = startTimer(5 * 1000);
 
     m_ui.lw_room_list->verticalScrollBar()->setStyleSheet(
         R"(QScrollBar{
@@ -245,7 +243,7 @@ void LiveRoomList::keyPressEvent(QKeyEvent *event)
 
 void LiveRoomList::timerEvent(QTimerEvent *event)
 {
-    getRoomList(0, 20);
+    getRoomList(0, 100);
 }
 
 void CALLBACK LiveRoomList::onTimerEvent(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)

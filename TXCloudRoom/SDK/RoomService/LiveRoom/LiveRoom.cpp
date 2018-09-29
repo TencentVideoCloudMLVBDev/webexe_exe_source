@@ -86,11 +86,11 @@ void LiveRoom::createRoom(const std::string& roomID, const std::string& roomInfo
     }
 }
 
-void LiveRoom::enterRoom(const std::string& roomID, HWND rendHwnd, const RECT & rect)
+void LiveRoom::enterRoom(const std::string& roomID)
 {
     if (m_impl)
     {
-        m_impl->enterRoom(roomID, rendHwnd, rect);
+        m_impl->enterRoom(roomID);
     }
 }
 
@@ -158,6 +158,14 @@ void LiveRoom::addRemoteView(HWND rendHwnd, const RECT & rect, const char * user
     }
 }
 
+void LiveRoom::updateRemotePreview(HWND rendHwnd, const RECT & rect, const char * userID)
+{
+	if (m_impl)
+	{
+		m_impl->updateRemotePreview(rendHwnd, rect, userID);
+	}
+}
+
 void LiveRoom::removeRemoteView(const char * userID)
 {
     if (m_impl)
@@ -166,11 +174,11 @@ void LiveRoom::removeRemoteView(const char * userID)
     }
 }
 
-bool LiveRoom::startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT & renderRect, const RECT & captureRect)
+bool LiveRoom::startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT & renderRect, const RECT & captureRect, bool bFollowWndRect)
 {
     if (m_impl)
     {
-        return m_impl->startScreenPreview(rendHwnd, captureHwnd, renderRect, captureRect);
+        return m_impl->startScreenPreview(rendHwnd, captureHwnd, renderRect, captureRect, bFollowWndRect);
     }
     else
     {
@@ -239,6 +247,22 @@ void LiveRoom::kickoutSubPusher(const std::string& userID)
     if (m_impl)
     {
         m_impl->kickoutSubPusher(userID);
+    }
+}
+
+void LiveRoom::joinPusher()
+{
+    if (m_impl)
+    {
+        m_impl->joinPusher();
+    }
+}
+
+void LiveRoom::quitPusher()
+{
+    if (m_impl)
+    {
+        m_impl->quitPusher();
     }
 }
 

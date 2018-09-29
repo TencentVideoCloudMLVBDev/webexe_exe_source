@@ -1,6 +1,10 @@
 #include "MultiVideoPanel.h"
 #include "CaptureScreen.h"
 #include <QScrollBar>
+#include <QKeyEvent>
+#include <QSettings>
+#include "DialogMessage.h"
+#include <QDateTime>
 
 extern QWidget * RTCMainWindow;
 
@@ -13,19 +17,54 @@ MultiVideoPanel::MultiVideoPanel(QWidget *parent)
 
 	connect(ui.dis_main, SIGNAL(actCamera(bool)), this, SLOT(on_dis_actCamera(bool)));
 	connect(ui.dis_main, SIGNAL(actMic(bool)), this, SLOT(on_dis_actMic(bool)));
+	connect(this, SIGNAL(actCamera(bool)), this, SLOT(on_dis_actCamera(bool)));
+	connect(this, SIGNAL(actMic(bool)), this, SLOT(on_dis_actMic(bool)));
 	connect(selfWidget, SIGNAL(local_actCamera(bool)), this, SLOT(on_local_actCamera(bool)));
 	connect(selfWidget, SIGNAL(local_actMic(bool)), this, SLOT(on_dis_actMic(bool)));
+
+	m_pTXShareFrameMgr = new TXShareFrameMgr(this, nullptr);
 }
 
 MultiVideoPanel::~MultiVideoPanel()
 {
 	RTCRoom::instance()->stopLocalPreview();
+	if (m_pTXShareFrameMgr)
+	{
+		delete m_pTXShareFrameMgr;
+		m_pTXShareFrameMgr = nullptr;
+	}
 }
 
 void MultiVideoPanel::initShowVideo()
 {
-	ui.widget_camera_tip->hide();
-	ui.label_mute_main->hide();
+	showLocalWnd(true);
+}
+
+void MultiVideoPanel::on_menu_actCamera(bool open)
+{
+	m_menuInfo.camera = open;
+	emit actCamera(open);
+}
+
+void MultiVideoPanel::on_menu_actMic(bool open)
+{
+	m_menuInfo.mic = open;
+	emit actMic(open);
+}
+
+MenuInfo & MultiVideoPanel::getMenuInfo()
+{
+	return m_menuInfo;
+}
+
+void MultiVideoPanel::on_startRecord(ScreenRecordType recordType)
+{
+	m_recordTime = 0;
+	m_timerID = startTimer(1000);
+	m_btn_record_manage->setStyleSheet(m_recordBtnStyle);
+	m_btn_record_manage->setText(QStringLiteral("● 00:00:00"));
+
+	m_screenRecord = recordType;
 }
 
 void MultiVideoPanel::onPusherJoin(const MemberItem& member)
@@ -39,7 +78,7 @@ void MultiVideoPanel::onPusherJoin(const MemberItem& member)
 		{
 			idle = true;
 			m_vCameraWidgets[i]->idle = false;
-			m_vCameraWidgets[i]->userID = member.userID.c_str();
+			m_vCameraWidgets[i]->userID = member.userID;
 			cameraWidget = m_vCameraWidgets[i]->cameraWidget;
 			break;
 		}
@@ -50,14 +89,22 @@ void MultiVideoPanel::onPusherJoin(const MemberItem& member)
 		RTCCameraWidget * pusherCameraWidget = new RTCCameraWidget;
 		pusherCameraWidget->cameraWidget = cameraWidget;
 		pusherCameraWidget->idle = false;
-		pusherCameraWidget->userID = member.userID.c_str();
+		pusherCameraWidget->userID = member.userID;
 		hCameraLayout->addWidget(cameraWidget);
 		m_vCameraWidgets.push_back(pusherCameraWidget);
 	}
 
 	cameraWidget->show();
-	cameraWidget->startVideo(member.userID.c_str());
-	cameraWidget->setUserName(member.userName.c_str());
+	cameraWidget->setUserName(member.userName);
+	cameraWidget->setUserID(member.userID);
+
+	if (m_tabIndex != 2)
+	{
+		cameraWidget->startVideo(member.userID);
+		m_RTCShareVideo->setUserInfo(member.userName, member.userID, true, false);
+	}
+	else
+		m_RTCShareVideo->setUserInfo(member.userName, member.userID, true, true);
 }
 
 void MultiVideoPanel::onPusherQuit(const MemberItem& member)
@@ -79,6 +126,7 @@ void MultiVideoPanel::onPusherQuit(const MemberItem& member)
 		}
 	}
 	initCameraWidget();
+	m_RTCShareVideo->setUserInfo(member.userName, member.userID, false, false);
 }
 
 void MultiVideoPanel::onRoomClosed()
@@ -96,10 +144,8 @@ void MultiVideoPanel::onRoomClosed()
 		ui.widget_camera2->update();
 	}
 
-    selfWidget->hide();
-    RTCRoom::instance()->stopLocalPreview();
-	ui.widget_camera_tip->show();
-	ui.label_mute_main->show();
+	showLocalWnd(false);
+	RTCRoom::instance()->stopLocalPreview();
 }
 
 void MultiVideoPanel::setRoomCreator(const std::string& id)
@@ -125,6 +171,7 @@ void MultiVideoPanel::setUserInfo(const std::string& id, const std::string& user
 	m_userID = id;
 	m_userName = userName;
 	selfWidget->setUserName(userName);
+	//m_RTCShareVideo->setUserInfo(userName, "", true, false);
 }
 
 int MultiVideoPanel::getVideoCount()
@@ -152,18 +199,20 @@ void MultiVideoPanel::setDeviceEnabled(bool camera, bool mic)
 	{
 		RTCRoom::instance()->stopLocalPreview();
 		m_cameraPreview = false;
-		ui.widget_camera_tip->show();
+		showLocalWnd(false);
 	}
 	else
-		ui.widget_camera_tip->hide();
+		showLocalWnd(true);
 
 	on_dis_actMic(mic);
 }
 
-void MultiVideoPanel::initConfigSetting(int size, bool whiteboard, bool screenShare)
+void MultiVideoPanel::initConfigSetting(int size, bool whiteboard, bool screenShare, ScreenRecordType screenRecord)
 {
 	m_cameraSize = size;
 	initCameraWidget();
+	m_RTCShareVideo->setCameraSize(m_cameraSize);
+
 	if (!screenShare)
 	{
 		ui.tabWidget->removeTab(2);
@@ -172,16 +221,81 @@ void MultiVideoPanel::initConfigSetting(int size, bool whiteboard, bool screenSh
 	{
 		ui.tabWidget->removeTab(1);
 	}
+
+	m_screenRecord = screenRecord;
+	if (screenRecord != RecordScreenNone)
+	{
+		m_btn_record_manage->setStyleSheet(m_recordBtnStyle);
+		m_btn_record_manage->setText(QStringLiteral("● 00:00:00"));
+		m_timerID = startTimer(1000);
+	}
 }
 
 void MultiVideoPanel::showEvent(QShowEvent * event)
 {
 	static bool init = true;
+	RECT clientRect;
+	m_bInitShowEvent = true;
 	if (init)
 	{
-		RTCRoom::instance()->startLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
+		resizeUI();
+		showLocalWnd(true);
+		::GetClientRect(m_hwnd, &clientRect);
+		RTCRoom::instance()->startLocalPreview(m_hwnd, clientRect);
 		init = false;
 	}
+}
+
+void MultiVideoPanel::timerEvent(QTimerEvent *event)
+{
+	if (m_timerID == event->timerId())
+	{
+		m_recordTime++;
+		QString str_recordTime = QStringLiteral("● ");
+		str_recordTime.append(QDateTime::fromTime_t(m_recordTime).toUTC().toString("hh:mm:ss"));
+		m_btn_record_manage->setText(str_recordTime);
+	}
+}
+
+void MultiVideoPanel::resizeEvent(QResizeEvent *event)
+{
+	if (!m_bInitShowEvent)
+	{
+		return;
+	}
+
+	m_bResize = true;
+	resizeUI();
+	for (int i = 0; i < m_vCameraWidgets.size(); i++)
+	{
+		if (m_vCameraWidgets[i]->idle == false)
+		{
+			m_vCameraWidgets[i]->cameraWidget->updatePreview();
+		}
+	}
+	on_tabWidget_currentChanged();
+}
+
+void MultiVideoPanel::onSwitch(HWND hwnd, QRect rect, bool bFollowWnd)
+{
+	shareVideo();
+	m_screenArea = true;
+	m_areaRect.left = rect.x();
+	m_areaRect.top = rect.y();
+	m_areaRect.right = rect.x() + rect.width();
+	m_areaRect.bottom = rect.y() + rect.height();
+	m_shareHwnd = hwnd;
+	m_bFollowWnd = bFollowWnd;
+	ui.stacked_screen->setCurrentIndex(1);
+	m_btn_esc->show();
+	showLocalWnd(false);
+	RTCRoom::instance()->stopLocalPreview();
+	RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), m_shareHwnd, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, m_areaRect, m_bFollowWnd);
+}
+
+void MultiVideoPanel::onClose()
+{
+	on_btn_esc_clicked();
 }
 
 void MultiVideoPanel::keyPressEvent(QKeyEvent * event)
@@ -190,20 +304,28 @@ void MultiVideoPanel::keyPressEvent(QKeyEvent * event)
 	{
 	case Qt::Key_Escape:
 	{
-		if (m_tabIndex == 2 && (m_screenFull || m_screenArea))
+		if (m_tabIndex == 2 && (/*m_screenFull ||*/ m_screenArea))
 		{
-			m_screenFull = false;
+			m_RTCShareVideo->hide();
+			//m_screenFull = false;
 			m_screenArea = false;
+			m_shareHwnd = false;
+			m_pTXShareFrameMgr->stopShareFrame();
 			RTCRoom::instance()->stopScreenPreview();
 			ui.stacked_screen->setCurrentIndex(0);
+			RECT clientRect;
+			::GetClientRect(m_hwnd, &clientRect);
 
-            m_cameraPreview = true;
-            RTCRoom::instance()->stopScreenPreview();
-            RTCRoom::instance()->startLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
+			m_cameraPreview = true;
 
-            if (m_cameraPreview)
-                RTCRoom::instance()->updateLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
+			if (m_cameraEnabled)
+			{
+				showLocalWnd(true);
+				RTCRoom::instance()->startLocalPreview(m_hwnd, clientRect);
+			}
 		}
+
+		m_btn_esc->hide();
 	}
 		break;
 	default:
@@ -213,6 +335,18 @@ void MultiVideoPanel::keyPressEvent(QKeyEvent * event)
 
 void MultiVideoPanel::initUI()
 {
+	winWidget = new WinWidget;
+
+	widgetDisplay = winWidget->getWidget();
+	m_hwnd = winWidget->getHwnd();
+	QHBoxLayout * hDismainLayout = new QHBoxLayout(ui.widget_wnd);
+
+	SetProp(m_hwnd, L"MultiVideoPanel", this);
+	//::SetParent(m_hwnd, (HWND)ui.widget_wnd->winId());
+	hDismainLayout->setMargin(0);
+	hDismainLayout->setAlignment(Qt::AlignLeft);
+	hDismainLayout->addWidget(widgetDisplay);
+	ui.widget_wnd->setLayout(hDismainLayout);
 	ui.widget_camera_tip->setFixedHeight(ui.dis_main->height());
 
 	ui.widget_local->hide();
@@ -228,10 +362,12 @@ void MultiVideoPanel::initUI()
 	hCameraLayout = new QHBoxLayout(scrollArea_camera);
 	hCameraLayout->setMargin(0);
 	hCameraLayout->setAlignment(Qt::AlignLeft);
+	hCameraLayout->setSpacing(15);
 	scrollArea_camera->show();
 
 	QWidget* widget = new QWidget(scrollArea_camera);
 	widget->setLayout(hCameraLayout);
+	
 	scrollArea_camera->setWidget(widget);
 	widget->show();
 
@@ -281,16 +417,15 @@ QScrollBar::up-arrow, QScrollBar::down-arrow {
 	m_menuInfo.mainDis = true;
 	ui.dis_main->setMenuInfo(m_menuInfo);
 
-	//ui.tabWidget->removeTab(2);
-	//ui.tabWidget->removeTab(1);
-
 	widget_tab_corner = new QWidget(this);
-	QPushButton * btn_device_manage = new QPushButton(QStringLiteral("设备管理"), widget_tab_corner);
-	QPushButton * btn_beauty_manage = new QPushButton(QStringLiteral("美颜设置"), widget_tab_corner);
-
-	QString btnStyle =
+	m_btn_record_manage = new QPushButton(QStringLiteral("录制"), widget_tab_corner);
+	m_btn_device_manage = new QPushButton(QStringLiteral("设置"), widget_tab_corner);
+	m_btn_beauty_manage = new QPushButton(QStringLiteral("美颜"), widget_tab_corner);
+	m_btn_esc = new QPushButton(QStringLiteral("结束分享"), widget_tab_corner);
+	m_btnStyle =
 		R"(
 QPushButton {
+border-radius: 15px;
 	border: 1px solid #dddddd;
 	background:  #ffffff;
 	color: #000000;
@@ -313,23 +448,50 @@ QPushButton:disable {
 	background:  #f2f2f2;
 }
 )";
-	const QSize btnSize = QSize(72, 26);
-	btn_device_manage->setStyleSheet(btnStyle);
-	btn_device_manage->setFixedSize(btnSize);
 
-	btn_beauty_manage->setStyleSheet(btnStyle);
-	btn_beauty_manage->setFixedSize(btnSize);
+	m_recordBtnStyle =
+		R"(
+QPushButton {
+	border-radius: 15px;
+	border: 1px solid #dddddd;
+	background:  #ffffff;
+	color: #ff0000;
+	font: 9pt "Microsoft YaHei";
+}
+)";
+	const QSize btnSize = QSize(80, 30);
 
-	connect(btn_device_manage, SIGNAL(released()), RTCMainWindow, SLOT(on_btn_device_manage_clicked()));
-	connect(btn_beauty_manage, SIGNAL(released()), RTCMainWindow, SLOT(on_btn_beauty_manage_clicked()));
+	m_btn_record_manage->setStyleSheet(m_btnStyle);
+	m_btn_record_manage->setFixedSize(btnSize);
 
+	m_btn_device_manage->setStyleSheet(m_btnStyle);
+	m_btn_device_manage->setFixedSize(btnSize);
+
+	m_btn_beauty_manage->setStyleSheet(m_btnStyle);
+	m_btn_beauty_manage->setFixedSize(btnSize);
+
+	m_btn_esc->setStyleSheet(m_btnStyle);
+	m_btn_esc->setFixedSize(btnSize);
+
+	connect(this, SIGNAL(record_manage_clicked()), RTCMainWindow, SLOT(on_record_manage_clicked()));
+	connect(m_btn_record_manage, SIGNAL(released()), this, SLOT(on_btn_record_manage_clicked()));
+	connect(m_btn_device_manage, SIGNAL(released()), RTCMainWindow, SLOT(on_btn_device_manage_clicked()));
+	connect(m_btn_beauty_manage, SIGNAL(released()), RTCMainWindow, SLOT(on_btn_beauty_manage_clicked()));
+	connect(m_btn_esc, SIGNAL(released()), this, SLOT(on_btn_esc_clicked()));
+
+	m_btn_esc->hide();
 	QHBoxLayout* hLayout = new QHBoxLayout(widget_tab_corner);
-	hLayout->addWidget(btn_beauty_manage);
-	hLayout->addWidget(btn_device_manage);
+	hLayout->addWidget(m_btn_record_manage);
+	hLayout->addWidget(m_btn_beauty_manage);
+	hLayout->addWidget(m_btn_device_manage);
+	hLayout->addWidget(m_btn_esc);
 	hLayout->setMargin(0);
-	widget_tab_corner->setStyleSheet("margin-top: 2");
+	widget_tab_corner->setStyleSheet("margin-left: 5px; margin-right:5px");
 	ui.tabWidget->setCornerWidget(widget_tab_corner);
 	widget_tab_corner->show();
+
+	m_RTCShareVideo = new RTCShareVideo;
+	m_RTCShareVideo->hide();
 }
 
 void MultiVideoPanel::initCameraWidget()
@@ -351,20 +513,91 @@ void MultiVideoPanel::initCameraWidget()
 	}
 }
 
-void MultiVideoPanel::on_dis_actCamera(bool open)
+void MultiVideoPanel::showLocalWnd(bool show)
 {
-	m_menuInfo.camera = open;
-
-	if (open)
+	if (show)
 	{
 		ui.widget_camera_tip->hide();
-		m_cameraPreview = true;
-		RTCRoom::instance()->startLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
+		ui.label_mute_main->hide();
+		if (m_tabIndex == 1)
+			selfWidget->show();
+		
+		ui.widget_wnd->show();
+		widgetDisplay->show();
 	}
 	else
 	{
 		ui.widget_camera_tip->show();
+		if (m_menuInfo.mic)
+			ui.label_mute_main->hide();
+		else
+			ui.label_mute_main->show();
+		selfWidget->hide();
+		selfWidget->stopVideo();
+		ui.widget_wnd->hide();
+		widgetDisplay->hide();
+	}
+}
+
+void MultiVideoPanel::resizeUI()
+{
+	if (m_tabIndex == 2)
+	{
+		return;
+	}
+	QSize cameraWidgetSize;
+	if (m_tabIndex == 0)
+	{
+		cameraWidgetSize = QSize(ui.widget_camera1->height() - 22, ui.widget_camera1->height());
+		QSize wndSize = QSize(ui.dis_main->width(), ui.dis_main->height());
+		ui.widget_wnd->setFixedSize(wndSize);
+		widgetDisplay->setFixedSize(wndSize);
+		ui.widget_camera_tip->setFixedSize(wndSize);
+
+		ui.label_mute_main->setGeometry(QRect(ui.dis_main->width() - 30, 0, 30, 30));
+	}
+	else if (m_tabIndex == 1)
+	{
+		cameraWidgetSize = QSize(ui.widget_camera2->height() - 22, ui.widget_camera2->height());
+	}
+
+	for (int i = 0; i < m_vCameraWidgets.size(); i++)
+	{
+		m_vCameraWidgets[i]->cameraWidget->setFixedSize(cameraWidgetSize);
+	}
+	selfWidget->setFixedSize(cameraWidgetSize);
+
+	//m_RTCShareVideo->setWidth(cameraWidgetSize.height() - 22);
+}
+
+void MultiVideoPanel::shareVideo()
+{
+	m_RTCShareVideo->show();
+	m_RTCShareVideo->updateUI();
+
+	m_bShareVideo = true;
+}
+
+void MultiVideoPanel::on_dis_actCamera(bool open)
+{
+	m_menuInfo.camera = open;
+	ui.dis_main->setMenuInfo(m_menuInfo);
+	selfWidget->setMenuInfo(m_menuInfo);
+
+	RECT clientRect;
+	::GetClientRect(m_hwnd, &clientRect);
+	if (open)
+	{
+		m_cameraPreview = true;
+		m_cameraEnabled = true;
+		showLocalWnd(true);
+		RTCRoom::instance()->startLocalPreview(m_hwnd, clientRect);
+	}
+	else
+	{
 		m_cameraPreview = false;
+		m_cameraEnabled = false;
+		showLocalWnd(false);
 		RTCRoom::instance()->stopLocalPreview();
 	}
 }
@@ -373,6 +606,7 @@ void MultiVideoPanel::on_dis_actMic(bool open)
 {
 	m_menuInfo.mic = open;
 	ui.dis_main->setMenuInfo(m_menuInfo);
+	selfWidget->setMenuInfo(m_menuInfo);
 
 	if (open)
 		ui.label_mute_main->hide();
@@ -389,27 +623,54 @@ void MultiVideoPanel::on_local_actCamera(bool open)
 
 	if (open)
 	{
-		ui.widget_camera_tip->hide();
+		showLocalWnd(true);
 		m_cameraPreview = true;
+		m_cameraEnabled = true;
 	}
 	else
 	{
-		ui.widget_camera_tip->show();
+		showLocalWnd(false);
 		m_cameraPreview = false;
+		m_cameraEnabled = false;
 	}
 }
 
 void MultiVideoPanel::on_selectCaptureArea(QRect rect)
 {
+	shareVideo();
 	m_screenArea = true;
 	m_areaRect.left = rect.x();
 	m_areaRect.top = rect.y();
 	m_areaRect.right = rect.x() + rect.width();
 	m_areaRect.bottom = rect.y() + rect.height();
 	ui.stacked_screen->setCurrentIndex(1);
-
+	m_btn_esc->show();
+	showLocalWnd(false);
 	RTCRoom::instance()->stopLocalPreview();
-	RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, m_areaRect);
+	RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, m_areaRect, m_bFollowWnd);
+}
+
+void MultiVideoPanel::on_btn_record_manage_clicked()
+{
+	if (m_screenRecord != RecordScreenNone)
+	{
+		int ret = DialogMessage::exec(QStringLiteral("是否停止录制?"), DialogMessage::OK | DialogMessage::CANCEL);
+		if (ret == DialogMessage::Rejected)
+		{
+			return;
+		}
+		killTimer(m_timerID);
+		m_timerID = 0;
+		m_btn_record_manage->setStyleSheet(m_btnStyle);
+		m_recordTime = 0;
+		m_btn_record_manage->setText(QStringLiteral("录制"));
+		TXCloudRecordCmd::instance().stop();
+		m_screenRecord = RecordScreenNone;
+	}
+	else
+	{
+		emit record_manage_clicked();
+	}
 }
 
 void MultiVideoPanel::on_tabWidget_currentChanged()
@@ -425,54 +686,112 @@ void MultiVideoPanel::on_tabWidget_currentChanged()
 	}
 
 	m_tabIndex = ui.tabWidget->currentIndex();
+
+	if (m_bResize)
+	{
+		resizeUI();
+	}
+
+	RECT clientRect;
+	::GetClientRect(m_hwnd, &clientRect);
+
 	switch (m_tabIndex)
 	{
 	case 0:
 	{
+		m_btn_beauty_manage->show();
+		m_btn_device_manage->show();
+		m_btn_esc->hide();
+
 		ui.hLayout_board->removeWidget(scrollArea_camera);
 		scrollArea_camera->setParent(ui.widget_camera1);
 		ui.hLayout_camera->addWidget(scrollArea_camera);
-		selfWidget->hide();
 
-		if (((m_screenFull || m_screenArea) && m_cameraPreview) || (!m_cameraPreview && m_cameraEnabled))
+		if (((/*m_screenFull ||*/ m_screenArea) && m_cameraPreview) || (!m_cameraPreview && m_cameraEnabled))
 		{
 			m_cameraPreview = true;
+			showLocalWnd(true);
+			m_pTXShareFrameMgr->stopShareFrame();
 			RTCRoom::instance()->stopScreenPreview();
-			RTCRoom::instance()->startLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
+			RTCRoom::instance()->startLocalPreview(m_hwnd, clientRect);
 		}
-		if (m_cameraPreview)
-			RTCRoom::instance()->updateLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
+		if (m_cameraPreview && m_cameraEnabled)
+		{
+			showLocalWnd(true);
+			RTCRoom::instance()->updateLocalPreview(m_hwnd, clientRect);
+		}
+		selfWidget->hide();
+		m_RTCShareVideo->hide();
+		if (m_bShareVideo)
+		{
+			for (auto iter = m_vCameraWidgets.begin(); iter != m_vCameraWidgets.end(); iter++)
+			{
+				if (!(*iter)->idle)
+				{
+					(*iter)->cameraWidget->updatePreview();
+				}
+			}
+			m_bShareVideo = false;
+		}
 	}
 	break;
 	case 1:
 	{
+		m_btn_beauty_manage->show();
+		m_btn_device_manage->show();
+		m_btn_esc->hide();
+		selfWidget->show();
+
 		ui.hLayout_camera->removeWidget(scrollArea_camera);
 		scrollArea_camera->setParent(ui.widget_camera2);
 		ui.hLayout_board->addWidget(scrollArea_camera);
 
-		if (((m_screenFull || m_screenArea) && m_cameraPreview) || (!m_cameraPreview && m_cameraEnabled))
+		if (((/*m_screenFull ||*/ m_screenArea) && m_cameraPreview) || (!m_cameraPreview && m_cameraEnabled))
 		{
 			m_cameraPreview = true;
+			m_pTXShareFrameMgr->stopShareFrame();
 			RTCRoom::instance()->stopScreenPreview();
-			RTCRoom::instance()->startLocalPreview((HWND)ui.dis_main->winId(), RECT{ 0, 0, ui.dis_main->width(), ui.dis_main->height() });
+			RTCRoom::instance()->startLocalPreview(m_hwnd, clientRect);
 		}
 
-		selfWidget->show();
 		selfWidget->setMenuInfo(m_menuInfo);
-		if (m_cameraPreview)
+		if (m_cameraPreview && m_cameraEnabled)
+		{
 			selfWidget->startVideo(m_userID);
+		}
+
+		m_RTCShareVideo->hide();
+		if (m_bShareVideo)
+		{
+			for (auto iter = m_vCameraWidgets.begin(); iter != m_vCameraWidgets.end(); iter++)
+			{
+				if (!(*iter)->idle)
+				{
+					(*iter)->cameraWidget->updatePreview();
+				}
+			}
+			m_bShareVideo = false;
+		}
 	}
 	break;
 	case 2:
 	{
-		if (!m_screenArea && !m_screenFull)
+		m_btn_beauty_manage->hide();
+		m_btn_device_manage->hide();
+
+		if (!m_screenArea /*&& !m_screenFull*/)
 			break;
 
+		m_btn_esc->show();
 		RTCRoom::instance()->stopLocalPreview();
-		if (m_screenFull)
-			RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, RECT{ 0 });
-		else if (m_screenArea)
-			RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, m_areaRect);
+		/*if (m_screenFull)
+			RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, RECT{ 0 }, m_bFollowWnd);
+		else*/
+		if (m_screenArea) {
+			shareVideo();
+			m_pTXShareFrameMgr->reTrackFrame(m_shareHwnd, QRect(m_areaRect.left, m_areaRect.top, m_areaRect.right - m_areaRect.left, m_areaRect.bottom - m_areaRect.top));
+			RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), m_shareHwnd, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, m_areaRect, m_bFollowWnd);
+		}
 	}
 	break;
 	default:
@@ -482,15 +801,32 @@ void MultiVideoPanel::on_tabWidget_currentChanged()
 
 void MultiVideoPanel::on_btn_area_share_clicked()
 {
-	CaptureScreen* captureHelper = new CaptureScreen();
-	connect(captureHelper, SIGNAL(signalSelectRect(QRect)), this, SLOT(on_selectCaptureArea(QRect)));
-	captureHelper->show();
+	m_pTXShareFrameMgr->areaShareFrame();
 }
 
 void MultiVideoPanel::on_btn_full_share_clicked()
 {
-	m_screenFull = true;
-	ui.stacked_screen->setCurrentIndex(1);
-	RTCRoom::instance()->stopLocalPreview();
-	RTCRoom::instance()->startScreenPreview((HWND)ui.widget_screen_share->winId(), nullptr, RECT{ 0, 0, ui.widget_screen_share->width(), ui.widget_screen_share->height() }, RECT{ 0 });
+	m_pTXShareFrameMgr->fullShareFrame();
+}
+
+void MultiVideoPanel::on_btn_esc_clicked()
+{
+	m_RTCShareVideo->hide();
+	m_btn_esc->hide();
+	//m_screenFull = false;
+	m_screenArea = false;
+	m_shareHwnd = false;
+	m_pTXShareFrameMgr->stopShareFrame();
+	RTCRoom::instance()->stopScreenPreview();
+	ui.stacked_screen->setCurrentIndex(0);
+	RECT clientRect;
+	::GetClientRect(m_hwnd, &clientRect);
+
+	m_cameraPreview = true;
+
+	if (m_cameraEnabled)
+	{
+		showLocalWnd(true);
+		RTCRoom::instance()->startLocalPreview(m_hwnd, clientRect);
+	}
 }

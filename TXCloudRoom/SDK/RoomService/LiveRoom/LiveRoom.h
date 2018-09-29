@@ -85,7 +85,7 @@ public:
     * \param：rendHwnd - 承载预览画面的 HWND
     * \param：rect - 指定视频图像在 HWND 上的渲染区域
     */
-    void enterRoom(const std::string& roomID, HWND rendHwnd, const RECT & rect);
+    void enterRoom(const std::string& roomID);
 
     /**
     * \brief：离开房间，如果是大主播，这个房间会被后台销毁，如果是小主播或者观众，不影响其他人继续观看
@@ -140,6 +140,14 @@ public:
     */
     void addRemoteView(HWND rendHwnd, const RECT & rect, const char * userID);
 
+	/**
+	* \brief：重设指定userID的视频预览区域，当您指定的本地 HWND 的窗口尺寸发生变化时，可以通过这个函数重新调整视频渲染区域
+	* \param：rendHwnd - 承载预览画面的 HWND
+	* \param：rect     - 指定视频图像在 HWND 上的渲染区域，比如 (0，0，width, height) 表示拿整个 HWND 作为渲染画布
+	* \param：userID - 用户ID
+	*/
+	void updateRemotePreview(HWND rendHwnd, const RECT &rect, const char * userID);
+
     /**
     * \brief：停止播放其他主播的视频
     * \param：userID - 用户ID
@@ -154,7 +162,7 @@ public:
     * \param：captureRect - 指定录取窗口客户区的区域
     * \return 成功 or 失败
     */
-    bool startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT & renderRect, const RECT & captureRect);
+    bool startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT & renderRect, const RECT & captureRect, bool bFollowWndRect = false);
 
     /**
     * \brief：关闭屏幕分享
@@ -206,6 +214,16 @@ public:
     * \param：userID - 用户ID
     */
     void kickoutSubPusher(const std::string& userID);
+
+    /**
+    * \brief：连麦者加入
+    */
+    void joinPusher();
+
+    /**
+    * \brief：连麦者退出
+    */
+    void quitPusher();
 
 	/**
 	* \brief：枚举当前的摄像头，如果一台Windows同时安装了多个摄像头，那么此函数获取可用的摄像头数量和名称

@@ -9,7 +9,7 @@
 struct BoardServiceCallback
 {
 	virtual void onUploadProgress(int percent) = 0;
-	virtual void onUploadResult(bool success) = 0;
+	virtual void onUploadResult(bool success, bool openHistory, const std::wstring& objName) = 0;
 	virtual void onStatusChanged(bool canUndo, bool canRedo, bool canCopy, bool canRemove) = 0;
 	virtual void onSyncEventResult(bool success) = 0;
 };
@@ -45,6 +45,8 @@ public:
 
 	void uploadFile(const std::wstring& fileName);
 
+    void openHistoryFile(const std::wstring& objName);
+
 	uint32_t getPageIndex() const;
 
 	uint32_t getPageCount() const;
@@ -59,7 +61,7 @@ public:
 
 	void deletePage();
 
-	void init(const BoardAuthData& authData);
+	void init(const BoardAuthData& authData, const std::string& ip, unsigned short port);
 
 	void setRoomID(const std::string& roomID);
 
@@ -70,7 +72,7 @@ public:
 private:
 	void sendUploadProgress(int percent) const;
 
-	void sendUploadResult(bool success) const;
+	void sendUploadResult(bool success, bool openHistory, const std::wstring& objName) const;
 
 	void sendStatusChanged() const;
 
@@ -82,7 +84,7 @@ private:
 
 	void uploadToCos(const std::string& sig, const std::wstring& fileName);
 
-	void previewFile(const std::wstring& objName);
+	void previewFile(const std::wstring& objName, bool openHistory);
 
 	void reportEvent(Json::Value event);
 
@@ -125,4 +127,6 @@ private:
 	bool m_bUpload = false;
 	bool m_bLast = false;
 	bool m_bNext = false;
+    bool m_bNewUpload = false;
+    int m_tryPreview = 3;
 };

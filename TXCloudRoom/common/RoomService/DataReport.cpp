@@ -89,7 +89,7 @@ void DataReport::setLocalHttp(uint64_t ts)
 
 void DataReport::setUserInfo(uint32_t int32_appid, std::string str_userid, std::string str_nickname, bool bool_room_creator)
 {
-	m_commonReport.int32_sdkapp_id = int32_appid;
+	m_commonReport.int32_sdkappid = int32_appid;
 	m_commonReport.str_userid = str_userid;
 	m_commonReport.str_nickname = str_nickname;
 	m_commonReport.bool_room_creator = bool_room_creator;
@@ -154,7 +154,7 @@ void DataReport::setPreviewUrl(std::string str_previewUrl)
 	m_whiteBoardUploadReport.str_previewurl = str_previewUrl;
 }
 
-void DataReport::setPageCount(uint32_t count)
+void DataReport::setPageCount(int32_t count)
 {
 	m_whiteBoardUploadReport.int32_pagecount = count;
 }
@@ -172,6 +172,16 @@ void DataReport::setClickUpload(uint64_t ts)
 void DataReport::setPreview(uint64_t ts)
 {
 	m_whiteBoardUploadReport.int64_ts_preview = ts;
+}
+
+void DataReport::setStreamID(std::string str_stream_id)
+{
+	m_streamReport.str_stream_id = str_stream_id;
+}
+
+void DataReport::setStreamAction(std::string str_stream_action)
+{
+	m_streamReport.str_action = str_stream_action;
 }
 
 void DataReport::setResult(DataReportType type, std::string result, std::string reason)
@@ -218,6 +228,12 @@ void DataReport::setResult(DataReportType type, std::string result, std::string 
 		m_whiteBoardNextReport.str_reason = reason;
 	}
 		break;
+	case DataReportStream:
+	{
+		m_streamReport.str_result = result;
+		m_streamReport.str_reason = reason;
+	}
+	break;
 	default:
 		break;
 	}
@@ -246,9 +262,11 @@ uint64_t DataReport::txf_gettickcount() {
 void DataReport::getCommonReport(Json::Value & root)
 {
 	root["type"] = m_commonReport.type;
+	root["bussiness"] = m_commonReport.bussiness;
+	root["platform"] = m_commonReport.platform;
 	root["str_app_name"] = m_commonReport.str_app_name;
 	root["str_token"] = m_commonReport.str_token;
-	root["int32_sdkapp_id"] = m_commonReport.int32_sdkapp_id;
+	root["int32_sdkapp_id"] = m_commonReport.int32_sdkappid;
 
 	root["str_room_type"] = m_commonReport.str_room_type;
 	root["str_roomid"] = m_commonReport.str_roomid;
@@ -333,7 +351,7 @@ std::string DataReport::getWhiteboardUploadReport()
 	root["str_previewurl"] = m_whiteBoardUploadReport.str_previewurl;
 	root["int32_pagecount"] = m_whiteBoardUploadReport.int32_pagecount;
 	root["int32_filesize"] = m_whiteBoardUploadReport.int32_filesize;
-	root["int64_ts_upload"] = m_whiteBoardUploadReport.int64_ts_click_upload;
+	root["int64_ts_click_upload"] = m_whiteBoardUploadReport.int64_ts_click_upload;
 	root["int64_ts_preview"] = m_whiteBoardUploadReport.int64_ts_preview;
 
 	root["bool_proxy"] = m_whiteBoardUploadReport.bool_proxy;
@@ -375,4 +393,21 @@ std::string DataReport::getWhiteboardNextReport()
 	Json::FastWriter writer;
 	jsonUTF8 = writer.write(root);
 	return jsonUTF8;
+}
+
+std::string DataReport::getStreamReport()
+{
+	std::string jsonUTF8;
+	Json::Value root;
+	getCommonReport(root);
+
+	root["str_stream_id"] = m_streamReport.str_stream_id;
+	root["str_action"] = m_streamReport.str_action;
+	root["str_result"] = m_streamReport.str_result;
+	root["str_reason"] = m_streamReport.str_reason;
+
+	Json::FastWriter writer;
+	jsonUTF8 = writer.write(root);
+	return jsonUTF8;
+
 }

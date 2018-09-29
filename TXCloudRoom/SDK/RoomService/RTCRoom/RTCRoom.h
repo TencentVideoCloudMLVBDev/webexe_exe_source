@@ -130,7 +130,7 @@ public:
     * \param：captureRect - 指定录取窗口客户区的区域
     * \return true成功，false失败
     */
-    bool startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT & renderRect, const RECT & captureRect);
+    bool startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT & renderRect, const RECT & captureRect, bool bFollowWndRect = false);
 
     /**
     * \brief：关闭屏幕分享
@@ -221,6 +221,7 @@ public:
 	* \param：volume - 设置的音量大小，范围是[0, 65535]
 	*/
 	void setMicVolume(unsigned int volume);
+
 protected:
     RTCRBussiness* m_impl;
 };

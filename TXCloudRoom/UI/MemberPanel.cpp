@@ -9,9 +9,9 @@ MemberPanel::MemberPanel(QWidget *parent)
 {
 	ui.setupUi(this);
 
-	connect(ui.btn_invite, SIGNAL(clicked()), this, SLOT(onInviteBtnClicked()));
+	//connect(ui.btn_invite, SIGNAL(clicked()), this, SLOT(onInviteBtnClicked()));
 
-	ui.btn_invite->hide();
+	//ui.btn_invite->hide();
 
 	const QString scrollBarStyle =
 		R"(QScrollBar{

@@ -13,6 +13,6 @@ IMItemView::~IMItemView()
 void IMItemView::setMsgContent(const QString& msg)
 {
     m_ui.label_msg->setText(msg);
-
+	m_ui.label_msg->setToolTip(msg);
     this->adjustSize();
 }

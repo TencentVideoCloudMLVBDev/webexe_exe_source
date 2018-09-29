@@ -13,6 +13,7 @@
 #include "DeviceManage.h"
 #include "BeautyManage.h"
 #include "ImageDownloader.h"
+#include "TXCloudRecordCmd.h"
 
 class RTCDemo
     : public QMainWindow
@@ -26,12 +27,12 @@ public:
 	RTCDemo(QWidget *parent = Q_NULLPTR);
 	virtual ~RTCDemo();
 
-	void createRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
-	void enterRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord);
+	void createRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id);
+	void enterRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id);
 	void setLogo(QString logoURL, bool multi = true);
 	void setTitle(QString title);
 	void leaveRoom();
-	void initUI(const QString& strTemplate, const QString& userTag, bool bUserList, bool bIMList, bool whiteboard, bool screenShare);
+	void initUI(const QString& strTemplate, const QString& userTag, bool bUserList, bool bIMList, bool whiteboard, bool screenShare, ScreenRecordType screenRecord);
 protected:
 	virtual void onCreateRoom(const RTCResult& res, const std::string& roomID);
 	virtual void onEnterRoom(const RTCResult& res);
@@ -80,6 +81,14 @@ private:
 	int m_beautyLevel = 5;
 	int m_whitenessLevel = 5;
 	ScreenRecordType m_screenRecord;
+	bool m_bUserIsResizing;
+	bool m_bUserList = true;
+	bool m_bIMList = true;
+
+	QRect m_deskRect;
+	QRect m_normalRect;
+
+	bool m_bMax = false;
 
 private:
 	void init(const RTCAuthData& authData, const QString& roomName, const std::string& ip, unsigned short port);
@@ -92,14 +101,18 @@ private slots:
 
 	void on_btn_close_clicked();
     void on_btn_min_clicked();
+	void on_btn_max_clicked();
 	void on_btn_device_manage_clicked();
+	void on_device_manage_tab_changed(int tabIndex);
 	void on_btn_beauty_manage_clicked();
+	void on_record_manage_clicked();
 	void on_cmb_mic_currentIndexChanged(int index);
 	void on_cmb_camera_currentIndexChanged(int index);
 	void on_slider_volume_valueChanged(int value);
 	void on_device_manage_ok(bool enableCamera, bool enableMic);
 	void on_device_manage_cancel(int cameraIndex, int micIndex, int micVolume);
 	void on_beauty_manage_ok(int beautyStyle, int beautyLevel, int whitenessLevel);
+	void on_record_manage_ok();
 	void on_chb_camera_stateChanged(int state);
 	void handle(txfunction func);
 };

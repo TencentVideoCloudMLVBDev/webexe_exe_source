@@ -91,6 +91,8 @@ void RTCStreamMixer::addSubStream(const std::string& streamID, int width, int he
 
 void RTCStreamMixer::removeSubStream(const std::string& streamID)
 {
+	LINFO(L"streamID: %s", Ansi2Wide(streamID).c_str());
+
     for (std::vector<RTCStreamMixParam>::iterator it = m_subStream.begin()
         ; m_subStream.end() != it; ++it)
     {
@@ -116,7 +118,7 @@ void RTCStreamMixer::mergeStream(int retryCount)
 {
     LINFO(L"retryCount: %d", retryCount);
 
-    if (m_httpRequest && retryCount > 0)
+	if (m_httpRequest && retryCount > 0 && !m_mainStream.streamID.empty())
     {
 		Json::Value mergeParams;
 		if (m_multi)
@@ -445,7 +447,6 @@ Json::Value RTCStreamMixer::createDoubleJsonParams()
 			subLocationX += subWidth;
 		}
 	}
-
 
 	// para
 	Json::Value para;

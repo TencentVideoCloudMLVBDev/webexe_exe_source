@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="PushPlay">
+    <file>slider.png</file>
+    <file>switch_off.png</file>
+    <file>switch_on.png</file>
+    <file>beautiful.png</file>
+    <file>live.ico</file>
+    <file>close-normal.png</file>
+    <file>close-press.png</file>
+    <file>start.png</file>
+    <file>suspend.png</file>
+  </qresource>
+</RCC>

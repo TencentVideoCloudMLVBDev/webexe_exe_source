@@ -32,21 +32,6 @@ enum MemberRole
     AudienceRole = 2,
 };
 
-enum ScreenRecordType
-{
-	RecordScreenNone = 0,
-	RecordScreenToServer = 1,
-	RecordScreenToClient = 2,
-	RecordScreenToBoth = 3,
-};
-
-enum ScreenRecordCmd
-{
-	ScreenRecordStart = 1001,
-	ScreenRecordStop = 1002,
-	ScreenRecordExit = 1003,
-};
-
 struct MemberItem
 {
     MemberRole role;
@@ -64,14 +49,17 @@ enum DataReportType
 	DataReportWBupload = 3,
 	DataReportWBLast = 4,
 	DataReportWBNext = 5,
+	DataReportStream = 6,
 };
 
 struct CommonDataReport
 {
 	std::string type;
+	std::string bussiness;
+	std::string platform;
 	std::string str_app_name;
 	std::string str_token;
-	uint32_t int32_sdkapp_id;
+	uint32_t int32_sdkappid;
 
 	std::string str_room_type;
 	std::string str_roomid;
@@ -85,8 +73,10 @@ struct CommonDataReport
 
 	CommonDataReport()
 	{
-		this->int32_sdkapp_id = 0;
-		this->type = "webexe";
+		this->int32_sdkappid = 0;
+		this->type = "event";
+		this->bussiness = "webexe";
+		this->platform = "pc";
 		this->str_app_name = "TXCloudRoom";
 	}
 };
@@ -163,7 +153,7 @@ struct WhiteboardUploadReport
 	std::string str_uploadurl;
 	uint32_t int32_uploadtocos_code;
 	std::string str_previewurl;
-	uint32_t int32_pagecount;
+	int32_t int32_pagecount;
 	uint32_t int32_filesize;
 	uint64_t int64_ts_click_upload;
 	uint64_t int64_ts_preview;
@@ -211,4 +201,12 @@ struct WhiteboardNextReport
 	{
 		this->str_action = "whiteboard_next";
 	}
+};
+
+struct StreamDataReport
+{
+	std::string str_stream_id;
+	std::string str_action;
+	std::string str_result;
+	std::string str_reason;
 };

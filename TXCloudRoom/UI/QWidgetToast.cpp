@@ -12,27 +12,19 @@ QWidgetToast::QWidgetToast(QWidget *parent) :
 	m_nMSecond(3000),
 	m_bCloseOut(false)
 {
-	if (!parent)
-	{
-		QRect rect = QApplication::desktop()->screenGeometry();
-		m_nParentHeight = rect.height();
-		m_nParentWidth = rect.width();
-	}
-	else
-	{
-		m_nParentWidth = parentWidget()->width();
-		m_nParentHeight = parentWidget()->height();
-	}
-
+	this->setParent(parent);
 	this->setFixedHeight(55);
+	
 	m_pLabel = new QLabel(this);
 	m_pLabel->setFixedHeight(55);
 	m_pLabel->move(0, 0);
 	m_pLabel->setAlignment(Qt::AlignCenter);
 	m_pLabel->setStyleSheet("color:white");
+
 	this->hide();
-	this->setWindowFlags(Qt::FramelessWindowHint);
 	this->setAttribute(Qt::WA_TranslucentBackground, true);
+
+	setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 
 	m_pTimer = new QTimer();
 	m_pTimer->setInterval(m_nMSecond);
@@ -48,20 +40,26 @@ QWidgetToast::~QWidgetToast()
 	delete m_pCloseTimer;
 }
 
-void QWidgetToast::setText(const QString &text) {
+void QWidgetToast::setText(const QString &text)
+{
 	QFontMetrics fm(this->font());
-	int width = std::max(fm.width(text) * 1.2,100.0);
+	int width = max(fm.width(text) * 1.2,100.0);
 	this->setFixedWidth(width);
 	m_pLabel->setFixedWidth(width);
 	this->m_pLabel->setText(text);
+
+    m_pCloseTimer->stop();
+    setWindowOpacity(1.0);
+
 	this->show();
+
 	m_pTimer->start();
 }
 
 void QWidgetToast::setDuration(int nMSecond)
 {
-	m_nMSecond = std::max(1000, nMSecond);
-	m_nMSecond = std::min(10000, m_nMSecond);
+	m_nMSecond = max(1000, nMSecond);
+	m_nMSecond = min(10000, m_nMSecond);
 	m_pTimer->setInterval(m_nMSecond);
 }
 
@@ -86,8 +84,26 @@ void QWidgetToast::showEvent(QShowEvent *e)
 	{
 		QTimer::singleShot(m_nMSecond, this, SLOT(hide()));
 	}
-	this->move(m_nParentWidth / 2 - this->width() / 2,
-		(m_nParentHeight *(1 - (172 / 1120))) / 2 - this->height() / 2);
+
+	QRect rect;
+	if (!parentWidget())
+	{
+		rect = QApplication::desktop()->screenGeometry();
+		m_parentRect.bottom = rect.bottom();
+		m_parentRect.top = rect.top();
+		m_parentRect.left = rect.left();
+		m_parentRect.right = rect.right();
+	}
+	else
+	{
+		::GetWindowRect((HWND)parentWidget()->winId(), &m_parentRect);
+	}
+
+	int left =(m_parentRect.right-m_parentRect.left) / 2 - this->width() / 2;
+	int top = (m_parentRect.bottom - m_parentRect.top) *(1 - (172 / 1120)) / 2 - this->height() / 2;
+
+	::SetWindowPos((HWND)this->winId(), HWND_TOPMOST, m_parentRect.left + left, m_parentRect.top + top, this->width(), this->height(), SWP_SHOWWINDOW);
+	//this->move(left, top);
 	QWidget::showEvent(e);
 }
 

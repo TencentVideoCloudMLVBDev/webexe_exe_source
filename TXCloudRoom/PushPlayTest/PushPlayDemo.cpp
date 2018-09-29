@@ -20,6 +20,7 @@
 #include <string.h>
 #include <windows.h>
 #include <Shlwapi.h>
+#include "TXShareFrameMgr.h"
 
 #pragma comment (lib,"Shlwapi.lib")
 
@@ -171,7 +172,7 @@ void PushPlayDemo::on_btn_push_clicked()
 	if (!m_pushing)
 	{
 		QString pushUrl = ui.lineEdit_push->text().trimmed();
-		if (pushUrl.isEmpty() || !pushUrl.contains("txSecret") || !pushUrl.toLower().contains("rtmp://"))
+		if (pushUrl.isEmpty() || !pushUrl.toLower().contains("rtmp://"))
 		{
 			DialogMessage::exec(QStringLiteral("请输入合法的RTMP地址!"), DialogMessage::OK);
 			return;
@@ -238,17 +239,17 @@ void PushPlayDemo::on_btn_push_clicked()
 				m_pusher.setVideoBitRateMax(m_maxBitrate);
 			}
 			else if (m_qurityIndex == 1)
-				m_pusher.setVideoQualityParamPreset(TXE_VIDEO_QUALITY_SUPER_DEFINITION);
+				m_pusher.setVideoQualityParamPreset(TXE_VIDEO_QUALITY_SUPER_DEFINITION, TXE_VIDEO_RATIO_16_9);
 			else if (m_qurityIndex == 2)
-				m_pusher.setVideoQualityParamPreset(TXE_VIDEO_QUALITY_HIGH_DEFINITION);
+				m_pusher.setVideoQualityParamPreset(TXE_VIDEO_QUALITY_HIGH_DEFINITION, TXE_VIDEO_RATIO_16_9);
 			else if (m_qurityIndex == 3)
-				m_pusher.setVideoQualityParamPreset(TXE_VIDEO_QUALITY_STANDARD_DEFINITION);
-			else if (m_qurityIndex == 4)
-				m_pusher.setVideoQualityParamPreset(TXE_VIDEO_QUALITY_REALTIME_VIDEOCHAT);
+				m_pusher.setVideoQualityParamPreset(TXE_VIDEO_QUALITY_STANDARD_DEFINITION, TXE_VIDEO_RATIO_16_9);
+
 			m_pusher.setRenderMode(TXE_RENDER_MODE_ADAPT);
 			m_pusher.startPreview((HWND)ui.widget_video_push->winId(), RECT{ 0, 0, ui.widget_video_push->width(), ui.widget_video_push->height() }, m_cameraIndex);
-			m_pusher.startPush(pushUrl.toLocal8Bit());
 			m_pusher.startAudioCapture();
+			m_pusher.startPush(pushUrl.toLocal8Bit());
+			//m_pusher.startLocalRecord("D:\\subTest\\ddddd.mp4");
 			ui.cbOpenSystemVoice->setCheckState(Qt::Unchecked);
 			ui.cbOpenSystemVoice->setEnabled(true);
 		}
@@ -263,9 +264,13 @@ void PushPlayDemo::on_btn_push_clicked()
 			RECT renderRect = { 0 };
 			::GetWindowRect((HWND)ui.widget_video_push->winId(), &renderRect);
 			m_pusher.setVideoQualityParamPreset(TXE_VIDEO_QUALITY_STILLIMAGE_DEFINITION);
-			m_pusher.setVideoFPS(10);
-			m_pusher.setScreenCaptureParam(m_hChooseHwnd, captureRect);
+			//m_pusher.setVideoFPS(10);
+			bool bFollowWnd = TXShareFrameMgr::IsFollowWnd(m_hChooseHwnd);
+
+			m_pusher.setScreenCaptureParam(m_hChooseHwnd, captureRect, bFollowWnd, true);
+			//m_pusher.setVideoResolution(TXE_VIDEO_RESOLUTION_1280x720);
 			m_pusher.startPreview(TXE_VIDEO_SRC_SDK_SCREEN, (HWND)ui.widget_video_push->winId(), renderRect);
+			m_pusher.startAudioCapture();
 			m_pusher.startPush(pushUrl.toLocal8Bit());
 			m_pusher.startAudioCapture();
 
@@ -498,12 +503,6 @@ void PushPlayDemo::on_cmb_bitrate_activated()
 				ui.cmb_resolution->setCurrentIndex(5);
 				ui.cmb_delay_min->setCurrentIndex(1);
 				ui.cmb_delay_max->setCurrentIndex(2);
-			}
-			if (index == 4)
-			{
-				ui.cmb_resolution->setCurrentIndex(0);
-				ui.cmb_delay_min->setCurrentIndex(0);
-				ui.cmb_delay_max->setCurrentIndex(0);
 			}
 			ui.cmb_resolution->setEnabled(false);
 			ui.cmb_FPS->setEnabled(false);
@@ -866,6 +865,8 @@ void PushPlayDemo::onOpenSystemVoiceSlots(int stats)
 			}
 			bPlayer = false;
 		}
+
+#ifndef _WIN64
 		if (bPlayer)
 		{
 			QByteArray ba = strPlayer.toLatin1(); // must
@@ -873,10 +874,13 @@ void PushPlayDemo::onOpenSystemVoiceSlots(int stats)
 		}
 		else
 			m_pusher.openSystemVoiceInput();
+#endif
 	}
 	else
 	{
+#ifndef _WIN64
 		m_pusher.closeSystemVoiceInput();
+#endif
 	}
 }
 
@@ -1008,11 +1012,10 @@ void PushPlayDemo::initUI()
 		<< QStringLiteral("自定义")
 		<< QStringLiteral("FHD")
 		<< QStringLiteral("HD")
-		<< QStringLiteral("SD")
-		<< QStringLiteral("RTC");
+		<< QStringLiteral("SD");
 
 	ui.cmb_bitrate->addItems(bitrateList);
-	ui.cmb_bitrate->setCurrentIndex(4);
+	ui.cmb_bitrate->setCurrentIndex(3);
 	m_qurityIndex = 4;
 
 	QStringList rotationList = QStringList()

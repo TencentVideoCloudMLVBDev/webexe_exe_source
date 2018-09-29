@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PPTHistoryItemView</class>
+ <widget class="QWidget" name="PPTHistoryItemView">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>300</width>
+    <height>59</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>300</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>300</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>192</width>
+    <height>42</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>PPTHistoryItemView</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="spacing">
+    <number>5</number>
+   </property>
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>5</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="label_name">
+     <property name="styleSheet">
+      <string notr="true">font: 10pt &quot;Microsoft YaHei&quot;;
+color: #000000;
+background: none;</string>
+     </property>
+     <property name="text">
+      <string>Nickname</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_datetime">
+     <property name="font">
+      <font>
+       <family>Microsoft YaHei</family>
+       <pointsize>9</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 9pt &quot;Microsoft YaHei&quot;;
+color: #888888;
+background: none;</string>
+     </property>
+     <property name="text">
+      <string>datetime</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btn_del">
+     <property name="font">
+      <font>
+       <family>Microsoft YaHei</family>
+       <pointsize>9</pointsize>
+       <weight>9</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	border: none;
+	border-radius: 15px;
+	background:  none;
+	color: #000000;
+	font: 75 9pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	border: none;
+	color: #ff4000;
+	background:  none;
+}
+
+QPushButton:pressed {
+	border: none;
+	color: #ff4000;
+	background: none;
+}</string>
+     </property>
+     <property name="text">
+      <string>   一</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

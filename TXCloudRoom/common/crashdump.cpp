@@ -199,7 +199,7 @@ LONG WINAPI CrashDump::UnhandledExceptionFilter(struct _EXCEPTION_POINTERS* pExc
     miniInfo.ThreadId = ::GetCurrentThreadId();
 
     //generate a minidump if possible
-    if (fnMiniDumpWriteDump(::GetCurrentProcess(), GetCurrentProcessId(), hFile, dumpFlags, &miniInfo, NULL, NULL))
+    if (fnMiniDumpWriteDump(::GetCurrentProcess(), ::GetCurrentProcessId(), hFile, dumpFlags, &miniInfo, NULL, NULL))
     {
         WCHAR buffer[MAX_PATH] = { 0 };
         ::swprintf_s(buffer, _countof(buffer) - 1, L"Process has crashed.\nMinidump was saved to: \n\\%s\n", filePath);

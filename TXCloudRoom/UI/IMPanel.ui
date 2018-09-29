@@ -7,28 +7,30 @@
     <x>0</x>
     <y>0</y>
     <width>200</width>
-    <height>700</height>
+    <height>630</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>696</height>
+    <height>630</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>700</height>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>IMPanel</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="spacing">
-    <number>0</number>
-   </property>
+  <property name="styleSheet">
+   <string notr="true">#IMPanel{
+	background: #ffffff;
+}</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -41,7 +43,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item>
+   <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <property name="spacing">
       <number>0</number>
@@ -50,13 +52,25 @@
       <number>20</number>
      </property>
      <property name="topMargin">
-      <number>26</number>
+      <number>20</number>
      </property>
      <property name="bottomMargin">
-      <number>25</number>
+      <number>20</number>
      </property>
      <item>
       <widget class="QLabel" name="label_title">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>180</width>
+         <height>25</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <family>Microsoft YaHei</family>
@@ -68,7 +82,7 @@
        </property>
        <property name="styleSheet">
         <string notr="true">font: 12pt &quot;Microsoft YaHei&quot;;
-color: #000000;</string>
+color: #333333;</string>
        </property>
        <property name="text">
         <string>消息</string>
@@ -77,7 +91,7 @@ color: #000000;</string>
      </item>
     </layout>
    </item>
-   <item>
+   <item row="1" column="0">
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <property name="leftMargin">
       <number>20</number>
@@ -90,6 +104,12 @@ color: #000000;</string>
      </property>
      <item>
       <widget class="QGroupBox" name="groupBoxTime">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="styleSheet">
         <string notr="true">QGroupBox{
 	border: none;
@@ -110,7 +130,7 @@ QGroupBox::title{
      </item>
     </layout>
    </item>
-   <item>
+   <item row="2" column="0">
     <widget class="QListWidget" name="lw_msg_list">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -118,10 +138,21 @@ QGroupBox::title{
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>390</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="styleSheet">
       <string notr="true">#lw_msg_list{
 	border: none;
-	background: #f2f2f2;
 }</string>
      </property>
      <property name="horizontalScrollBarPolicy">
@@ -129,26 +160,7 @@ QGroupBox::title{
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QWidget" name="widgetLine2" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>1</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>1</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background: #dddddd;</string>
-     </property>
-    </widget>
-   </item>
-   <item>
+   <item row="4" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
       <number>0</number>
@@ -182,14 +194,14 @@ QGroupBox::title{
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>74</height>
+         <height>100</height>
         </size>
        </property>
        <property name="styleSheet">
         <string notr="true">#tb_msg{
 	border: none;
-	background: #f2f2f2;
 	font: 9pt &quot;Microsoft YaHei&quot;;
+	color: #333333;
 }</string>
        </property>
        <property name="placeholderText">
@@ -222,38 +234,31 @@ QGroupBox::title{
         <widget class="QPushButton" name="btn_send">
          <property name="minimumSize">
           <size>
-           <width>64</width>
-           <height>30</height>
+           <width>70</width>
+           <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>64</width>
-           <height>30</height>
+           <width>70</width>
+           <height>25</height>
           </size>
          </property>
          <property name="styleSheet">
           <string notr="true">QPushButton {
-	border: 1px solid #dddddd;
-	background:  #ffffff;
-	color: #000000;
+	border: none;
+	border-radius:12px;
+	background:  #006eff;
+	color: #ffffff;
 	font: 10pt &quot;Microsoft YaHei&quot;;
 }
 
 QPushButton:hover {
-	border: 1px solid #d2d2d2;
-	background:  #f2f2f2;
+	background:  #0068f2;
 }
 
 QPushButton:pressed {
-	border: 1px solid #d2d2d2;
-	background:  #e5e5e5;
-}
-
-QPushButton:disable {
-	border: 1px solid #d5d5d5;
-	color: #bbbbbb;
-	background:  #f2f2f2;
+	background:  #0062e5;
 }</string>
          </property>
          <property name="text">
@@ -264,6 +269,25 @@ QPushButton:disable {
       </layout>
      </item>
     </layout>
+   </item>
+   <item row="3" column="0">
+    <widget class="QWidget" name="widgetLine2" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>1</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>1</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background: #dddddd;</string>
+     </property>
+    </widget>
    </item>
   </layout>
   <zorder>widgetLine2</zorder>

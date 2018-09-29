@@ -20,6 +20,17 @@ struct LRAuthData
 };
 
 /**
+* \brief：角色类型
+*/
+enum LRRole
+{
+    LRNullRole,     // 角色未知，未进入房间或者退出房间
+    LRMainRole,     // 大主播
+    LRSubRole,      // 小主播
+    LRAudience      // 观众
+};
+
+/**
 * \brief：成员信息
 */
 struct LRMemberData
@@ -70,7 +81,8 @@ enum LRErrorCode
 	LIVEROOM_ERR_PUSH_DISCONNECT = -1007, // 推流连接断开
 	LIVEROOM_ERR_CAMERA_OCCUPY = -1008, // 摄像头占用
 	LIVEROOM_ERR_CAMERA_REMOVED = -1009, // 摄像头被拔出
-	LIVEROOM_ERR_PLAY_DISCONNECT = -1010, // 拉流连接断开
+    LIVEROOM_ERR_CAMERA_MISSED = -1010, // 无可用摄像头
+    LIVEROOM_ERR_PLAY_DISCONNECT = -1011, // 拉流连接断开
 
 	// CGI
 	LIVEROOM_ERR_WRONG_PARAMETER = -2001, // 参数错误

@@ -4,6 +4,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <string>
+#include <assert.h>
 
 // ¿í×Ö·û×ª»»ºê
 #define __W(str)    L##str

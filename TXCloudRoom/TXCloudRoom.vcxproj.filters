@@ -472,6 +472,84 @@
     <ClCompile Include="common\HttpReportRequest.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="common\TXCloudRecordCmd.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\TXShareFrameChoose.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_TXShareFrameChoose.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TXShareFrameChoose.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TXShareFrameChoose.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="common\TXShareFrameMgr.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_TXShareFrameMgr.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TXShareFrameMgr.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TXShareFrameMgr.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Court&amp;CS\RTCShareVideo.cpp">
+      <Filter>CourtCS</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_RTCShareVideo.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_RTCShareVideo.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_RTCShareVideo.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\PPTHistory.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_PPTHistory.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PPTHistory.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PPTHistory.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\PPTHistoryItemView.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_PPTHistoryItemView.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PPTHistoryItemView.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PPTHistoryItemView.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\WinWidget.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Education\LiveShareVideo.cpp">
+      <Filter>Education</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_LiveShareVideo.cpp">
+      <Filter>Generated Files\Professional_Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LiveShareVideo.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LiveShareVideo.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Education\LiveDemo.h">
@@ -606,6 +684,33 @@
     </CustomBuild>
     <CustomBuild Include="PushPlayTest\GetPushUrlInfo.h">
       <Filter>PushPlayTest</Filter>
+    </CustomBuild>
+    <CustomBuild Include="common\TXShareFrameChoose.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="common\TXShareFrameMgr.h">
+      <Filter>Common</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Court&amp;CS\RTCShareVideo.h">
+      <Filter>CourtCS</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\DialogShareVideo.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\PPTHistory.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\PPTHistory.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\PPTHistoryItemView.h">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\PPTHistoryItemView.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Education\LiveShareVideo.h">
+      <Filter>Education</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -744,6 +849,21 @@
     </ClInclude>
     <ClInclude Include="common\HttpReportRequest.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\TXCloudRecordCmd.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_DialogShareVideo.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_PPTHistory.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_PPTHistoryItemView.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\WinWidget.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

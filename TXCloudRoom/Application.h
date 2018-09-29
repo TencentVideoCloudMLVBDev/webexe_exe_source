@@ -59,6 +59,9 @@ private:
     void handleDestroySession(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
     void handleSnapshotPusher(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
     void handleSnapshotPlayer(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
+	void handleCSLiveSetMute(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
+	void handleCSAddPusher(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
+	void handleCSDelPusher(const std::wstring& absPath, DWORD& statusCode, std::string& respDataUTF8);
 
     bool resolve(const std::string& json);
     bool resolveProtol(const Json::Value& root);
@@ -89,4 +92,6 @@ private:
 	ScreenRecordType m_screenRecord;
 	std::string m_proxyIP;
 	int m_proxyPort;
+	std::string m_recordUrl;
+	std::string m_recordPath;
 };

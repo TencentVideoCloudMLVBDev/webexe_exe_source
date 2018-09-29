@@ -30,7 +30,8 @@ public:
     explicit HttpServer(IHttpServerCallback* callback);
     ~HttpServer();
 
-    DWORD listen(const std::vector<std::wstring>& urls);
+    DWORD listenHttps(const std::vector<std::wstring>& urls);
+	DWORD listenHttp(const std::vector<std::wstring>& urls);
     void close();
 private:
     void handle();
@@ -38,9 +39,9 @@ private:
     DWORD response(HANDLE hReqQueue, void* request, USHORT StatusCode, const char* pReason, const char* pEntityString);
 private:
     IHttpServerCallback* m_callback;
-    HANDLE m_reqQueue;
     std::unique_ptr<std::thread> m_thread;
-    std::vector<std::wstring> m_urls;
+	bool bHttpsServer = false;
+	std::vector<std::wstring> m_urls;
 };
 
 #endif /* __HTTPSERVER_H__ */

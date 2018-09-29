@@ -8,6 +8,7 @@
 #include "Base.h"
 #include "DataReport.h"
 #include <Dwmapi.h> 
+#include <QDesktopWidget>
 
 QWidget * RTCMainWindow = nullptr;
 #define PANEL_WIDTH 200
@@ -23,16 +24,6 @@ RTCDemo::RTCDemo(QWidget *parent)
 	ui.setupUi(this);
 	setWindowFlags(Qt::FramelessWindowHint | windowFlags());
 
-	BOOL bEnable = false;
-	::DwmIsCompositionEnabled(&bEnable);
-	if (bEnable)
-	{
-		DWMNCRENDERINGPOLICY ncrp = DWMNCRP_ENABLED;
-		::DwmSetWindowAttribute((HWND)winId(), DWMWA_NCRENDERING_POLICY, &ncrp, sizeof(ncrp));
-		MARGINS margins = { -1 };
-		::DwmExtendFrameIntoClientArea((HWND)winId(), &margins);
-	}
-
 	RTCMainWindow = this;
 	m_demoWidth = this->geometry().width();
 
@@ -43,6 +34,13 @@ RTCDemo::RTCDemo(QWidget *parent)
 
 	ui.label_logo->hide();
 	ui.label_title->hide();
+
+	QDesktopWidget* desktopWidget = QApplication::desktop();
+	m_normalRect = this->geometry();
+	m_deskRect = desktopWidget->availableGeometry();
+
+	m_deviceManage = new DeviceManage(this);
+	connect(m_deviceManage, SIGNAL(device_manage_tab_changed(int)), this, SLOT(on_device_manage_tab_changed(int)));
 }
 
 void RTCDemo::mousePressEvent(QMouseEvent *e)
@@ -59,7 +57,7 @@ void RTCDemo::mouseReleaseEvent(QMouseEvent *e)
 
 void RTCDemo::mouseMoveEvent(QMouseEvent *e)
 {
-	if (!mousePressedPosition.isNull()) {
+	if (!mousePressedPosition.isNull() && !m_bMax) {
 		QPoint delta = e->globalPos() - mousePressedPosition;
 		move(windowPositionAsDrag + delta);
 	}
@@ -67,6 +65,16 @@ void RTCDemo::mouseMoveEvent(QMouseEvent *e)
 
 void RTCDemo::showEvent(QShowEvent * event)
 {
+	BOOL bEnable = false;
+	::DwmIsCompositionEnabled(&bEnable);
+	if (bEnable)
+	{
+		DWMNCRENDERINGPOLICY ncrp = DWMNCRP_ENABLED;
+		::DwmSetWindowAttribute((HWND)winId(), DWMWA_NCRENDERING_POLICY, &ncrp, sizeof(ncrp));
+		MARGINS margins = { -1 };
+		::DwmExtendFrameIntoClientArea((HWND)winId(), &margins);
+	}
+
 	this->setAttribute(Qt::WA_Mapped);
 	this->update();
 	QMainWindow::showEvent(event);
@@ -81,15 +89,11 @@ void RTCDemo::onDownloadFinished(bool success, QByteArray image)
 
 void RTCDemo::on_btn_close_clicked()
 {
+    LOGGER;
+	
 	if (m_screenRecord != RecordScreenNone)
 	{
-		HWND recordHwnd = FindWindowExA(HWND_MESSAGE, NULL, "TXCloudRecord", "TXCloudRecordCaption");
-		if (recordHwnd)
-		{
-			std::string message = "RecordExit";
-			COPYDATASTRUCT copy_data = { ScreenRecordExit, message.length() + 1,(LPVOID)message.c_str() };
-			::SendMessage(recordHwnd, WM_COPYDATA, ScreenRecordExit, reinterpret_cast<LPARAM>(&copy_data));
-		}
+		TXCloudRecordCmd::instance().stop();
 	}
 
     Application::instance().pushRoomStatus(2, Wide2UTF8(L"退出房间"));
@@ -101,6 +105,11 @@ void RTCDemo::on_btn_close_clicked()
 	DataReport::instance().setResult(DataReportLeave, "success");
 	HttpReportRequest::instance().reportELK(DataReport::instance().getLeaveReport());
 
+	if (m_screenRecord != RecordScreenNone)
+	{
+		TXCloudRecordCmd::instance().exit();
+	}
+
 	this->close();
 	Application::instance().quit(0);
 }
@@ -108,6 +117,82 @@ void RTCDemo::on_btn_close_clicked()
 void RTCDemo::on_btn_min_clicked()
 {
     this->showMinimized();
+}
+
+void RTCDemo::on_btn_max_clicked()
+{
+	if (m_bMax)
+	{
+		m_bMax = false;
+		const QString maxBtnStyle =
+			R"(QPushButton{
+		font: 10pt "Microsoft YaHei";
+		border: none;
+		image: url(:/RoomService/max-button.png);
+		background-position: center;
+		}
+		QPushButton:hover{
+		image: url(:/RoomService/max-hover.png);
+		}
+		QPushButton:pressed{
+		image: url(:/RoomService/max-hover.png);
+		})";
+
+		ui.btn_max->setStyleSheet(maxBtnStyle);
+
+		int panelWidth = 200;
+		this->setFixedSize(QSize(m_normalRect.width(), m_normalRect.height()));
+		ui.widget_main->setFixedSize(QSize(m_normalRect.width(), m_normalRect.height()));
+		ui.widget_member->setFixedWidth(panelWidth);
+		ui.widget_message->setFixedWidth(panelWidth);
+		ui.widget_main_share->setFixedWidth(m_normalRect.width() - panelWidth * 2 - 60);
+		m_imPanel->setFixedSize(QSize(panelWidth, ui.widget_message->height()));
+		m_memberPanel->setFixedSize(QSize(panelWidth, ui.widget_member->height()));
+		if (m_doublePanel)
+		{
+			m_doublePanel->setFixedSize(QSize(ui.widget_main_share->width(), ui.widget_main_share->height()));
+		}
+		else
+			m_multiPanel->setFixedSize(QSize(ui.widget_main_share->width(), ui.widget_main_share->height()));
+
+		this->move((m_deskRect.width() - this->width()) / 2, (m_deskRect.height() - this->height()) / 2);
+	}
+	else
+	{
+		m_bMax = true;
+		const QString restoreBtnStyle =
+			R"(QPushButton{
+		font: 10pt "Microsoft YaHei";
+		border: none;
+		image: url(:/RoomService/restore-button.png);
+		background-position: center;
+		}
+		QPushButton:hover{
+		image: url(:/RoomService/restore-hover.png);
+		}
+		QPushButton:pressed{
+		image: url(:/RoomService/restore-hover.png);
+		})";
+
+		ui.btn_max->setStyleSheet(restoreBtnStyle);
+
+		int panelWidth = 200 * m_deskRect.width() / 1080 * 1.05;
+		this->setFixedSize(QSize(m_deskRect.width(), m_deskRect.height()));
+		ui.widget_main->setFixedSize(QSize(m_deskRect.width(), m_deskRect.height()));
+		ui.widget_member->setFixedWidth(panelWidth);
+		ui.widget_message->setFixedWidth(panelWidth);
+		ui.widget_main_share->setFixedWidth(m_deskRect.width() - panelWidth * 2 - 60);
+		m_imPanel->setFixedSize(QSize(panelWidth, ui.widget_message->height()));
+		m_memberPanel->setFixedSize(QSize(panelWidth, ui.widget_member->height()));
+		if (m_doublePanel)
+		{
+			m_doublePanel->setFixedSize(QSize(ui.widget_main_share->width(), ui.widget_main_share->height()));
+		}
+		else
+			m_multiPanel->setFixedSize(QSize(ui.widget_main_share->width(), ui.widget_main_share->height()));
+
+		this->move(0, 0);
+	}
 }
 
 RTCDemo::~RTCDemo()
@@ -126,7 +211,7 @@ RTCDemo::~RTCDemo()
 	delete roomService;
 }
 
-void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
+void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id)
 {
     RTCRoom::instance()->setProxy(ip, port);
     m_imgDownloader.setProxy(ip, port);
@@ -134,7 +219,7 @@ void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, cons
 	m_bCreate = true;
     m_roomID = roomID;
 	m_roomInfo = roomInfo;
-	m_screenRecord = screenRecord;
+
 	BoardService::instance().setRoomID(roomID.toStdString());
 	if (record)
 	{
@@ -146,7 +231,7 @@ void RTCDemo::createRoom(RTCAuthData authData, const QString& serverDomain, cons
 	init(authData, roomInfo, ip, port);
 }
 
-void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id, ScreenRecordType screenRecord)
+void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const std::string& ip, unsigned short port, const QString& roomID, const QString& roomInfo, bool record, int picture_id)
 {
     RTCRoom::instance()->setProxy(ip, port);
     m_imgDownloader.setProxy(ip, port);
@@ -154,7 +239,7 @@ void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const
 	m_bCreate = false;
     m_roomID = roomID;
 	m_roomInfo = roomInfo;
-	m_screenRecord = screenRecord;
+
 	BoardService::instance().setRoomID(roomID.toStdString());
 	if (record)
 	{
@@ -168,6 +253,8 @@ void RTCDemo::enterRoom(RTCAuthData authData, const QString& serverDomain, const
 
 void RTCDemo::setLogo(QString logoURL, bool multi)
 {
+    LTRACE(L"logoURL: %s, multi: %s", logoURL.toStdWString().c_str(), (true == multi ? L"true" : L"false"));
+
     if (true == logoURL.isEmpty())
     {
         if (true == multi)
@@ -207,7 +294,7 @@ void RTCDemo::init(const RTCAuthData& authData, const QString& roomName, const s
 	boardAuthData.token = authData.token;
 	boardAuthData.userID = authData.userID;
 
-	BoardService::instance().init(boardAuthData);
+	BoardService::instance().init(boardAuthData, ip, port);
 
 	if (m_multiPanel)
 	{
@@ -261,7 +348,8 @@ void RTCDemo::onCreateRoom(const RTCResult& res, const std::string& roomID)
 		emit dispatch([this, res] {
 			RTCRoom::instance()->stopLocalPreview();
 
-			DialogMessage::exec(QString::fromStdString(res.msg), DialogMessage::OK);
+            QString msgContent = QString("[%1] %2").arg(res.ec).arg(QString::fromUtf8(res.msg.c_str()));
+			DialogMessage::exec(msgContent, DialogMessage::OK);
 		});
 
         Application::instance().pushRoomStatus(-1004, Wide2UTF8(L"创建房间失败"));
@@ -292,7 +380,8 @@ void RTCDemo::onEnterRoom(const RTCResult& res)
 		emit dispatch([this, res] {
 			RTCRoom::instance()->stopLocalPreview();
 
-			DialogMessage::exec(QString::fromStdString(res.msg), DialogMessage::OK);
+            QString msgContent = QString("[%1] %2").arg(res.ec).arg(QString::fromUtf8(res.msg.c_str()));
+			DialogMessage::exec(msgContent, DialogMessage::OK);
 		});
 
         Application::instance().pushRoomStatus(-1006, Wide2UTF8(L"进入房间失败"));
@@ -319,7 +408,8 @@ void RTCDemo::onUpdateRoomData(const RTCResult& res, const RTCRoomData& roomData
     emit dispatch([this, res, roomData] {
         if (RTCROOM_SUCCESS != res.ec)
         {
-            DialogMessage::exec(QString::fromStdString(res.msg), DialogMessage::OK);
+            QString msgContent = QString("[%1] %2").arg(res.ec).arg(QString::fromUtf8(res.msg.c_str()));
+            DialogMessage::exec(msgContent, DialogMessage::OK);
         }
         else
         {
@@ -553,13 +643,7 @@ void RTCDemo::onTIMKickOffline()
 
 		if (m_screenRecord != RecordScreenNone)
 		{
-			HWND recordHwnd = FindWindowExA(HWND_MESSAGE, NULL, "TXCloudRecord", "TXCloudRecordCaption");
-			if (recordHwnd)
-			{
-				std::string message = "RecordExit";
-				COPYDATASTRUCT copy_data = { ScreenRecordExit, message.length() + 1,(LPVOID)message.c_str() };
-				::SendMessage(recordHwnd, WM_COPYDATA, ScreenRecordExit, reinterpret_cast<LPARAM>(&copy_data));
-			}
+            TXCloudRecordCmd::instance().exit();
 		}
 
 		Application::instance().pushRoomStatus(2, Wide2UTF8(L"IM强制下线，退出房间"));
@@ -573,13 +657,13 @@ void RTCDemo::onTIMKickOffline()
 
 void RTCDemo::onError(const RTCResult & res, const std::string & userID)
 {
-    QString msgContent = QString::fromLocal8Bit(res.msg.c_str());
+    QString msgContent = QString("[%1] %2").arg(res.ec).arg(QString::fromLocal8Bit(res.msg.c_str()));
 
 	emit dispatch([this, res, msgContent] {
 		DialogMessage::exec(msgContent, DialogMessage::OK);
 	});
 
-    if (RTCROOM_SUCCESS != res.ec)
+	if (RTCROOM_SUCCESS != res.ec)
     {
         Application::instance().pushRoomStatus(res.ec, msgContent.toUtf8().toStdString());
     }
@@ -598,7 +682,9 @@ void RTCDemo::onLogin(const RTCResult & res, const RTCAuthData & authData)
 	{
 		emit dispatch([=] {
 			RTCRoom::instance()->stopLocalPreview();
-			DialogMessage::exec(QString::fromStdString(res.msg), DialogMessage::OK);
+
+            QString msgContent = QString("[%1] %2").arg(res.ec).arg(QString::fromUtf8(res.msg.c_str()));
+			DialogMessage::exec(msgContent, DialogMessage::OK);
 		});
 	}
 }
@@ -608,7 +694,7 @@ void RTCDemo::onSendIMGroupMsg(const std::string & msg)
 	RTCRoom::instance()->sendRoomTextMsg(msg.c_str());
 }
 
-void RTCDemo::initUI(const QString& strTemplate, const QString& userTag, bool bUserList, bool bIMList, bool whiteboard, bool screenShare)
+void RTCDemo::initUI(const QString& strTemplate, const QString& userTag, bool bUserList, bool bIMList, bool whiteboard, bool screenShare, ScreenRecordType screenRecord)
 {
 	if (strTemplate == "1v1")
 	{
@@ -628,6 +714,10 @@ void RTCDemo::initUI(const QString& strTemplate, const QString& userTag, bool bU
 	}
 	m_userTag = userTag;
 
+	m_bUserList = bUserList;
+	m_bIMList = m_bIMList;
+	m_screenRecord = screenRecord;
+
 	QVBoxLayout *tabVBoxLayout = new QVBoxLayout(ui.widget_main_share);
 	tabVBoxLayout->setMargin(0);
 	ui.widget_main_share->setLayout(tabVBoxLayout);
@@ -635,14 +725,14 @@ void RTCDemo::initUI(const QString& strTemplate, const QString& userTag, bool bU
 	{
 		m_multiPanel = new MultiVideoPanel(ui.widget_main_share);
 		tabVBoxLayout->addWidget(m_multiPanel);
-		m_multiPanel->initConfigSetting(DEFAULT_CAMERA_SIZE, whiteboard, screenShare);
+		m_multiPanel->initConfigSetting(DEFAULT_CAMERA_SIZE, whiteboard, screenShare, m_screenRecord);
 		m_multiPanel->show();
 	}
 	else
 	{
 		m_doublePanel = new DoubleVideoPanel(ui.widget_main_share);
 		tabVBoxLayout->addWidget(m_doublePanel);
-		m_doublePanel->initConfigSetting(whiteboard, screenShare);
+		m_doublePanel->initConfigSetting(whiteboard, screenShare, screenRecord);
 		m_doublePanel->show();
 	}
 
@@ -666,36 +756,43 @@ void RTCDemo::initUI(const QString& strTemplate, const QString& userTag, bool bU
 		m_imPanel->show();
 	}
 
-	if (!bUserList && !bIMList)
-	{
-		ui.widget_member->hide();
-		ui.widget_message->hide();
-		this->setFixedWidth(m_demoWidth - 2 * PANEL_WIDTH);
-		ui.widget_bottom->setFixedWidth(m_demoWidth - 2 * PANEL_WIDTH);
-		ui.widget_top->setFixedWidth(m_demoWidth - 2 * PANEL_WIDTH);
-		ui.widget_bottom->setContentsMargins(20, 0, 20, 0);
-	}
-	else if (!bUserList)
-	{
-		ui.widget_member->hide();
-		this->setFixedWidth(m_demoWidth - PANEL_WIDTH);
-		ui.widget_bottom->setFixedWidth(m_demoWidth - PANEL_WIDTH);
-		ui.widget_top->setFixedWidth(m_demoWidth - PANEL_WIDTH);
-		ui.widget_bottom->setContentsMargins(10, 0, 0, 0);
-	}
-	else if (!bIMList)
-	{
-		ui.widget_message->hide();
-		this->setFixedWidth(m_demoWidth - PANEL_WIDTH);
-		ui.widget_bottom->setFixedWidth(m_demoWidth - PANEL_WIDTH);
-		ui.widget_top->setFixedWidth(m_demoWidth - PANEL_WIDTH);
-		ui.widget_bottom->setContentsMargins(0, 0, 10, 0);
-	}
 
 	if (!m_toast)
 	{
 		m_toast = new QWidgetToast(this);
 	}
+
+	int cameraCount = RTCRoom::instance()->enumCameras();
+	wchar_t **camerasName = new wchar_t *[cameraCount];
+	for (int i = 0; i < cameraCount; ++i)
+	{
+		camerasName[i] = new wchar_t[256];
+	}
+	RTCRoom::instance()->enumCameras(camerasName, cameraCount);
+
+	int micCount = RTCRoom::instance()->micDeviceCount();
+	char **micsName = new char *[micCount];
+	for (int i = 0; i < micCount; ++i)
+	{
+		micsName[i] = new char[512];
+		RTCRoom::instance()->micDeviceName(i, micsName[i]);
+	}
+
+	m_deviceManage->setCameras(camerasName, cameraCount);
+	m_deviceManage->setMics(micsName, micCount);
+	m_deviceManage->setMicVolume(RTCRoom::instance()->micVolume(), true);
+
+	for (int i = 0; i < cameraCount; ++i)
+	{
+		delete[] camerasName[i];
+	}
+	delete[] camerasName;
+
+	for (int i = 0; i < micCount; ++i)
+	{
+		delete[] micsName[i];
+	}
+	delete[] micsName;
 }
 
 void RTCDemo::handle(txfunction func)
@@ -705,61 +802,39 @@ void RTCDemo::handle(txfunction func)
 
 void RTCDemo::on_btn_device_manage_clicked()
 {
-	if (!m_deviceManage)
+	bool ret = m_deviceManage->updateUI(2);
+	if (ret)
 	{
-		m_deviceManage = new DeviceManage(this);
-		int cameraCount = RTCRoom::instance()->enumCameras();
-		wchar_t **camerasName = new wchar_t *[cameraCount];
-		for (int i = 0; i < cameraCount; ++i)
-		{
-			camerasName[i] = new wchar_t[256];
-		}
-		RTCRoom::instance()->enumCameras(camerasName, cameraCount);
-
-		int micCount = RTCRoom::instance()->micDeviceCount();
-		char **micsName = new char *[micCount];
-		for (int i = 0; i < micCount; ++i)
-		{
-			micsName[i] = new char[512];
-			RTCRoom::instance()->micDeviceName(i, micsName[i]);
-		}
-
-		m_deviceManage->setCameras(camerasName, cameraCount);
-		m_deviceManage->setMics(micsName, micCount);
-		m_deviceManage->setMicVolume(RTCRoom::instance()->micVolume(), true);
-
-		for (int i = 0; i < cameraCount; ++i)
-		{
-			delete[] camerasName[i];
-		}
-		delete[] camerasName;
-
-		for (int i = 0; i < micCount; ++i)
-		{
-			delete[] micsName[i];
-		}
-		delete[] micsName;
+		QWidget* display = m_deviceManage->getRenderWidget();
+		RTCRoom::instance()->updateLocalPreview((HWND)display->winId(), RECT{ 0, 0, display->width(), display->height() });
 	}
-	else
-	{
-		bool ret = m_deviceManage->updateUI();
-		if (ret)
-		{
-			QWidget* display = m_deviceManage->getRenderWidget();
-			RTCRoom::instance()->updateLocalPreview((HWND)display->winId(), RECT{ 0, 0, display->width(), display->height() });
-		}
-	}
+
 	m_deviceManage->exec();
+}
+
+void RTCDemo::on_device_manage_tab_changed(int tabIndex)
+{
+	bool ret = m_deviceManage->previewCamera();
+	if (ret)
+	{
+		QWidget* display = m_deviceManage->getRenderWidget();
+		RTCRoom::instance()->updateLocalPreview((HWND)display->winId(), RECT{ 0, 0, display->width(), display->height() });
+	}
 }
 
 void RTCDemo::on_btn_beauty_manage_clicked()
 {
-	if (!m_beautyManage)
-	{
-		m_beautyManage = new BeautyManage(this);
-	}
+ 
+    m_deviceManage->updateUI(0);
 
-	m_beautyManage->exec();
+	m_deviceManage->exec();
+}
+
+void RTCDemo::on_record_manage_clicked()
+{
+    m_deviceManage->updateUI(1);
+
+    m_deviceManage->exec();
 }
 
 void RTCDemo::on_cmb_mic_currentIndexChanged(int index)
@@ -817,6 +892,76 @@ void RTCDemo::on_beauty_manage_ok(int beautyStyle, int beautyLevel, int whitenes
 	m_beautyLevel = beautyLevel;
 	m_whitenessLevel = whitenessLevel;
 	RTCRoom::instance()->setBeautyStyle((RTCBeautyStyle)beautyStyle, beautyLevel, whitenessLevel);
+}
+
+void RTCDemo::on_record_manage_ok()
+{
+	QSettings* setting = new QSettings(QCoreApplication::applicationDirPath() + "/record-config.ini", QSettings::IniFormat);
+	setting->beginGroup("config");
+	bool localRecord = setting->value("localRecord").toBool();
+	bool serverRecord = setting->value("serverRecord").toBool();
+
+	if (!localRecord && !serverRecord)
+	{
+		DialogMessage::exec(QStringLiteral("请先设置录制参数!"), DialogMessage::OK);
+		return;
+	}
+
+	if (localRecord && serverRecord)
+	{
+		m_screenRecord = RecordScreenToBoth;
+	}
+	else if (localRecord)
+	{
+		m_screenRecord = RecordScreenToClient;
+	}
+	else
+		m_screenRecord = RecordScreenToServer;
+
+	QString qPath = setting->value("localRecordPath").toString();
+
+	qPath.replace("/", "\\");
+	if (qPath.lastIndexOf("\\") != qPath.length() - 1)
+	{
+		qPath.append("\\");
+	}
+
+	qPath.append(QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss"));
+	qPath.append(".mp4");
+
+	std::string localRecordPath = qPath.toStdString();
+	std::string serverUrl = setting->value("serverUrl").toString().toStdString();
+	int sliceTime = setting->value("sliceTime").toInt();
+	setting->endGroup();
+
+	RecordData recordData;
+	ZeroMemory(&recordData, sizeof(recordData));
+	//strcpy(recordData.recordExe, "TXCloudRoom.exe");
+	strcpy(recordData.recordUrl, serverUrl.c_str());
+	strcpy(recordData.recordPath, localRecordPath.c_str());
+	recordData.recordType = m_screenRecord;
+	recordData.sliceTime = sliceTime;
+	recordData.winID = (int)GetDesktopWindow();
+
+	if (TXCloudRecordCmd::instance().isExist())
+ 	{
+ 		TXCloudRecordCmd::instance().update(recordData);
+ 	}
+ 	else
+ 	{
+        TXCloudRecordCmd::instance().cleanProcess();
+ 		TXCloudRecordCmd::instance().runAndRecord(recordData);
+ 	}
+
+	if (m_multiPanel)
+	{
+		m_multiPanel->on_startRecord(m_screenRecord);
+
+	}
+	if (m_doublePanel)
+	{
+		m_doublePanel->on_startRecord(m_screenRecord);
+	}
 }
 
 void RTCDemo::on_chb_camera_stateChanged(int state)

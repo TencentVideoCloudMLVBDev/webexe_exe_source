@@ -119,10 +119,21 @@ public:
 	void setCallback(BoardCallback *callback) const;
 
 	/**
+	* \brief 设置调用环境
+	* \param 0 测试环境 1 正式环境
+	*/
+	void setEnv(int env) const;
+
+	/**
 	 * \brief 设置日志路径
 	 * \param szLogPath				日志路径
 	 */
 	bool SetLogPath(const char* szLogPath) const;
+
+	/**
+	* \brief 清空白板数据
+	*/
+	void clearWhiteBoard() const;
 
 	/**
 	 * \brief 白板页面操作
@@ -281,7 +292,7 @@ public:
     void enableDefaultReporter(int appId, uint32_t classId, const char* userSig) const;
 
 	/**
-	* \brief 新增一个白板文件，默认为ppt
+	* \brief 新增一个白板文件，并生成对应白板id和文件id，默认为ppt
 	* \param urls	ppt分页url数组
 	* \param boardIds	ppt白板分页数组
 	* \param title	ppt文件名
@@ -289,6 +300,13 @@ public:
 	* \return 文件id
 	*/
 	std::string addFile(std::vector<std::wstring>& urls, std::vector<std::string>& boardIds, const wchar_t * title, int type = 0) const;
+
+	/**
+	* \brief 批量新增一个白板文件作为普遍白板
+	* \param urls	ppt分页url数组
+	* \param boardIds	ppt白板分页数组
+	*/
+	void addFile(std::vector<std::wstring>& urls, std::vector<std::string>& boardIds) const;
 
 	/**
 	* \brief 创建白板

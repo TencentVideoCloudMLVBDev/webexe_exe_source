@@ -3,15 +3,15 @@
 
 WebEXE 和 WebRTC 是我们推出的两套企业端接入方案，下表列出了两套方案的适用场景和优缺点，您可以根据自己的情况自行选择。
 
-| 方案选型| WebEXE | WebRTC |
-|:-------:|:-------:|:-------:|
-| 文档地址 | [DOC](https://cloud.tencent.com/document/product/454/17004) | [DOC](https://cloud.tencent.com/document/product/454/17005) |
-| 试用场景 | 面向公司职员 | 面相普通C类用户 |
-| 方案优势 | 可以跳开浏览器的各种限制，实现一些高级特性 | 无需安装插件，Chrome浏览器就能胜任，适合普通用户接入 |
-| 方案不足 | 需要使用者按提示安装程序 | 功能受到Chrome浏览器的安全限制 |
-| 美颜磨皮 | 支持美颜 | 不支持美颜 |
-| 桌面录屏 | 支持桌面录屏 | 不支持录屏 |
-| 安装插件 | 需要安装插件 | 不需要任何插件 |
+|  方案选型  |                  WebEXE                  |                  WebRTC                  |
+| :----: | :--------------------------------------: | :--------------------------------------: |
+|  文档地址  | [DOC](https://cloud.tencent.com/document/product/454/17004) | [DOC](https://cloud.tencent.com/document/product/454/17005) |
+|  试用场景  |                  面向公司职员                  |                 面相普通C类用户                 |
+|  方案优势  |          可以跳开浏览器的各种限制，实现一些高级特性           |      无需安装插件，Chrome浏览器就能胜任，适合普通用户接入       |
+|  方案不足  |               需要使用者按提示安装程序               |            功能受到Chrome浏览器的安全限制            |
+|  美颜磨皮  |                   支持美颜                   |                  不支持美颜                   |
+|  桌面录屏  |                  支持桌面录屏                  |                  不支持录屏                   |
+|  安装插件  |                  需要安装插件                  |                 不需要任何插件                  |
 | 依赖的云服务 | [LVB](https://cloud.tencent.com/product/LVB) + [IM](https://cloud.tencent.com/product/im) | [TRTC](https://cloud.tencent.com/product/trtc) + [IM](https://cloud.tencent.com/product/im) |
 
 ## Demo体验
@@ -26,15 +26,18 @@ WebEXE 和 WebRTC 是我们推出的两套企业端接入方案，下表列出�
 ## 源码调试
 点击 [GitHub](https://github.com/TencentVideoCloudMLVBDev/webexe_web.git) 下载网页端源代码，用本地浏览器双击打开文件中的 index.html，就可以体验和调试 WebEXE 的相关功能。
 
-| 目录 | 说明 |
-|:-------:|---------|
-| index.html | demo主页面 |
-| doubleroom.html | 双人视频通话的demo页面 |
-| liveroom.html | 互动视频通话的demo页面 |
-| assets | demo页面中使用的 css 样式表和资源文件 |
-| js | demo页面中使用的javascript，其中，最为关键的 EXEStart.js就在这里 |
+|       目录        | 说明                                       |
+| :-------------: | ---------------------------------------- |
+|   index.html    | demo主页面                                  |
+| doubleroom.html | 双人视频通话的demo页面                            |
+|  liveroom.html  | 互动视频通话的demo页面                            |
+|     assets      | demo页面中使用的 css 样式表和资源文件                  |
+|       js        | demo页面中使用的javascript，其中，最为关键的 EXEStart.js就在这里 |
+
+注意：若您有修改 exe demo 的需求，可点击 [Exe-GitHub](https://github.com/TencentVideoCloudMLVBDev/webexe_exe_source) 下载 exe demo 源代码调试。(如果需要使用录制功能，可参考 [Record-GitHub](https://github.com/TencentVideoCloudMLVBDev/exe_screen_record) 进行配置)。
 
 ## 方案对接
+
 下面这幅图简单介绍了如何将 WebEXE 方案整合到您的现有的业务系统中：
 ![](https://main.qcloudimg.com/raw/30281f823d059c5876968385ef97cbc6.png)
 
@@ -57,7 +60,7 @@ WebEXE 实现视频通话服务所使用的 [LiveRoom(直播+连麦)](https://cl
 |    roomId    | 房间ID，您的业务服务器负责分配，小程序端和PC端进入同一个ID的房间，即可进行视频通话 |
 |     type     | RTCRoom 和 LiveRoom 两种模式，其区别可以看 step4     |
 |   template   | 视频窗口摆放样式，默认1V1，更多参考 [Template](https://cloud.tencent.com/document/product/454/17006#EnumDef) 定义 |
-|    record    | 视频通话内容是否要进行录制                              |
+|    record    | 视频通话内容是否要进行录制                            |
 
 **EXEStarter.js**  主要用于唤起 TXCloudRoom.exe 桌面程序，并跟 TXCloudRoom.exe 进行双向通讯，您的 Web 页面只需要 include EXEStarter.js 就可以调用其接口函数。音视频相关的复杂功能，则交给 TXCloudRoom.exe 去完成。
 

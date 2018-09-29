@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>172</height>
+    <width>390</width>
+    <height>178</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,13 +36,13 @@
     <widget class="QWidget" name="widgetMain" native="true">
      <property name="minimumSize">
       <size>
-       <width>420</width>
+       <width>380</width>
        <height>148</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>420</width>
+       <width>380</width>
        <height>168</height>
       </size>
      </property>
@@ -218,6 +218,7 @@ QPushButton:pressed {
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton {
+	border-radius: 15px;
 	border: none;
 	background:  #006eff;
 	color: #ffffff;
@@ -268,6 +269,7 @@ QPushButton:disable {
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton {
+	border-radius: 15px;
 	border: 1px solid #dddddd;
 	background:  #ffffff;
 	color: #000000;
@@ -320,6 +322,11 @@ QPushButton:disable {
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>btn_ok</tabstop>
+  <tabstop>btn_cancel</tabstop>
+  <tabstop>btn_close</tabstop>
+ </tabstops>
  <resources>
   <include location="../Resources/RoomService/RoomService.qrc"/>
  </resources>

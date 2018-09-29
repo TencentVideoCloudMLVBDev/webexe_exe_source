@@ -1,5 +1,26 @@
 <RCC>
   <qresource prefix="/RoomService">
+    <file>restore-button.png</file>
+    <file>restore-hover.png</file>
+    <file>max-button.png</file>
+    <file>max-hover.png</file>
+    <file>close-hover.png</file>
+    <file>min-hover.png</file>
+    <file>speaker.png</file>
+    <file>student.png</file>
+    <file>teacher.png</file>
+    <file>tab_both.png</file>
+    <file>tab_local.png</file>
+    <file>tab_both_unselected.png</file>
+    <file>tab_local_unselected.png</file>
+    <file>tab_server.png</file>
+    <file>tab_server_unselected.png</file>
+    <file>tab_blur.png</file>
+    <file>tab_blur_unselected.png</file>
+    <file>tab_nature.png</file>
+    <file>tab_nature_unselected.png</file>
+    <file>tab_smooth.png</file>
+    <file>tab_smooth_unselected.png</file>
     <file>customservice.ico</file>
     <file>switch_off.png</file>
     <file>slider.png</file>

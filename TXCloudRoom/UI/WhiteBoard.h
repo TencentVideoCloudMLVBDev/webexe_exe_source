@@ -8,6 +8,7 @@
 #include <queue>
 #include "ui_WhiteBoard.h"
 #include "BoardService.h"
+#include "PPTHistory.h"
 
 class WhiteBoard : public QMainWindow, public BoardServiceCallback
 {
@@ -49,6 +50,8 @@ private slots:
 	void on_btnNextPage_clicked();
 	void on_btnAddPage_clicked();
 	void on_btnDeletePage_clicked();
+	void on_btnHistory_clicked();
+    void on_btnSwitchPage_clicked();
 
 	void on_sliderShapeThin_valueChanged(int value);
 
@@ -87,9 +90,12 @@ private:
 
 private:
 	void onUploadProgress(int percent) override;
-	void onUploadResult(bool success) override;
+	void onUploadResult(bool success, bool openHistory, const std::wstring& objName) override;
 	void onStatusChanged(bool canUndo, bool canRedo, bool canCopy, bool canRemove) override;
 	void onSyncEventResult(bool success) override;
+
+signals:
+	void addItem(QString, QString);
 
 private:
 	Ui::WhiteBoard ui{};
@@ -112,4 +118,7 @@ private:
 	bool _mainUser{false};
 	QTimer *_timer{};
 	QString _colorStyle;
+
+    PPTHistory* m_historyDlg;
+	int m_boardYPos=0;
 };

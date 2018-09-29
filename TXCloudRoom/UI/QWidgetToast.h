@@ -3,6 +3,8 @@
 #include <QLabel>
 #include <QPaintEvent>
 #include <QTimer>
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 class QWidgetToast : public QWidget
 {
@@ -31,8 +33,8 @@ private:
 	QTimer * m_pTimer;
 	QTimer * m_pCloseTimer;
 	qreal m_dTransparent;
-	int m_nParentWidth;
-	int m_nParentHeight;
+	RECT m_parentRect;
+
 	int m_nMSecond;
 	bool m_bCloseOut;
 };

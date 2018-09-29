@@ -142,11 +142,11 @@ void RTCRoom::stopLocalPreview()
     }
 }
 
-bool RTCRoom::startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT & renderRect, const RECT & captureRect)
+bool RTCRoom::startScreenPreview(HWND rendHwnd, HWND captureHwnd, const RECT & renderRect, const RECT & captureRect, bool bFollowWndRect)
 {
     if (m_impl)
     {
-        return m_impl->startScreenPreview(rendHwnd, captureHwnd, renderRect, captureRect);
+        return m_impl->startScreenPreview(rendHwnd, captureHwnd, renderRect, captureRect, bFollowWndRect);
     }
     else
     {

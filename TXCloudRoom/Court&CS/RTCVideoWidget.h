@@ -3,6 +3,9 @@
 #include <QWidget>
 #include "ui_VideoWidget.h"
 #include "commonType.h"
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include "WinWidget.h"
 
 class RTCVideoWidget : public QWidget
 {
@@ -11,6 +14,9 @@ class RTCVideoWidget : public QWidget
 public:
 	RTCVideoWidget(QWidget *parent = Q_NULLPTR, bool local = false);
 	~RTCVideoWidget();
+	void on_menu_actCamera(bool open);
+	void on_menu_actMic(bool open);
+	MenuInfo & getMenuInfo();
 
 	void startVideo(std::string userID);
 	void stopVideo();
@@ -21,6 +27,11 @@ public:
 signals:
 	void local_actCamera(bool open); 
 	void local_actMic(bool open);
+	void actCamera(bool open);
+	void actMic(bool open);
+
+protected:
+	virtual void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
 
 private slots:
 	void on_dis_actCamera(bool open);
@@ -30,4 +41,8 @@ private:
 	Ui::VideoWidget ui;
 	std::string	m_userID;
 	bool m_local;
+	HWND m_hwnd;
+	QWidget * widgetDisplay;
+	MenuInfo m_menuInfo;
+	WinWidget * winWidget;
 };

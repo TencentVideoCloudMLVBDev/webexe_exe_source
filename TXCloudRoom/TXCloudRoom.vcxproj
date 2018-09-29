@@ -148,12 +148,17 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
     <ClCompile Include="common\RoomService\ImageDownloader.cpp" />
     <ClCompile Include="common\RoomService\TIMManager.cpp" />
     <ClCompile Include="common\TaskQueue.cpp" />
+    <ClCompile Include="common\TXCloudRecordCmd.cpp" />
+    <ClCompile Include="common\TXShareFrameChoose.cpp" />
+    <ClCompile Include="common\TXShareFrameMgr.cpp" />
     <ClCompile Include="Court&amp;CS\DoubleVideoPanel.cpp" />
     <ClCompile Include="Court&amp;CS\MultiVideoPanel.cpp" />
     <ClCompile Include="Court&amp;CS\RTCDemo.cpp" />
+    <ClCompile Include="Court&amp;CS\RTCShareVideo.cpp" />
     <ClCompile Include="Court&amp;CS\RTCVideoWidget.cpp" />
     <ClCompile Include="CSLive\DialogPushPlay.cpp" />
     <ClCompile Include="Education\LiveDemo.cpp" />
+    <ClCompile Include="Education\LiveShareVideo.cpp" />
     <ClCompile Include="Education\LiveVideoPanel.cpp" />
     <ClCompile Include="Education\LiveVideoWidget.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_Application.cpp">
@@ -216,6 +221,10 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_LiveShareVideo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_LiveVideoPanel.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -233,6 +242,14 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_MultiVideoPanel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PPTHistory.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PPTHistoryItemView.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -256,7 +273,19 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_RTCShareVideo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_RTCVideoWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TXShareFrameChoose.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TXShareFrameMgr.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -324,6 +353,10 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_LiveShareVideo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Professional_Release\moc_LiveVideoPanel.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -341,6 +374,14 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Professional_Release\moc_MultiVideoPanel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_PPTHistory.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_PPTHistoryItemView.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -364,7 +405,19 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_RTCShareVideo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Professional_Release\moc_RTCVideoWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_TXShareFrameChoose.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Professional_Release\moc_TXShareFrameMgr.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -456,6 +509,10 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_LiveShareVideo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_LiveVideoPanel.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -473,6 +530,14 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_MultiVideoPanel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PPTHistory.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PPTHistoryItemView.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -496,7 +561,19 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_RTCShareVideo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_RTCVideoWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TXShareFrameChoose.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TXShareFrameMgr.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -527,12 +604,58 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
     <ClCompile Include="UI\InvitePanel.cpp" />
     <ClCompile Include="UI\MemberItemView.cpp" />
     <ClCompile Include="UI\MemberPanel.cpp" />
+    <ClCompile Include="UI\PPTHistory.cpp" />
+    <ClCompile Include="UI\PPTHistoryItemView.cpp" />
     <ClCompile Include="UI\QDialogProgress.cpp" />
     <ClCompile Include="UI\QProgressIndicator.cpp" />
     <ClCompile Include="UI\QWidgetToast.cpp" />
     <ClCompile Include="UI\WhiteBoard.cpp" />
+    <ClCompile Include="UI\WinWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="Education\LiveShareVideo.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+    </CustomBuild>
+    <ClInclude Include="UI\WinWidget.h" />
+    <CustomBuild Include="UI\PPTHistoryItemView.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+    </CustomBuild>
+    <CustomBuild Include="UI\PPTHistory.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+    </CustomBuild>
     <CustomBuild Include="UI\BeautyManage.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Moc%27ing %(Identity)...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -910,16 +1033,62 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
     <ClInclude Include="common\RoomService\DataReport.h" />
     <ClInclude Include="common\RoomService\TIMManager.h" />
     <ClInclude Include="common\TaskQueue.h" />
+    <ClInclude Include="common\TXCloudRecordCmd.h" />
+    <CustomBuild Include="common\TXShareFrameChoose.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+    </CustomBuild>
+    <CustomBuild Include="common\TXShareFrameMgr.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+    </CustomBuild>
+    <CustomBuild Include="Court&amp;CS\RTCShareVideo.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUSE_LOG -DCURL_STATICLIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtNetwork" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\ActiveQt" "-I$(ProjectDir)SDK\liteav\include" "-I$(ProjectDir)SDK\IM_Windows_SDK\c_includes" "-I$(ProjectDir)SDK\BoardSDK\include" "-I$(ProjectDir)SDK\RoomService\RTCRoom" "-I$(ProjectDir)SDK\RoomService" "-I$(ProjectDir)SDK\RoomService\LiveRoom" "-I$(ProjectDir)SDK\CosSDK\include" "-I$(ProjectDir)thirdparty\zlib" "-I$(ProjectDir)thirdparty\gzip" "-I$(ProjectDir)thirdparty\jsoncpp" "-I$(ProjectDir)thirdparty\libyuv\include" "-I$(ProjectDir)common\RoomService" "-I$(ProjectDir)common" "-I$(ProjectDir)UI" "-I$(ProjectDir)Court&amp;CS" "-I$(ProjectDir)Education" "-I$(ProjectDir)CSLive" "-I$(ProjectDir)PushPlayTest" "-I$(ProjectDir)..\Basic(Qt)\." "-I$(ProjectDir)thirdparty\curl\include"</Command>
+    </CustomBuild>
     <ClInclude Include="GeneratedFiles\ui_BeautyManage.h" />
     <ClInclude Include="GeneratedFiles\ui_DeviceManage.h" />
     <ClInclude Include="GeneratedFiles\ui_DialogMessage.h" />
     <ClInclude Include="GeneratedFiles\ui_DialogPushPlay.h" />
+    <ClInclude Include="GeneratedFiles\ui_DialogShareVideo.h" />
     <ClInclude Include="GeneratedFiles\ui_IMItemView.h" />
     <ClInclude Include="GeneratedFiles\ui_IMPanel.h" />
     <ClInclude Include="GeneratedFiles\ui_InvitePanel.h" />
     <ClInclude Include="GeneratedFiles\ui_MainPanel.h" />
     <ClInclude Include="GeneratedFiles\ui_MemberItemView.h" />
     <ClInclude Include="GeneratedFiles\ui_MemberPanel.h" />
+    <ClInclude Include="GeneratedFiles\ui_PPTHistory.h" />
+    <ClInclude Include="GeneratedFiles\ui_PPTHistoryItemView.h" />
     <ClInclude Include="GeneratedFiles\ui_PushPlayDemo.h" />
     <ClInclude Include="GeneratedFiles\ui_QDialogProgress.h" />
     <ClInclude Include="GeneratedFiles\ui_RoomDemo.h" />
@@ -1519,6 +1688,54 @@ copy /y "$(ProjectDir)Build\Bin\$(Configuration)\*.exe" "$(ProjectDir)..\Portal(
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="UI\BeautyManage.ui">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="UI\DialogShareVideo.ui">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="UI\PPTHistory.ui">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="UI\PPTHistoryItemView.ui">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">Uic%27ing %(Identity)...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Professional_Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>

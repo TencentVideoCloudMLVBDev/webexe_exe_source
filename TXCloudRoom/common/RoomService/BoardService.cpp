@@ -76,7 +76,39 @@ void BoardService::uploadFile(const std::wstring& fileName)
 		HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
 	}
 	m_bUpload = true;
+    m_bNewUpload = true;
+    m_tryPreview = 3;
 	fetchCosSig(fileName);
+}
+
+void BoardService::openHistoryFile(const std::wstring& objName)
+{
+    std::vector<std::string> headers;
+    headers.push_back("Content-Type: application/json; charset=utf-8");
+
+    //获取COS上传权限签名
+    _cos.httpClient()->asyn_post(
+        TXCHttpClient::w2a(url(), CP_UTF8),
+        headers,
+        CosSigReq("pc/", "").GenReq(),
+        [=](int code, std::string resp, const std::vector<std::string>& respHeaders)
+    {
+        CosSigRsp sigRsp;
+        sigRsp.Parse(resp);
+        if (sigRsp.GetCode())
+        {
+            sendUploadResult(false, true, objName);
+        }
+        else
+        {
+            _cos.setAppID(L"1253488539");
+            _cos.setBucket(TXCHttpClient::a2w(sigRsp.GetBucket()));
+            _cos.setPath(L"pc/");
+            _cos.setRegion(TXCHttpClient::a2w(sigRsp.GetRegion()));
+
+            previewFile(objName, true);
+        }
+    });
 }
 
 uint32_t BoardService::getPageIndex() const
@@ -172,9 +204,13 @@ void BoardService::deletePage()
 	}
 }
 
-void BoardService::init(const BoardAuthData & authData)
+void BoardService::init(const BoardAuthData & authData, const std::string& ip, unsigned short port)
 {
 	m_authData = authData;
+
+    _cos.setProxy(ip, port);
+
+    BoardSDK::setProxy(ip, port);
 
 	_board = new BoardSDK(m_authData.userID.c_str());
 	_board->setCallback(this);
@@ -192,10 +228,10 @@ void BoardService::sendUploadProgress(int percent) const
 	}
 }
 
-void BoardService::sendUploadResult(bool success) const
+void BoardService::sendUploadResult(bool success, bool openHistory, const std::wstring& objName) const
 {
 	if (_callback) {
-		_callback->onUploadResult(success);
+		_callback->onUploadResult(success, openHistory, objName);
 	}
 }
 
@@ -250,7 +286,7 @@ void BoardService::fetchCosSig(const std::wstring& fileName)
 			DataReport::instance().setResult(DataReportWBupload, "fail:1001", std::to_string(sigRsp.GetCode()));
 			HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
 
-			sendUploadResult(false);
+			sendUploadResult(false, false, L"");
 		}
 		else
 		{
@@ -281,13 +317,14 @@ void BoardService::uploadToCos(const std::string& sig, const std::wstring& fileN
 				DataReport::instance().setUploadtoCosCode(code);
 				if (code != 0)
 				{
-					sendUploadResult(false);
+					sendUploadResult(false, false, objName);
 					m_bUpload = false;
 					DataReport::instance().setResult(DataReportWBupload, "fail:1002", std::to_string(code));
 					HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
 					return;
 				}
-				previewFile(objName);
+                m_bNewUpload = false;
+				previewFile(objName, false);
 			}
 			else
 			{
@@ -296,7 +333,7 @@ void BoardService::uploadToCos(const std::string& sig, const std::wstring& fileN
 		});
 }
 
-void BoardService::previewFile(const std::wstring& objName)
+void BoardService::previewFile(const std::wstring& objName, bool openHistory)
 {
 	const std::size_t pos = objName.find_last_of(L".");
 	const std::wstring ext = objName.substr(pos + 1);
@@ -311,9 +348,9 @@ void BoardService::previewFile(const std::wstring& objName)
 	{
 		//删除旧的页面
 		auto oldPages = std::make_unique<const char*[]>(_pagesId.size() - 1);
-		for (size_t i = 1; i < _pagesId.size(); ++i)
+		for (size_t i = 0; i < _pagesId.size() - 1; ++i)
 		{
-			oldPages.get()[i - 1] = _pagesId[i].c_str();
+			oldPages.get()[i] = _pagesId[i].c_str();
 		}
 		_board->pageOperate("#DEFAULT", oldPages.get(), _pagesId.size() - 1);
 		_pagesId.clear();
@@ -324,7 +361,7 @@ void BoardService::previewFile(const std::wstring& objName)
 		_backsUrl.emplace_back(_cos.getDownloadUrl(objName).c_str());
 		_backsSend.emplace_back(false);
 		gotoPage(0);
-		sendUploadResult(true);
+		sendUploadResult(true, openHistory, objName);
 		return;
 	}
 
@@ -344,9 +381,9 @@ void BoardService::previewFile(const std::wstring& objName)
 			{
 				//删除旧的页面
 				auto oldPages = std::make_unique<const char*[]>(_pagesId.size() - 1);
-				for (size_t i = 1; i < _pagesId.size(); ++i)
+				for (size_t i = 0; i < _pagesId.size() - 1; ++i)
 				{
-					oldPages.get()[i-1] = _pagesId[i].c_str();
+					oldPages.get()[i] = _pagesId[i].c_str();
 				}
 				_board->pageOperate("#DEFAULT", oldPages.get(), _pagesId.size() - 1);
 				_pagesId.clear();
@@ -364,14 +401,22 @@ void BoardService::previewFile(const std::wstring& objName)
 					_backsSend.emplace_back(false);
 				}
 				gotoPage(0);
-				sendUploadResult(true);
+				sendUploadResult(true, openHistory, objName);
 			}
+            else if (page_count < 0 && m_tryPreview > 0 && !m_bNewUpload)
+            {
+                Sleep(1000);
+                m_tryPreview --;
+                previewFile(objName, false);
+                DataReport::instance().setResult(DataReportWBupload, "fail:1003", "page count error");
+				HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
+            }
 			else
 			{
 				m_bUpload = false;
-				DataReport::instance().setResult(DataReportWBupload, "fail:1003", "page count is 0");
+				DataReport::instance().setResult(DataReportWBupload, "fail:1003", "page count error");
 				HttpReportRequest::instance().reportELK(DataReport::instance().getWhiteboardUploadReport());
-				sendUploadResult(false);
+				sendUploadResult(false, openHistory, objName);
 			}
 		});
 }

@@ -2,11 +2,67 @@
 
 #include <assert.h>
 #include <memory>
+#include "curl/curl.h"
 #include "Base.h"
 
 /**************************************************************************/
 
 #define USER_CURL 1
+
+struct RequestSink
+{
+    std::string* reqData;
+    size_t sendSize;
+};
+
+struct ResponseSink
+{
+    std::string* respData;
+    std::vector<std::string>* respHeaders;
+};
+
+static size_t onRequest(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+    RequestSink* reqSink = reinterpret_cast<RequestSink*>(stream);
+    std::string* reqData = reqSink->reqData;
+
+    size_t sendSize = reqSink->sendSize;
+    size_t actualSize = reqData->size() - sendSize;
+    if (actualSize > 4096)
+    {
+        actualSize = 4096;
+    }
+
+    memcpy_s(ptr, size * nmemb, &((*reqData)[sendSize]), actualSize);
+    reqSink->sendSize += actualSize;
+
+    return actualSize;
+}
+
+static size_t onResponse(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+    ResponseSink* respSink = reinterpret_cast<ResponseSink*>(stream);
+    std::string* respData = respSink->respData;
+
+    respData->append((char*)ptr, size * nmemb);
+
+    return (size * nmemb);
+}
+
+static size_t onHeaderCallback(char *buffer, size_t size, size_t nitems, void *userdata)
+{
+    std::string str(buffer, size * nitems);
+    size_t index = str.rfind('\r');
+
+    std::string header = str.substr(0, index);
+    if (false == header.empty())
+    {
+        ResponseSink* respSink = reinterpret_cast<ResponseSink*>(userdata);
+        respSink->respHeaders->push_back(header.substr(0, index));
+    }
+
+    return (size * nitems);
+}
 
 HttpClient::HttpClient(const std::wstring& user_agent)
 	: m_user_agent(user_agent)
@@ -49,13 +105,19 @@ DWORD HttpClient::http_get(const std::wstring& url
 
 	std::string url_temp = Wide2UTF8(url);
 	CURL* curl = curl_easy_init();
-	CURLcode res;
+
+    CURLcode res = CURLE_OK;
     if (curl)
     {
+        std::vector<std::string> respHeaders;
+        ResponseSink sink = { &resp_data, &respHeaders };
+
         // set params  
-        curl_easy_setopt(curl, CURLOPT_URL, url_temp.c_str()); // url  
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, req_reply);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&resp_data);
+        curl_easy_setopt(curl, CURLOPT_URL, url_temp.c_str()); // url
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, onResponse);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&sink);
+        curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, onHeaderCallback);
+        curl_easy_setopt(curl, CURLOPT_HEADERDATA, (void *)&sink);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5000);
@@ -104,15 +166,25 @@ DWORD HttpClient::http_post(const std::wstring& url
 
 	std::string url_temp = Wide2UTF8(url);
 	CURL* curl = curl_easy_init();
-	CURLcode res;
+
+    CURLcode res = CURLE_OK;
 	if (curl)
 	{
-		// set params  
-		curl_easy_setopt(curl, CURLOPT_POST, 1); // post req  
-		curl_easy_setopt(curl, CURLOPT_URL, url_temp.c_str()); // url  
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str()); // params  
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, req_reply);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&resp_data);
+        RequestSink reqSink = { const_cast<std::string*>(&body), 0 };
+
+        std::vector<std::string> respHeaders;
+        ResponseSink respSink = { &resp_data, &respHeaders };
+
+        // set params  
+        curl_easy_setopt(curl, CURLOPT_POST, 1); // post req
+        curl_easy_setopt(curl, CURLOPT_URL, url_temp.c_str()); // url
+        curl_easy_setopt(curl, CURLOPT_READFUNCTION, onRequest); // 调用重写的读文件流函数
+        curl_easy_setopt(curl, CURLOPT_READDATA, (void *)&reqSink); // 往read_file()函数中传入用户自定义的数据类型
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (curl_off_t)body.size());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, onResponse);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&respSink);
+        curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, onHeaderCallback);
+        curl_easy_setopt(curl, CURLOPT_HEADERDATA, (void *)&respSink);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5000);
@@ -131,9 +203,12 @@ DWORD HttpClient::http_post(const std::wstring& url
 		{
 			headerlist = curl_slist_append(headerlist, Wide2UTF8(headers[i]).c_str());
 		}
+
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+
 		// start req  
 		res = curl_easy_perform(curl);
+
 		curl_slist_free_all(headerlist);
 	}
 

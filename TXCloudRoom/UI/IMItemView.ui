@@ -24,7 +24,7 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>200</width>
+    <width>16777215</width>
     <height>16777215</height>
    </size>
   </property>
@@ -57,12 +57,13 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>170</width>
+       <width>16777215</width>
        <height>16777215</height>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 10pt &quot;Microsoft YaHei&quot;;</string>
+      <string notr="true">font: 10pt &quot;Microsoft YaHei&quot;;
+color: #333333;</string>
      </property>
      <property name="text">
       <string>消息</string>

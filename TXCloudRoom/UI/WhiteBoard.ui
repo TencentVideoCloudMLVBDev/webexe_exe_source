@@ -32,13 +32,13 @@
     <property name="minimumSize">
      <size>
       <width>36</width>
-      <height>288</height>
+      <height>252</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
-      <width>36</width>
-      <height>288</height>
+      <width>16777215</width>
+      <height>16777215</height>
      </size>
     </property>
     <property name="windowTitle">
@@ -46,7 +46,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">#toolsWindow{
-	background-color: #66000000;
+	background-color: #55000000;
 }</string>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -142,13 +142,18 @@ QRadioButton:checked{
 	border-image: url(:/tools/tools/pick-press.png);
 }
 
-QRadioButton::indicator {
+QRadioButton::indicator:unchecked {
     width: 28px;
     height: 24px;
 	image:none;
 	border-image: url(:/tools/tools/pen-normal.png);
 }
-
+QRadioButton::indicator:checked {
+    width: 28px;
+    height: 24px;
+	image:none;
+	border-image: url(:/tools/tools/pen-hover.png);
+}
 QRadioButton::indicator:hover {
 	border-image: url(:/tools/tools/pen-hover.png);
 }</string>
@@ -193,13 +198,18 @@ QRadioButton:checked{
 	border-image: url(:/tools/tools/pick-press.png);
 }
 
-QRadioButton::indicator {
+QRadioButton::indicator:unchecked{
     width: 28px;
     height: 24px;
 	image: none;
 	border-image: url(:/tools/tools/line-normal.png);
 }
-
+QRadioButton::indicator:checked{
+    width: 28px;
+    height: 24px;
+	image: none;
+	border-image: url(:/tools/tools/line-hover.png);
+}
 QRadioButton::indicator:hover {
 	border-image: url(:/tools/tools/line-hover.png);
 }</string>
@@ -241,11 +251,17 @@ QRadioButton:checked{
 	border-image: url(:/tools/tools/pick-press.png);
 }
 
-QRadioButton::indicator {
+QRadioButton::indicator:unchecked {
     width: 28px;
     height: 24px;
 	image: none;
 	border-image: url(:/tools/tools/shape-normal.png);
+}
+QRadioButton::indicator:checked{
+    width: 28px;
+    height: 24px;
+	image: none;
+	border-image: url(:/tools/tools/shape-hover.png);
 }
 
 QRadioButton::indicator:hover {
@@ -289,11 +305,18 @@ QRadioButton:checked{
 	border-image: url(:/tools/tools/pick-press.png);
 }
 
-QRadioButton::indicator {
+QRadioButton::indicator:unchecked {
     width: 28px;
     height: 24px;
 	image: none;
 	border-image: url(:/tools/tools/eraser-normal.png);
+}
+
+QRadioButton::indicator:checked {
+    width: 28px;
+    height: 24px;
+	image: none;
+	border-image: url(:/tools/tools/eraser-hover.png);
 }
 
 QRadioButton::indicator:hover {
@@ -302,28 +325,6 @@ QRadioButton::indicator:hover {
        </property>
        <property name="text">
         <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QWidget" name="widgetSplite1" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>28</width>
-         <height>1</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>28</width>
-         <height>1</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QWidget{
-	background-color: #ff7c7c7b;
-	margin: 0px 4px 0px 4px;
-}</string>
        </property>
       </widget>
      </item>
@@ -350,18 +351,28 @@ QRadioButton::indicator:hover {
 }
 
 QRadioButton:unchecked{
+	border-image: url(:/tools/tools/pick-normal.png);
 }
 
 QRadioButton:checked{
 	border-radius: 2px;
 	background-color:#33000000;
+	border-image: url(:/tools/tools/pick-press.png);
 }
 
-QRadioButton::indicator {
+
+QRadioButton::indicator:unchecked {
     width: 28px;
     height: 24px;
 	image: none;
 	border-image: url(:/tools/tools/select-normal.png);
+}
+
+QRadioButton::indicator:checked {
+    width: 28px;
+    height: 24px;
+	image: none;
+	border-image: url(:/tools/tools/select-hover.png);
 }
 
 QRadioButton::indicator:hover {
@@ -405,86 +416,32 @@ QPushButton:pressed {
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QWidget" name="widgetSplite2" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>28</width>
-         <height>1</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>28</width>
-         <height>1</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QWidget{
-	background-color: #ff7c7c7b;
-	margin: 0px 4px 0px 4px;
-}</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnUpload">
-       <property name="minimumSize">
-        <size>
-         <width>36</width>
-         <height>36</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>36</width>
-         <height>36</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>上传</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-	margin: 6px 4px 6px 4px;
-	border-image: url(:/tools/tools/upload-normal.png);
-}
-
-QPushButton:pressed {
-	border-image: url(:/tools/tools/upload-press.png);
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="pagesWindow">
     <property name="minimumSize">
      <size>
       <width>0</width>
-      <height>42</height>
+      <height>0</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
       <width>16777215</width>
-      <height>42</height>
+      <height>16777215</height>
      </size>
     </property>
     <property name="windowTitle">
      <string>PagesWindow</string>
     </property>
     <property name="styleSheet">
-     <string notr="true">#pagesWindow{
-	background-color: #fff2f2f2;
+     <string notr="true">#pagesWindow{	
+background-color: #55000000;
 }</string>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>18</number>
+      <number>10</number>
      </property>
      <property name="leftMargin">
       <number>14</number>
@@ -499,6 +456,153 @@ QPushButton:pressed {
       <number>10</number>
      </property>
      <item>
+      <widget class="QPushButton" name="btnLastPage">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>上一页</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border-image: url(:/pages/pages/left-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/pages/pages/left-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnPageNumber">
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border: none;
+	font: bold 14pt &quot;Microsoft YaHei&quot;;
+	color: #dedede;
+}
+
+QPushButton:pressed {
+	color: #dedede;
+}</string>
+       </property>
+       <property name="text">
+        <string>1 / 1</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnNextPage">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>下一页</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border-image: url(:/pages/pages/right-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/pages/pages/right-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinPage">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 10pt &quot;Microsoft YaHei&quot;;
+color: rgb(222,222,222);
+background-color:rgb(170,170,170);</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSwitchPage">
+       <property name="minimumSize">
+        <size>
+         <width>25</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>25</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>跳页</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	font: 10pt &quot;Microsoft YaHei&quot;;
+color: rgb(222,222,222);
+}
+
+QPushButton:pressed {
+	font: 10pt &quot;Microsoft YaHei&quot;;
+color: rgb(20,115,251);
+}</string>
+       </property>
+       <property name="text">
+        <string>go</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnUndo">
        <property name="minimumSize">
         <size>
@@ -511,6 +615,9 @@ QPushButton:pressed {
          <width>22</width>
          <height>22</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>撤销</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
@@ -540,6 +647,9 @@ QPushButton:pressed {
          <height>22</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>重做</string>
+       </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
 	border-image: url(:/pages/pages/redo-normal.png);
@@ -547,93 +657,6 @@ QPushButton:pressed {
 
 QPushButton:pressed {
 	border-image: url(:/pages/pages/redo-press.png);
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnLastPage">
-       <property name="minimumSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-	border-image: url(:/pages/pages/left-normal.png);
-}
-
-QPushButton:pressed {
-	border-image: url(:/pages/pages/left-press.png);
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnPageNumber">
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-	border: none;
-	font: bold 14pt &quot;Microsoft YaHei&quot;;
-	color: #ff888888;
-}
-
-QPushButton:pressed {
-	color: #ff006eef;
-}</string>
-       </property>
-       <property name="text">
-        <string>1 / 1</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnNextPage">
-       <property name="minimumSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-	border-image: url(:/pages/pages/right-normal.png);
-}
-
-QPushButton:pressed {
-	border-image: url(:/pages/pages/right-press.png);
 }</string>
        </property>
        <property name="text">
@@ -655,6 +678,68 @@ QPushButton:pressed {
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="btnUpload">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>上传PPT</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border-image: url(:/tools/tools/upload-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/tools/tools/upload-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnHistory">
+       <property name="minimumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>PPT历史</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	border-image: url(:/pages/pages/history-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/pages/pages/history-press.png);
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="btnAddPage">
        <property name="minimumSize">
         <size>
@@ -667,6 +752,9 @@ QPushButton:pressed {
          <width>22</width>
          <height>22</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>新增白板页</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
@@ -695,6 +783,9 @@ QPushButton:pressed {
          <width>22</width>
          <height>22</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>清空</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
@@ -730,7 +821,7 @@ QPushButton:pressed {
     </property>
     <property name="styleSheet">
      <string notr="true">#colorWindow{
-	background-color: #b3000000;
+	background-color: #55000000;
 }</string>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -970,7 +1061,7 @@ QRadioButton::indicator:checked {
     </property>
     <property name="styleSheet">
      <string notr="true">#sizeWindow{
-	background-color: #b3000000;
+	background-color: #55000000;
 }</string>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -1114,7 +1205,7 @@ QRadioButton::indicator:checked {
     </property>
     <property name="styleSheet">
      <string notr="true">#shapeWindow{
-	background-color: #b3000000;
+	background-color: #55000000;
 }</string>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1669,7 +1760,7 @@ QPushButton:disable {
      <x>0</x>
      <y>0</y>
      <width>1036</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

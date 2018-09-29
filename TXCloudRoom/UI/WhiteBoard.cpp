@@ -2,25 +2,29 @@
 #include <QWindow>
 #include <QFileDialog>
 #include <QTimer>
+#include <QDateTime>
 #include <ctime>
+
 #include "QDialogProgress.h"
 #include "BoardService.h"
 #include "DataReport.h"
-#include "log.h"
 
 WhiteBoard::WhiteBoard(bool enableDraw, QWidget *parent)
 	: QMainWindow(parent)
 	, _enableDraw(enableDraw)
 {
 	emit QDialogProgress::instance().showProgress(QStringLiteral("正在同步数据"));
-
+	m_historyDlg = new PPTHistory();
 	setWindowFlags(windowFlags() & ~Qt::Window);
 
 	ui.setupUi(this);
 	ui.menuBar->hide();
 	ui.mainToolBar->hide();
 	ui.statusBar->hide();
-
+    ui.spinPage->setValue(1);
+    ui.spinPage->setMinimum(1);
+	ui.spinPage->setMaximum(1);
+    ui.spinPage->setSingleStep(1);
 	for(auto subWin : ui.centralWidget->subWindowList())
 	{
 		if(subWin->windowTitle() == "ToolsWindow")
@@ -123,6 +127,9 @@ QCheckBox::indicator {
 
 WhiteBoard::~WhiteBoard()
 {
+    QDialogProgress::instance().hideEvent(nullptr);
+    QDialogProgress::instance().close();
+
 	_timer->stop();
 }
 
@@ -153,14 +160,21 @@ void WhiteBoard::setMainUser(bool mainUser)
 
 void WhiteBoard::resizeEvent(QResizeEvent * event)
 {
-	_toolsWindow->resize(36, 288);
-	_toolsWindow->move(0, (ui.centralWidget->height() - _toolsWindow->height()) / 2);
+	int centralWidth = ui.centralWidget->width();
+	float scale = min(centralWidth *1.0 / 620, 1.5);
 
-	_pagesWindow->resize(ui.centralWidget->width(), 42);
-	_pagesWindow->move(0, ui.centralWidget->height() - _pagesWindow->height());
+	int boardHeight = ui.centralWidget->width()*9.0 / 16;
+	int pageHeight = min(ui.centralWidget->height() - boardHeight, 50);
+	m_boardYPos = ui.centralWidget->height() - pageHeight - boardHeight;
 
-	_boardWindow->resize(ui.centralWidget->width(), ui.centralWidget->height() - _pagesWindow->height());
-	_boardWindow->move(0, 0);
+	_boardWindow->resize(ui.centralWidget->width(), boardHeight);
+	_boardWindow->move(0, m_boardYPos);
+
+	_toolsWindow->resize(36, 252);
+	_toolsWindow->move(0, m_boardYPos);
+
+	_pagesWindow->resize(ui.centralWidget->width(), pageHeight);
+	_pagesWindow->move(0, ui.centralWidget->height() - pageHeight);
 }
 
 void WhiteBoard::showEvent(QShowEvent* event)
@@ -211,7 +225,7 @@ void WhiteBoard::on_btnUpload_clicked()
 	QString fileName = QFileDialog::getOpenFileName(this,
 		QStringLiteral("选择背景文件"),
 		"",
-		QStringLiteral("背景文件 (*.png *.jpg *.jpeg *.bmp *.ppt *.pptx *.pdf *.doc)"),
+		QStringLiteral("背景文件 (*.png *.jpg *.jpeg *.bmp *.ppt *.pptx *.pdf *.doc *.docx *.xls)"),
 		nullptr);
 	if (fileName.isEmpty()) return;
 	emit QDialogProgress::instance().showProgress(QStringLiteral("正在上传"), 0);
@@ -294,6 +308,19 @@ void WhiteBoard::on_btnDeletePage_clicked()
 	showDialogWindow();
 }
 
+void WhiteBoard::on_btnHistory_clicked()
+{
+    m_historyDlg->exec();
+    m_historyDlg->activateWindow();
+}
+
+void WhiteBoard::on_btnSwitchPage_clicked()
+{
+    int pageIndex = ui.spinPage->value();
+    BoardService::instance().gotoPage(pageIndex-1);
+	on_updatePageWindow();
+}
+
 void WhiteBoard::on_sliderShapeThin_valueChanged(int value)
 {
 	ui.labelThinValue->setText(QString::number(value));
@@ -361,6 +388,9 @@ void WhiteBoard::on_updatePageWindow()
 	ui.btnLastPage->setEnabled(BoardService::instance().getPageIndex() > 0);
 	ui.btnNextPage->setEnabled(BoardService::instance().getPageIndex() < BoardService::instance().getPageCount() - 1);
 	ui.btnDeletePage->setEnabled(BoardService::instance().getPageCount() > 1);
+    ui.spinPage->setMinimum(1);
+	ui.spinPage->setMaximum(BoardService::instance().getPageCount());
+    ui.spinPage->setSingleStep(1);
 }
 
 void WhiteBoard::on_btnDialogClose_clicked()
@@ -429,6 +459,7 @@ void WhiteBoard::connectSignals()
 	connect(ui.rdoShapeFullEllipse, &QRadioButton::toggled, this, &WhiteBoard::on_shape_toggled);
 
 	connect(_timer, &QTimer::timeout, this, &WhiteBoard::on_updateWindowStatus);
+	connect(this, SIGNAL(addItem(QString, QString)), m_historyDlg, SLOT(on_addItem(QString, QString)));
 }
 
 void WhiteBoard::updateTool(bool showToolWindow)
@@ -563,10 +594,12 @@ void WhiteBoard::updateShape()
 void WhiteBoard::showToolsWindow()
 {
 	_toolsWindow->hide();
-	_toolsWindow->resize(36, 288);
-	_toolsWindow->move(0, (ui.centralWidget->height() - _toolsWindow->height()) / 2);
+	int centralWidth = ui.centralWidget->width();
+	float scale = min(centralWidth *1.0 / 620, 1.5);
+	_toolsWindow->resize(36, 252);
+	_toolsWindow->move(0, m_boardYPos);
 	_toolsWindow->show();
-	
+
 	_toolsLostClock = clock();
 }
 
@@ -580,8 +613,19 @@ void WhiteBoard::showPagesWindow()
 	if (_mainUser)
 	{
 		_pagesWindow->hide();
-		_pagesWindow->resize(ui.centralWidget->width(), 42);
-		_pagesWindow->move(0, ui.centralWidget->height() - _pagesWindow->height());
+		//_pagesWindow->resize(ui.centralWidget->width(), 40);
+		//_pagesWindow->move(0, ui.centralWidget->height() - _pagesWindow->height());
+
+
+		int boardHeight = ui.centralWidget->width()*9.0 / 16;
+		int pageHeight = min(ui.centralWidget->height() - boardHeight, 50);
+
+		m_boardYPos = ui.centralWidget->height() - pageHeight - boardHeight;
+		_boardWindow->resize(ui.centralWidget->width(), boardHeight);
+		_boardWindow->move(0, m_boardYPos);
+
+		_pagesWindow->resize(ui.centralWidget->width(), pageHeight);
+		_pagesWindow->move(0, ui.centralWidget->height() - pageHeight);
 		_pagesWindow->show();
 
 		_pagesLostClock = clock();
@@ -655,15 +699,20 @@ void WhiteBoard::onUploadProgress(int percent)
 	emit QDialogProgress::instance().showProgress(QStringLiteral("正在上传"), percent);
 }
 
-void WhiteBoard::onUploadResult(bool success)
+void WhiteBoard::onUploadResult(bool success, bool openHistory, const std::wstring& objName)
 {
 	if(success)
 	{
 		emit QDialogProgress::instance().hideAfter(0);
 		emit updatePageWindow();
+
+        QString dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd");
+		emit addItem(QString::fromStdWString(objName), dateTime);
+		m_historyDlg->save();
 	}
 	else
 	{
+        QString msg = (true == openHistory ? QStringLiteral("打开失败") : QStringLiteral("上传失败"));
 		emit QDialogProgress::instance().showProgress(QStringLiteral("上传失败"), 100);
 		emit QDialogProgress::instance().hideAfter(1000);
 	}

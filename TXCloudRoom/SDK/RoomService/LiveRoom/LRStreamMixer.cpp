@@ -86,6 +86,8 @@ void LRStreamMixer::addSubStream(const std::string& streamID, int width, int hei
 
 void LRStreamMixer::removeSubStream(const std::string& streamID)
 {
+	LINFO(L"streamID: %s", Ansi2Wide(streamID).c_str());
+
     for (std::vector<LRStreamMixParam>::iterator it = m_subStream.begin()
         ; m_subStream.end() != it; ++it)
     {
@@ -111,7 +113,7 @@ void LRStreamMixer::mergeStream(int retryCount)
 {
     LINFO(L"retryCount: %d", retryCount);
 
-    if (m_httpRequest && retryCount > 0)
+    if (m_httpRequest && retryCount > 0 && !m_mainStream.streamID.empty())
     {
         Json::Value mergeParams = createJsonParams();
         m_httpRequest->mergeStream(m_roomID, m_userID, mergeParams, [=](const LRResult& res) {
